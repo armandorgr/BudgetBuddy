@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">BudgetBuddy</string>
+    <string name="login">Login</string>
+    <string name="registro">Sign up</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last Name</string>
+    <string name="password">Password</string>
+    <string name="repeatPassword">Repeat password</string>
+    <string name="icon_description">icon</string>
+    <string name="doNotHaveAccount">Don\'t have an account?</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="contrasena">Proyecto1234</string>
+    <string name="default_web_client_id">366242925352-8d4o893bvr01ohv68gu7li0m4semlkrp.apps.googleusercontent.com</string>
+</resources>

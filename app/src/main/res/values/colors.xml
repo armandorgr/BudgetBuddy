@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Light Theme Colors -->
+    <color name="md_theme_light_primary">#94CBFF</color> <!-- Azul Cielo Pastel for Primary -->
+    <color name="md_theme_light_onPrimary">#333333</color> <!-- Gris muy oscuro for Text on Primary -->
+    <color name="md_theme_light_secondary">#B5DBFF</color> <!-- Azul Bebé Pastel for Secondary -->
+    <color name="md_theme_light_onSecondary">#333333</color> <!-- Gris muy oscuro for Text on Secondary -->
+    <color name="md_theme_light_surface">#FFFFFF</color> <!-- White for Surface -->
+    <color name="md_theme_light_onSurface">#333333</color> <!-- Gris muy oscuro for Text on Surface -->
+    <color name="md_theme_light_background">#FFFFFF</color> <!-- White for Background -->
+    <color name="md_theme_light_onBackground">#333333</color> <!-- Gris muy oscuro for Text on Background -->
+    <color name="md_theme_light_error">#B00020</color> <!-- Default Error -->
+    <color name="md_theme_light_onError">#FFFFFF</color> <!-- White for Text on Error -->
+    <!-- Tema Oscuro -->
+    <color name="dark_theme_primary">#323C46</color> <!-- Gris Oscuro Azulado -->
+    <color name="dark_theme_secondary">#4A6572</color> <!-- Azul Petróleo Pastel -->
+    <color name="dark_theme_accent">#88BDBC</color> <!-- Turquesa Pastel -->
+    <color name="dark_theme_text_primary">#FAFAFA</color> <!-- Blanco Crema -->
+    <color name="dark_theme_text_secondary">#B0BEC5</color> <!-- Gris Claro -->
+</resources>
