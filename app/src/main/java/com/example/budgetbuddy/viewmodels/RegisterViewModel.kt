@@ -25,8 +25,14 @@ class RegisterViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _allGood = MutableLiveData<Boolean>()
-    var allGood:LiveData<Boolean> = _allGood
+     val allGood: Boolean
+        get(){
+            return userNameError.value.equals("") &&
+                    emailError.value.equals("") &&
+                    firstNameError.value.equals("") &&
+                    lastNameError.value.equals("") &&
+                    passwordError.value.equals("")
+        }
 
     private val _username = MutableLiveData<String>()
     var username: LiveData<String> = _username
@@ -66,23 +72,23 @@ class RegisterViewModel @Inject constructor(
         this._username.postValue(username)
     }
 
-    fun setEmail(email: String){
+    fun setEmail(email: String) {
         this._email.postValue(email)
     }
 
-    fun setFirstName(firstName:String){
+    fun setFirstName(firstName: String) {
         this._firstName.postValue(firstName)
     }
 
-    fun setLastName(lastName: String){
+    fun setLastName(lastName: String) {
         this._lastName.postValue(lastName)
     }
 
-    fun setPassword(password: String){
+    fun setPassword(password: String) {
         this._password.postValue(password)
     }
 
-    fun setRepeatPassword(repeatPassword:String){
+    fun setRepeatPassword(repeatPassword: String) {
         this._repeatPassword.postValue(repeatPassword)
     }
 
@@ -112,7 +118,12 @@ class RegisterViewModel @Inject constructor(
      * @return [Unit]
      * */
     fun validatePassword(password: String, repeatPassword: String) {
-        _passwordError.postValue(passwordValidator.validate(password) ?: validateRepeatPassword(password, repeatPassword))
+        _passwordError.postValue(
+            passwordValidator.validate(password) ?: validateRepeatPassword(
+                password,
+                repeatPassword
+            )
+        )
     }
 
     /**
@@ -121,10 +132,10 @@ class RegisterViewModel @Inject constructor(
      * @param input2 [String] segunda contraseña a validar que coincide con la primera
      * @return [Unit]
      * */
-    private fun validateRepeatPassword(input:String, input2:String):String{
-        return if(!(input.contentEquals(input2))){
+    private fun validateRepeatPassword(input: String, input2: String): String {
+        return if (!(input.contentEquals(input2))) {
             "Las contraseñas no coinciden"
-        }else{
+        } else {
             ""
         }
     }
@@ -154,6 +165,7 @@ class RegisterViewModel @Inject constructor(
     fun moveToLogin(): View.OnClickListener {
         return Navigation.createNavigateOnClickListener(R.id.nav_register_to_login, null)
     }
+
     /**
      * Metodo que sirve para moverse desde la pantalla de login a la de registro
      * @return [View.OnClickListener] funcion usada para realizar el cambio de pantalla
