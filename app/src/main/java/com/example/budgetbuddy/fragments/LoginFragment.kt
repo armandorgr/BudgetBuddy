@@ -52,12 +52,19 @@ class LoginFragment : Fragment() {
             }
         }
     }
-
+    /**
+     * Método que sirve para iniciar sesión con Google
+     * */
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         intent.launch(signInIntent)
     }
 
+    /**
+     * Método usado para conseguir autorización de firebase mediante las
+     * credenciales obtenidas de Google
+     * @param idToken token usado para obtener las credenciales de Google
+     * */
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
@@ -97,6 +104,10 @@ class LoginFragment : Fragment() {
         return view
     }
 
+    /**
+     * Método que sirve para actualizar la interfaz una vez se haya iniciado sesión correctamente.
+     * @param user Usuario con el cual se ha iniciado sesión
+     * */
     private fun updateUI(user: FirebaseUser?) {
         Toast.makeText(requireContext(), user?.displayName, Toast.LENGTH_LONG).show()
     }

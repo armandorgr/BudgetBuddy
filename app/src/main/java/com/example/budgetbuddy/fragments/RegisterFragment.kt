@@ -38,6 +38,11 @@ class RegisterFragment : Fragment() {
         return view
     }
 
+    /**
+     * Método usado para preparar el binding de las vistas con los campos del viewmodel
+     * y añadir eventos para realizar las validaciones cada vez que se escriben en los EditText
+     * @param binding binding del fragmento usado para acceder a los controles de la vista
+     * */
     private fun prepareBinding(binding:FragmentRegisterBinding){
         binding.usernameEditText.addTextChangedListener(afterTextChanged = {text ->
             viewModel.setUserName(text.toString())

@@ -5,6 +5,9 @@ import com.example.budgetbuddy.validations.ExpValidations
 import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
 
+/**
+ * Objeto que sirve para validar los nombres de usuarios
+ * */
 object NameValidator {
     private val validator = BlankValidationHandler("El nombre no puede estar vacío")
         .setNext(
@@ -17,6 +20,11 @@ object NameValidator {
                 )
         )
 
+    /**
+     * Metodo que funciona que para validar la entrada de texto
+     * @param input [String] valor a validar
+     * @return resultado [String]? de validar, es nulo si no hay error.
+     * */
     fun validate(input: String): String? {
         return validator.validate(input)
     }

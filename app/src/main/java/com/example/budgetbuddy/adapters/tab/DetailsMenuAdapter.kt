@@ -13,13 +13,25 @@ val DETAILS_TABS_PAIR = listOf(
     R.string.saldos
 )
 
-
+/**
+ * Adaptador usado para crear las pestañas del menú del fragmento Details
+ * */
 class DetailsMenuAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
+
+    /**
+     * Método que sirve para obtener el numero de pestañas a crear en el menú
+     * @return El numero de pestañas a crear en el menú
+     * */
     override fun getItemCount(): Int {
         return DETAILS_TABS_PAIR.size
     }
 
+    /**
+     * Método que sirve para cambiar de fragment en función de la posicion del menú
+     * @param position posición actual del menú
+     * @return fragmento a mostrar en el ViewPager
+     * */
     override fun createFragment(position: Int): Fragment {
         return if (position == 0) GastosFragment() else SaldosFragment()
     }
