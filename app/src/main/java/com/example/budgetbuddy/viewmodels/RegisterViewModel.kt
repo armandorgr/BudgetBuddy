@@ -9,21 +9,25 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.validations.validators.NameValidator
 import com.example.budgetbuddy.validations.validators.EmailValidator
 import com.example.budgetbuddy.validations.validators.PasswordValidator
+import com.example.budgetbuddy.validations.validators.UsernameValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+/**
+ * ViewModel encargado del comportamiento del proceso de registro de nuevos usuarios.
+ * */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val nameValidator: NameValidator,
     private val emailValidator: EmailValidator,
-    private val passwordValidator: PasswordValidator
+    private val passwordValidator: PasswordValidator,
+    private val usernameValidator: UsernameValidator
 ) :
     ViewModel() {
 
     private val _allGood = MutableLiveData<Boolean>()
     var allGood:LiveData<Boolean> = _allGood
 
-    //TODO hacer validador para el nombre de usuario
     private val _username = MutableLiveData<String>()
     var username: LiveData<String> = _username
 
@@ -89,7 +93,7 @@ class RegisterViewModel @Inject constructor(
      * @return [Unit]
      * */
     fun validateUserName(input: String) {
-        _usernameError.postValue(nameValidator.validate(input) ?: "")
+        _usernameError.postValue(usernameValidator.validate(input) ?: "")
     }
 
     /**
