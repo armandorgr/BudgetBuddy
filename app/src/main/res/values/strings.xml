@@ -13,4 +13,8 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="contrasena">Proyecto1234</string>
     <string name="default_web_client_id">366242925352-8d4o893bvr01ohv68gu7li0m4semlkrp.apps.googleusercontent.com</string>
+    <string name="saldos">Saldos</string>
+    <string name="Gastos">Gastos</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

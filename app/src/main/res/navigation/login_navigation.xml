@@ -13,10 +13,17 @@
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/nav_login_to_register"
-            app:destination="@+id/nav_register"
+            app:destination="@+id/nav_details"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popUpTo="@+id/nav_login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_details"
+        android:name="com.example.budgetbuddy.fragments.DetailsFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_details">
     </fragment>
 
     <fragment

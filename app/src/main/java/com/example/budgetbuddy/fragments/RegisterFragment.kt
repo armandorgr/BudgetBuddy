@@ -33,10 +33,8 @@ class RegisterFragment : Fragment() {
         val view = binding.root
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
-
         view.findViewById<TextView>(R.id.textViewLogin).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_register_to_login))
         prepareBinding(binding)
-
         return view
     }
 
