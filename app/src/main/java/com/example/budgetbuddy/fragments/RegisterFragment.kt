@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -44,6 +45,14 @@ class RegisterFragment : Fragment() {
      * @param binding binding del fragmento usado para acceder a los controles de la vista
      * */
     private fun prepareBinding(binding:FragmentRegisterBinding){
+        binding.signUpBtn.setOnClickListener{
+            if(viewModel.allGood){
+                Toast.makeText(context, "Correcto", Toast.LENGTH_LONG).show()
+            }else{
+                Toast.makeText(context, "Incorecto", Toast.LENGTH_LONG).show()
+            }
+        }
+
         binding.usernameEditText.addTextChangedListener(afterTextChanged = {text ->
             viewModel.setUserName(text.toString())
             viewModel.validateUserName(text.toString())
