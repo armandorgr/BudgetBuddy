@@ -8,14 +8,14 @@ import com.example.budgetbuddy.validations.RegexValidationHandler
 /**
  * Objeto que sirve para validar los nombres de usuarios
  * */
-object NameValidator {
-    private val validator = BlankValidationHandler("El nombre no puede estar vacío")
+object UsernameValidator {
+    private val validator = BlankValidationHandler("El nombre de usuario no puede estar vacío")
         .setNext(
-            LengthValidationHandler(30, "El nombre no puede tener más de 30 letras")
+            LengthValidationHandler(22, "El nombre de usuario no puede tener más de 22 letras")
                 .setNext(
                     RegexValidationHandler(
-                        ExpValidations.NAMES,
-                        "El nombre no esta bien formado"
+                        ExpValidations.USERNAME,
+                        "El nombre de usuario no esta bien formado"
                     )
                 )
         )

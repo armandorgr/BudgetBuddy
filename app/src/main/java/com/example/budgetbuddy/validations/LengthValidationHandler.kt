@@ -1,8 +1,5 @@
 package com.example.budgetbuddy.validations
 
-import android.util.Log
-
-
 class LengthValidationHandler(private val maxLength: Int, private val message: String) :
     BaseValidationHandler() {
     override fun validate(input: String): String? {
@@ -50,5 +47,6 @@ enum class ExpValidations(val exp: String) {
     // Es posible tener maximo tres nombres como David Joaquin Juan
     NAMES("^[A-Za-záéíóúüñÁÉÍÓÚÜÑ]+(?: [A-Za-záéíóúüñÁÉÍÓÚÜÑ]+)?(?: [A-Za-záéíóúüñÁÉÍÓÚÜÑ]+)?$"),
     EMAIL("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$"),
-    PASSWORD("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@._-])[A-Za-z\\d@._-]{8,}$")
+    PASSWORD("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@._-])[A-Za-z\\d@._-]{8,}$"),
+    USERNAME("^(?=.*[a-zA-Z]{3})[a-zA-Z0-9-_$]{3,22}$")
 }
