@@ -16,11 +16,16 @@ import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.FragmentRegisterBinding
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
     private val viewModel:RegisterViewModel by viewModels()
+    private lateinit var auth:FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,7 @@ class RegisterFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        auth = Firebase.auth
         val binding:FragmentRegisterBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false)
         val view = binding.root
         binding.viewmodel = viewModel
@@ -37,6 +43,17 @@ class RegisterFragment : Fragment() {
         view.findViewById<TextView>(R.id.textViewLogin).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_register_to_login))
         prepareBinding(binding)
         return view
+    }
+
+    private fun createAccount(email:String, password:String){
+        auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener{
+            if(it.isSuccessful){
+                val user = auth.currentUser
+                Toast.makeText(requireContext(), "Usuario registrado ${user}", Toast.LENGTH_LONG).show()
+            }else{
+                Toast.makeText(requireContext(), "${it.exception?.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     /**
@@ -47,7 +64,7 @@ class RegisterFragment : Fragment() {
     private fun prepareBinding(binding:FragmentRegisterBinding){
         binding.signUpBtn.setOnClickListener{
             if(viewModel.allGood){
-                Toast.makeText(context, "Correcto", Toast.LENGTH_LONG).show()
+                createAccount(viewModel.email.value.toString(), viewModel.password.value.toString())
             }else{
                 Toast.makeText(context, "Incorecto", Toast.LENGTH_LONG).show()
             }

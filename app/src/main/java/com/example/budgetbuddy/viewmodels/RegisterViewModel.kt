@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,8 +26,8 @@ class RegisterViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-     val allGood: Boolean
-        get(){
+    val allGood: Boolean
+        get() {
             return userNameError.value.equals("") &&
                     emailError.value.equals("") &&
                     firstNameError.value.equals("") &&
