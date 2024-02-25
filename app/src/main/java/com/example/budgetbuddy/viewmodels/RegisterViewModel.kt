@@ -17,6 +17,8 @@ import com.example.budgetbuddy.validations.validators.UsernameValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -181,6 +183,18 @@ class RegisterViewModel @Inject constructor(
      * */
     fun moveToRegister(): View.OnClickListener {
         return Navigation.createNavigateOnClickListener(R.id.nav_login_to_register, null)
+    }
+
+    suspend fun findUser(username: String): User? {
+        return withContext(Dispatchers.IO){
+            try{
+                val snapshot = repo.findUserByUserName(username).await()
+                val user = snapshot.getValue(User::class.java)
+                user
+            }catch (e: Exception){
+                null
+            }
+        }
     }
 
     /**
