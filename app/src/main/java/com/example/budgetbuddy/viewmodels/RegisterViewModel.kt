@@ -5,14 +5,21 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.repositories.UsersRepository
 import com.example.budgetbuddy.validations.validators.NameValidator
 import com.example.budgetbuddy.validations.validators.EmailValidator
 import com.example.budgetbuddy.validations.validators.PasswordValidator
 import com.example.budgetbuddy.validations.validators.UsernameValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * ViewModel encargado del comportamiento del proceso de registro de nuevos usuarios.
@@ -22,7 +29,8 @@ class RegisterViewModel @Inject constructor(
     private val nameValidator: NameValidator,
     private val emailValidator: EmailValidator,
     private val passwordValidator: PasswordValidator,
-    private val usernameValidator: UsernameValidator
+    private val usernameValidator: UsernameValidator,
+    private val repo: UsersRepository
 ) :
     ViewModel() {
 
@@ -173,6 +181,29 @@ class RegisterViewModel @Inject constructor(
      * */
     fun moveToRegister(): View.OnClickListener {
         return Navigation.createNavigateOnClickListener(R.id.nav_login_to_register, null)
+    }
+
+    /**
+     * Método usado para crear un nuevo usuario en la base de datos
+     * @param uid Uid del usuario a guardar en la base de datos.
+     * */
+    suspend fun createNewUser(uid: String): Boolean {
+        val user = User(
+            _firstName.value.toString(),
+            _lastName.value.toString(),
+            _email.value.toString(),
+            _username.value.toString()
+        )
+
+        return suspendCoroutine { continuation ->
+            repo.writeNewUser(uid, user).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    continuation.resume(true)
+                } else {
+                    continuation.resume(false)
+                }
+            }
+        }
     }
 
 }

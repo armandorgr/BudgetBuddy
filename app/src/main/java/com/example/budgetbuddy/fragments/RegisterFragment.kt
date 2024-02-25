@@ -12,15 +12,19 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.FragmentRegisterBinding
+import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -49,7 +53,12 @@ class RegisterFragment : Fragment() {
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener{
             if(it.isSuccessful){
                 val user = auth.currentUser
-                Toast.makeText(requireContext(), "Usuario registrado ${user}", Toast.LENGTH_LONG).show()
+                if(user?.uid!=null){
+                    lifecycleScope.launch{
+                        val result = viewModel.createNewUser(user.uid)
+                        Toast.makeText(requireContext(), "$result", Toast.LENGTH_LONG).show()
+                    }
+                }
             }else{
                 Toast.makeText(requireContext(), "${it.exception?.message}", Toast.LENGTH_LONG).show()
             }

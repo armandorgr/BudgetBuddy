@@ -44,6 +44,8 @@ android {
 }
 
 dependencies {
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation("com.google.firebase:firebase-database:20.3.0")
     val lottieVersion = "6.3.0"
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
