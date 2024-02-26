@@ -3,4 +3,8 @@
     <dimen name="textSizeTitle">30sp</dimen>
     <dimen name="inputTextSize">10sp</dimen>
     <dimen name="margin_small">6dp</dimen>
+    <dimen name="corner_radius_dialog">14dp</dimen>
+    <dimen name="text_size_title_dialog">20sp</dimen>
+    <dimen name="text_size_title_text">16sp</dimen>
+    <dimen name="alert_dialog_padding">32dp</dimen>
 </resources>

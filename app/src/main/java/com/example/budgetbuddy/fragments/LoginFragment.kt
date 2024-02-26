@@ -1,12 +1,16 @@
 package com.example.budgetbuddy.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.renderscript.ScriptGroup.Input
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +19,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.FragmentLoginBinding
+import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -33,8 +39,16 @@ class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var intent: ActivityResultLauncher<Intent>
     private lateinit var googleSignInClient: GoogleSignInClient
-
+    private lateinit var binding: FragmentLoginBinding
     private val viewModel: RegisterViewModel by viewModels()
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            updateUI(currentUser)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +66,7 @@ class LoginFragment : Fragment() {
             }
         }
     }
+
     /**
      * Método que sirve para iniciar sesión con Google
      * */
@@ -60,22 +75,86 @@ class LoginFragment : Fragment() {
         intent.launch(signInIntent)
     }
 
+    private fun signInWithEmailPassword(email: String, password: String) {
+        val dialogFactory = AlertDialogFactory(requireContext())
+        var dialogLayout: Int = 0
+        var data: Result? = null
+        binding.frame.alpha = 0.4f
+        binding.determinateBar.visibility = View.VISIBLE
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) {
+            if (it.isSuccessful) {
+                val user = auth.currentUser
+                dialogLayout = R.layout.success_dialog
+                data = Result(
+                    getString(R.string.success_title),
+                    getString(R.string.loggedin_success),
+                    getString(R.string.go_to_home)
+                ) {
+                    binding.frame.alpha = 1f
+                    updateUI(user)
+                }
+            } else {
+                dialogLayout = R.layout.error_dialog
+                data = Result(
+                    getString(R.string.fail_title),
+                    getString(R.string.account_doesnt_exist),
+                    getString(R.string.try_again)
+                ) {
+                    binding.frame.alpha = 1f
+                }
+            }
+            data?.let { it1 ->
+                dialogFactory.createDialog(
+                    dialogLayout, binding.root,
+                    it1
+                )
+            }
+            binding.determinateBar.visibility = View.INVISIBLE
+        }
+    }
+
     /**
      * Método usado para conseguir autorización de firebase mediante las
      * credenciales obtenidas de Google
      * @param idToken token usado para obtener las credenciales de Google
      * */
     private fun firebaseAuthWithGoogle(idToken: String) {
+        val dialogFactory = AlertDialogFactory(requireContext())
+        var dialogLayout: Int = 0
+        var data: Result? = null
+        binding.frame.alpha = 0.4f
+        binding.determinateBar.visibility = View.VISIBLE
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
                     val user = auth.currentUser
-                    updateUI(user)
+                    dialogLayout = R.layout.success_dialog
+                    data = Result(
+                        getString(R.string.success_title),
+                        getString(R.string.loggedin_success),
+                        getString(R.string.go_to_home)
+                    ) {
+                        binding.frame.alpha = 1f
+                        binding.determinateBar.visibility = View.INVISIBLE
+                        updateUI(user)
+                    }
                 } else {
-                    // If sign in fails, display a message to the user.
-                    updateUI(null)
+                    dialogLayout = R.layout.error_dialog
+                    data = Result(
+                        getString(R.string.fail_title),
+                        getString(R.string.fail_login),
+                        getString(R.string.try_again)
+                    ) {
+                        binding.frame.alpha = 1f
+                        binding.determinateBar.visibility = View.INVISIBLE
+                    }
+                }
+                data?.let { it1 ->
+                    dialogFactory.createDialog(
+                        dialogLayout, binding.root,
+                        it1
+                    )
                 }
             }
     }
@@ -85,7 +164,7 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentLoginBinding =
+        binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
         val view = binding.root
 
@@ -98,10 +177,25 @@ class LoginFragment : Fragment() {
 
         auth = Firebase.auth
         binding.textViewSignUp.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_login_to_register))
+        binding.signUpBtn.setOnClickListener {
+            signInWithEmailPassword(
+                binding.emailEditText.text.toString(),
+                binding.passwordEditText.text.toString()
+            )
+            hideKeyboard()
+        }
         binding.google.setOnClickListener {
             signIn()
         }
         return view
+    }
+
+
+    private fun hideKeyboard() {
+        requireActivity().currentFocus?.let { view ->
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
     /**
@@ -109,7 +203,7 @@ class LoginFragment : Fragment() {
      * @param user Usuario con el cual se ha iniciado sesión
      * */
     private fun updateUI(user: FirebaseUser?) {
-        Toast.makeText(requireContext(), user?.displayName, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), user?.email ?: "null", Toast.LENGTH_LONG).show()
     }
 
 

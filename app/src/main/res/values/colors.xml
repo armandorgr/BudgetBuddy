@@ -13,6 +13,7 @@
     <color name="md_theme_light_onBackground">#333333</color> <!-- Gris muy oscuro for Text on Background -->
     <color name="md_theme_light_error">#B00020</color> <!-- Default Error -->
     <color name="md_theme_light_onError">#FFFFFF</color> <!-- White for Text on Error -->
+    <color name="gray">#808080</color>
     <!-- Tema Oscuro -->
     <color name="dark_theme_primary">#323C46</color> <!-- Gris Oscuro Azulado -->
     <color name="dark_theme_secondary">#4A6572</color> <!-- Azul Petróleo Pastel -->

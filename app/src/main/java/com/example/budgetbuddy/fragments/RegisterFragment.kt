@@ -1,10 +1,12 @@
 package com.example.budgetbuddy.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -13,9 +15,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.FragmentRegisterBinding
 import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -24,6 +29,7 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -34,6 +40,14 @@ class RegisterFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
+    private fun hideKeyboard(){
+        requireActivity().currentFocus?.let { view ->
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,17 +64,24 @@ class RegisterFragment : Fragment() {
         return view
     }
 
+
+
     private fun createAccount(email: String, password: String) {
+        val dialogFactory = AlertDialogFactory(requireContext())
+        var dialogLayout:Int = 0
+        var data:Result? = null
         binding.determinateBar.visibility = View.VISIBLE;
         binding.frame.alpha = 0.4f
         lifecycleScope.launch {
-
             if (viewModel.username.value?.let { viewModel.findUser(it) } != null) {
-                Toast.makeText(
-                    requireContext(),
-                    "el nombre de usuario no esta disponible",
-                    Toast.LENGTH_LONG
-                ).show()
+                dialogLayout = R.layout.error_dialog
+                data = Result(
+                    getString(R.string.fail_title),
+                    getString(R.string.username_already_exits),
+                    getString(R.string.try_again)
+                ) {
+                    binding.frame.alpha = 1f
+                }
             } else {
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -68,21 +89,48 @@ class RegisterFragment : Fragment() {
                         if (user?.uid != null) {
                             lifecycleScope.launch {
                                 val result = viewModel.createNewUser(user.uid)
-                                Toast.makeText(requireContext(), "$result", Toast.LENGTH_LONG)
-                                    .show()
+                                if (result){
+                                    dialogLayout = R.layout.success_dialog
+                                    data = Result(
+                                        getString(R.string.success_title),
+                                        getString(R.string.success_registro_text),
+                                        getString(R.string.login)
+                                    ) {
+                                        val navController = findNavController()
+                                        binding.frame.alpha = 1f
+                                        navController.navigate(R.id.nav_register_to_login)
+                                    }
+                                }
+                                data?.let { it1 ->
+                                    dialogFactory.createDialog(dialogLayout, binding.root,
+                                        it1
+                                    )
+                                }
                             }
                         }
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "${it.exception?.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        dialogLayout = R.layout.error_dialog
+                        data = Result(
+                            getString(R.string.fail_title),
+                            it.exception?.message ?: "error",
+                            getString(R.string.try_again)
+                        ) {
+                            binding.frame.alpha = 1f
+                        }
+                    }
+                    data?.let { it1 ->
+                        dialogFactory.createDialog(dialogLayout, binding.root,
+                            it1
+                        )
                     }
                 }
             }
             binding.determinateBar.visibility = View.INVISIBLE
-            binding.frame.alpha = 1f
+            data?.let { it1 ->
+                dialogFactory.createDialog(dialogLayout, binding.root,
+                    it1
+                )
+            }
         }
     }
 
@@ -94,9 +142,8 @@ class RegisterFragment : Fragment() {
     private fun prepareBinding(binding: FragmentRegisterBinding) {
         binding.signUpBtn.setOnClickListener {
             if (viewModel.allGood) {
+                hideKeyboard()
                 createAccount(viewModel.email.value.toString(), viewModel.password.value.toString())
-            } else {
-                Toast.makeText(context, "Incorecto", Toast.LENGTH_LONG).show()
             }
         }
 

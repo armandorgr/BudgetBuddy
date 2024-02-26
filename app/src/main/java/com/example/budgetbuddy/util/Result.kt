@@ -1,3 +1,10 @@
 package com.example.budgetbuddy.util
 
-data class Result()
+import androidx.annotation.DrawableRes
+
+data class Result(
+    val title: String,
+    val text: String,
+    val btnText: String,
+    val onClick: () -> Unit
+)
