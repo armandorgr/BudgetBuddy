@@ -7,4 +7,5 @@
     <dimen name="text_size_title_dialog">20sp</dimen>
     <dimen name="text_size_title_text">16sp</dimen>
     <dimen name="alert_dialog_padding">32dp</dimen>
+    <dimen name="btnTextSize">16dp</dimen>
 </resources>

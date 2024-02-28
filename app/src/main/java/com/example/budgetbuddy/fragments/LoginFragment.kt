@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.databinding.FragmentLoginBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
@@ -203,8 +204,9 @@ class LoginFragment : Fragment() {
      * @param user Usuario con el cual se ha iniciado sesión
      * */
     private fun updateUI(user: FirebaseUser?) {
-        Toast.makeText(requireContext(), user?.email ?: "null", Toast.LENGTH_LONG).show()
+        val intent:Intent = Intent(activity, HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent)
     }
-
-
 }

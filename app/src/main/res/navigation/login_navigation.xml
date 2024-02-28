@@ -20,20 +20,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_details"
-        android:name="com.example.budgetbuddy.fragments.DetailsFragment"
-        android:label="Details"
-        tools:layout="@layout/fragment_details">
-    </fragment>
-
-    <fragment
         android:id="@+id/nav_register"
         android:name="com.example.budgetbuddy.fragments.RegisterFragment"
         android:label="@string/registro"
         tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/nav_register_to_login"
-            app:destination="@+id/nav_details"
+            app:destination="@+id/nav_login"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popUpTo="@+id/nav_register" />

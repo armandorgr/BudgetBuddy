@@ -28,4 +28,8 @@
     <string name="go_to_home">Go to Home</string>
     <string name="fail_login">Couldn\'t log in</string>
     <string name="account_doesnt_exist">There is no account with this credentials</string>
+    <string name="home">Home</string>
+    <string name="friends">Friends</string>
+    <string name="groups">Groups</string>
+    <string name="profile">Profile</string>
 </resources>

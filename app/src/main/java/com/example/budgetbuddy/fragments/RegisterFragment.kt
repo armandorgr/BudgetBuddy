@@ -1,35 +1,31 @@
 package com.example.budgetbuddy.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.databinding.FragmentRegisterBinding
-import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -96,9 +92,7 @@ class RegisterFragment : Fragment() {
                                         getString(R.string.success_registro_text),
                                         getString(R.string.login)
                                     ) {
-                                        val navController = findNavController()
-                                        binding.frame.alpha = 1f
-                                        navController.navigate(R.id.nav_register_to_login)
+                                        updateUI(auth.currentUser)
                                     }
                                 }
                                 data?.let { it1 ->
@@ -132,6 +126,17 @@ class RegisterFragment : Fragment() {
                 )
             }
         }
+    }
+
+    /**
+     * Método que sirve para actualizar la interfaz una vez se haya iniciado sesión correctamente.
+     * @param user Usuario con el cual se ha iniciado sesión
+     * */
+    private fun updateUI(user: FirebaseUser?) {
+        val intent:Intent = Intent(activity, HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent)
     }
 
     /**
