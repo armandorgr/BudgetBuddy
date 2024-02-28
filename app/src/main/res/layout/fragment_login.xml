@@ -22,8 +22,8 @@
                 style="@android:style/Widget.Material.Light.ProgressBar.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="invisible"
                 android:indeterminateTint="@color/md_theme_light_primary"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -72,8 +72,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        app:endIconMode="clear_text"
-                        android:hint="@string/email">
+
+                        android:hint="@string/email"
+                        app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/emailEditText"
@@ -122,6 +123,7 @@
                         android:layout_marginTop="20dp"
                         android:elevation="8dp"
                         android:text="@string/login" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -163,7 +165,7 @@
                         <com.google.android.gms.common.SignInButton
                             android:id="@+id/google"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
 
@@ -174,21 +176,24 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:padding="@dimen/margin_small">
+
                         <TextView
                             android:id="@+id/textViewNotHaveAccount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/doNotHaveAccount"
-                            android:layout_marginEnd="10dp"/>
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/doNotHaveAccount" />
+
                         <TextView
                             android:id="@+id/textViewSignUp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/md_theme_light_primary"
-                            android:text="@string/registro" />
+                            android:text="@string/registro"
+                            android:textColor="@color/md_theme_light_primary" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>
