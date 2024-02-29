@@ -90,7 +90,7 @@ class RegisterFragment : Fragment() {
                                     data = Result(
                                         getString(R.string.success_title),
                                         getString(R.string.success_registro_text),
-                                        getString(R.string.login)
+                                        getString(R.string.go_to_home)
                                     ) {
                                         updateUI(auth.currentUser)
                                     }

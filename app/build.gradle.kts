@@ -44,6 +44,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
