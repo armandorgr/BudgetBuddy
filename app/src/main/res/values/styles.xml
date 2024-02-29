@@ -9,9 +9,14 @@
         <item name="android:textSize">@dimen/inputTextSize</item>
     </style>
 
+    <style name="Circular">
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="btnElevated" parent="Widget.Material3.Button.ElevatedButton">
         <item name="android:textColor">@color/md_theme_light_onPrimary</item>
         <item name="backgroundTint">@color/md_theme_light_primary</item>
+        <item name="android:textSize">@dimen/btnTextSize</item>
     </style>
 
     <style name="alertDialogTitle" parent="TextAppearance.AppCompat.Title">
