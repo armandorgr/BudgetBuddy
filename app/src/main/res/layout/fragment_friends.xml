@@ -6,9 +6,59 @@
     tools:context=".fragments.FriendsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/friends" />
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFDFD"
+            android:padding="8dp"
+            android:text="@string/friends"
+            android:textAlignment="center"
+            android:textSize="34sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:orientation="horizontal">
+
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:iconifiedByDefault="false"
+                android:queryHint="@string/buscarAmigo" />
+
+            <EditText
+                android:id="@+id/edit_text_search"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/buscarAmigo"
+                android:inputType="text"
+                android:layout_weight="2"/>
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:text="@string/buscar" />
+        </LinearLayout>
+
+        <!-- Otros elementos que quieras agregar en el mismo LinearLayout horizontal -->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_theme_accent" />
+
+    </LinearLayout>
 
 </FrameLayout>

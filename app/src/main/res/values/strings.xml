@@ -32,4 +32,7 @@
     <string name="friends">Friends</string>
     <string name="groups">Groups</string>
     <string name="profile">Profile</string>
+    <string name="buscarAmigo">Buscar amigo</string>
+    <string name="buscar">Buscar</string>
+
 </resources>
