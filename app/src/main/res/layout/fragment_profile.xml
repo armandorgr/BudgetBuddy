@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/custom_gradient_bkg"
-    tools:context=".fragments.ProfileFragment">
+    tools:context=".fragments.ProfileFragment"
+    android:id="@+id/profileFrame">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/profileMotionLayout"
@@ -127,7 +128,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/logoutConstraintLayout"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
                     android:orientation="horizontal">
@@ -160,12 +161,12 @@
                         android:id="@+id/logoutArrow"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
                         android:src="@drawable/baseline_keyboard_arrow_right_24"
-                        app:layout_constraintStart_toStartOf="@id/guideline7"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:contentDescription="@string/arrow_content_description" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guideline7"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline6"

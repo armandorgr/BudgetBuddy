@@ -41,4 +41,6 @@
     <string name="personal_data_title">Personal data</string>
     <string name="fail_creating_user">Failed trying to crear new user</string>
     <string name="more_data">We need some personal data about you</string>
+    <string name="logout_success">Logged out successfully</string>
+    <string name="go_to_login">Go to Login</string>
 </resources>
