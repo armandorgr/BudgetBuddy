@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
 class UsersRepository {
     private val ref:String = "users"
@@ -20,7 +21,37 @@ class UsersRepository {
         return database.child(uid).setValue(user)
     }
 
-    fun findUserByUserName(username:String):Task<DataSnapshot>{
-        return database.orderByChild("username").equalTo(username).get()
+     fun writeNewUser(user: User, uid:String):Task<Void>{
+        return database.child(uid).setValue(user)
+    }
+
+    suspend fun findUserByUserName(username:String):User?{
+       return try{
+            val snapshot = database.orderByChild("username").equalTo(username).get().await()
+            val user = snapshot.getValue(User::class.java)
+            user
+        }catch (e: Exception){
+            null
+        }
+    }
+
+    suspend fun findUserByEmail(email:String):User?{
+        return try{
+            val snapshot = database.orderByChild("email").equalTo(email).get().await()
+            val user = snapshot.getValue(User::class.java)
+            user
+        }catch (e: Exception){
+            null
+        }
+    }
+
+    suspend fun findUserByUID(uid:String):User?{
+        return try{
+            val snapshot = database.child(uid).get().await()
+            val user = snapshot.getValue(User::class.java)
+            user
+        }catch (e: Exception){
+            null
+        }
     }
 }
