@@ -57,6 +57,10 @@ class UsersRepository {
         }
     }
 
+     fun updateUsername(uid:String, newUsername:String):Task<Void>{
+        return database.child(uid).child("username").setValue(newUsername)
+    }
+
     suspend fun findUserByUID(uid:String):User?{
         return try{
             val snapshot = database.child(uid).get().await()

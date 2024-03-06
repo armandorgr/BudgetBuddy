@@ -85,7 +85,40 @@ class ProfileFragment : Fragment() {
         binding.deleteAccountConstraintLayout.setOnClickListener{
             reauthenticate(this::onDeleteAccount)
         }
+        binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
+
+    private fun onChangeUsername(view: View?) {
+        val data = PromptResult(
+            getString(R.string.change_username_title),
+            getString(R.string.change_username_hint),
+            { dialog ->
+                val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
+                var response: String? = viewModel.validateUsername(txt)
+                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
+                lifecycleScope.launch {
+                    if(viewModel.findUserByUsername(txt) != null){
+                        response = getString(R.string.username_already_exits)
+                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response
+                    }else{
+                        if (response == null) {
+                            viewModel.updateUsername(firebaseUser.uid, txt).addOnCompleteListener{
+                                onChangeUsernameComplete(it)
+                                dialog.dismiss()
+                            }
+                        }
+                    }
+
+                }
+            },
+            {
+                binding.profileFrame.alpha = 1f
+            }
+        )
+        dialogFactory.createPromptDialog(binding.root, data)
+    }
+
+
 
 
     private fun reauthenticate(onCompleteListener: (p: Task<Void>) -> Unit) {
@@ -177,6 +210,8 @@ class ProfileFragment : Fragment() {
                         lifecycleScope.launch {
                             if(viewModel.deleteUser(firebaseUser.uid)){
                                 onDeleteAccountComplete(it)
+                            }else{
+                                failedChange(getString(R.string.delete_account_fail))
                             }
                         }
                     }
@@ -208,7 +243,14 @@ class ProfileFragment : Fragment() {
         }
     }
 
-
+    private fun onChangeUsernameComplete(it: Task<Void>) {
+        binding.profileFrame.alpha = 0.3f
+        if(it.isSuccessful){
+            successChange(getString(R.string.change_username_success))
+        }else{
+            failedChange(getString(R.string.change_username_fail))
+        }
+    }
 
     private fun onPasswordChangeComplete(result: Task<Void>){
         binding.profileFrame.alpha = 0.3f
