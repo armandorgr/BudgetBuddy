@@ -25,6 +25,10 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun validatePassword(input:String):String?{
+        return passwordValidator.validate(input)
+    }
+
     fun validateEmail(input:String):String?{
         return emailValidator.validate(input)
     }

@@ -19,7 +19,7 @@
     <string name="errorLength">%s no puede tener mas de %s letras</string>
     <string name="errorForm">%s no esta bien formado</string>
     <string name="template">template</string>
-    <string name="success_title">Éxito</string>
+    <string name="success_title">Success</string>
     <string name="success_registro_text">Te has registrado correctamente</string>
     <string name="fail_title">Error</string>
     <string name="try_again">Try again</string>
@@ -44,6 +44,7 @@
     <string name="logout_success">Logged out successfully</string>
     <string name="go_to_login">Go to Login</string>
     <string name="new_email">Enter new email</string>
+    <string name="new_email_title">Email change</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="change_email">Change email address</string>
@@ -52,4 +53,9 @@
     <string name="fail_email_change">An error occurred trying to change the email</string>
     <string name="reathenticate">Reauthenticate</string>
     <string name="fail_reauthentication">Failed to reauthenticate</string>
+    <string name="change_password">Change password</string>
+    <string name="change_password_title">Password change</string>
+    <string name="change_password_hint">New password</string>
+    <string name="change_password_success">Your password has been updated</string>
+    <string name="change_password_fail">An error occurred trying to change your password</string>
 </resources>

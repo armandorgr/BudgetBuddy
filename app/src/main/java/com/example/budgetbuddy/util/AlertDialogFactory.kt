@@ -53,7 +53,7 @@ class AlertDialogFactory(private val context: Context) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_prompt_dialog, constraintLayout)
         val btnOk = dialogView.findViewById<Button>(R.id.dialog_button_ok)
         val btnCancel = dialogView.findViewById<Button>(R.id.dialog_button_cancel)
-        val editText = dialogView.findViewById<EditText>(R.id.newEmailEditText)
+        val editText = dialogView.findViewById<EditText>(R.id.newEditText)
         val textLayout = dialogView.findViewById<TextInputLayout>(R.id.promptTextLayout)
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)

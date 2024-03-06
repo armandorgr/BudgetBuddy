@@ -78,7 +78,12 @@ class ProfileFragment : Fragment() {
         binding.newEmailConstraintLayout.setOnClickListener {
             reauthenticate(this::onChangeEmail)
         }
+        binding.newPasswordConstraintLayout.setOnClickListener{
+            reauthenticate(this::onPasswordChange)
+        }
     }
+
+
 
     private fun reauthenticate(onCompleteListener: (p: Task<Void>) -> Unit) {
         binding.profileFrame.alpha = 0.3f
@@ -111,10 +116,10 @@ class ProfileFragment : Fragment() {
         binding.profileFrame.alpha = 0.3f
         if (task.isSuccessful) {
             val data = PromptResult(
-                getString(R.string.new_email),
+                getString(R.string.new_email_title),
                 getString(R.string.new_email),
                 { dialog ->
-                    val txt = dialog.findViewById<EditText>(R.id.newEmailEditText).text.toString()
+                    val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                     val response: String? = viewModel.validateEmail(txt)
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
                     if (response == null) {
@@ -130,6 +135,40 @@ class ProfileFragment : Fragment() {
             dialogFactory.createPromptDialog(binding.root, data)
         } else {
             failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
+        }
+    }
+
+    private fun onPasswordChange(task: Task<Void>){
+        binding.profileFrame.alpha = 0.3f
+        if(task.isSuccessful){
+            val data = PromptResult(
+                getString(R.string.change_password_title),
+                getString(R.string.change_password_hint),
+                {dialog ->
+                    val txt = dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
+                    val response: String? = viewModel.validatePassword(txt)
+                    dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
+                    if(response == null){
+                        firebaseUser.updatePassword(txt).addOnCompleteListener(this::onPasswordChangeComplete)
+                        dialog.dismiss()
+                    }
+                },
+                {
+                    binding.profileFrame.alpha = 1f
+                }
+            )
+            dialogFactory.createPromptDialog(binding.root, data)
+        }else{
+            failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
+        }
+    }
+
+    private fun onPasswordChangeComplete(result: Task<Void>){
+        binding.profileFrame.alpha = 0.3f
+        if(result.isSuccessful){
+            successChange(getString(R.string.change_password_success))
+        }else{
+            failedChange(result.exception?.message ?: getString(R.string.change_password_fail))
         }
     }
 

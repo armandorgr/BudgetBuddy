@@ -36,7 +36,7 @@
             android:hint="@string/place_holder_username_profile">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/newEmailEditText"
+                android:id="@+id/newEditText"
                 style="@style/inputText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
