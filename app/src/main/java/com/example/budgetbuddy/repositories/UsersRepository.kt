@@ -45,6 +45,16 @@ class UsersRepository {
         }
     }
 
+    suspend fun updateEmail(uid:String, newEmail:String):Boolean{
+        return try{
+            val task = database.child(uid).child("email").setValue(newEmail)
+            task.await()
+            task.isSuccessful
+        }catch (e: Exception){
+            false
+        }
+    }
+
     suspend fun findUserByUID(uid:String):User?{
         return try{
             val snapshot = database.child(uid).get().await()

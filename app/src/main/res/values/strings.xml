@@ -43,4 +43,13 @@
     <string name="more_data">We need some personal data about you</string>
     <string name="logout_success">Logged out successfully</string>
     <string name="go_to_login">Go to Login</string>
+    <string name="new_email">Enter new email</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="change_email">Change email address</string>
+    <string name="change_email_content_description">Change email button</string>
+    <string name="success_email_change">An email to verify the new email has been sent to the address provided</string>
+    <string name="fail_email_change">An error occurred trying to change the email</string>
+    <string name="reathenticate">Reauthenticate</string>
+    <string name="fail_reauthentication">Failed to reauthenticate</string>
 </resources>

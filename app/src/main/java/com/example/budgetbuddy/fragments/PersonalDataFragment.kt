@@ -106,7 +106,6 @@ class PersonalDataFragment : Fragment(), OnClickListener {
                 val user = User(
                     binding.firstNameEditText.text.toString(),
                     binding.lastNameEditText.text.toString(),
-                    currentUser.email,
                     binding.usernameEditText.text.toString()
                 )
                 val data:Result?

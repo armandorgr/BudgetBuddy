@@ -224,7 +224,6 @@ class RegisterViewModel @Inject constructor(
         val user = User(
             _firstName.value.toString(),
             _lastName.value.toString(),
-            _email.value.toString(),
             _username.value.toString()
         )
 
