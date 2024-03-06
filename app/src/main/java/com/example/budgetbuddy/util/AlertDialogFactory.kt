@@ -85,12 +85,42 @@ class AlertDialogFactory(private val context: Context) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_two_prompts_dialog, constraintLayout)
         val btnOk = dialogView.findViewById<Button>(R.id.dialog_button_ok)
         val btnCancel = dialogView.findViewById<Button>(R.id.dialog_button_cancel)
-        val editText1 = dialogView.findViewById<TextInputEditText>(R.id.EmailEditText)
-        val editText2 = dialogView.findViewById<TextInputEditText>(R.id.passwordEditText)
 
         dialogView.findViewById<TextView>(R.id.alertDialogTitle).text = result.title
         dialogView.findViewById<TextInputLayout>(R.id.emailTextLayout).hint = result.hint1
         dialogView.findViewById<TextInputLayout>(R.id.passwordTextLayout).hint = result.hint2
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+
+        if (alertDialog.window != null) {
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        alertDialog.show()
+
+        alertDialog.setOnDismissListener{
+            result.onDismiss()
+        }
+
+        btnOk.setOnClickListener{
+            result.onOk(alertDialog)
+        }
+        btnCancel.setOnClickListener{
+            alertDialog.dismiss()
+        }
+
+        return dialogView
+    }
+
+    fun createOkCancelDialog(view: View, result:ResultOkCancel):View{
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.okCancelConstraintLayout)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_ok_cancel_dialog, constraintLayout)
+        val btnOk = dialogView.findViewById<Button>(R.id.dialog_button_ok)
+        val btnCancel = dialogView.findViewById<Button>(R.id.dialog_button_cancel)
+
+        dialogView.findViewById<TextView>(R.id.alertDialogTitle).text = result.title
+        dialogView.findViewById<TextView>(R.id.alertDialogText).text = result.text
 
         val builder = AlertDialog.Builder(context)
         builder.setView(dialogView)

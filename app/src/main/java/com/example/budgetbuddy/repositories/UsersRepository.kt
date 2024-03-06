@@ -25,6 +25,8 @@ class UsersRepository {
         return database.child(uid).setValue(user)
     }
 
+
+
     suspend fun findUserByUserName(username:String):User?{
        return try{
             val snapshot = database.orderByChild("username").equalTo(username).get().await()
@@ -45,9 +47,9 @@ class UsersRepository {
         }
     }
 
-    suspend fun updateEmail(uid:String, newEmail:String):Boolean{
+    suspend fun deleteUser(uid:String):Boolean{
         return try{
-            val task = database.child(uid).child("email").setValue(newEmail)
+            val task = database.child(uid).removeValue()
             task.await()
             task.isSuccessful
         }catch (e: Exception){

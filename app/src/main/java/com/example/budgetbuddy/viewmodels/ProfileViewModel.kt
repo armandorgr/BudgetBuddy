@@ -25,6 +25,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    suspend fun deleteUser(uid:String): Boolean{
+        return withContext(Dispatchers.IO){
+            repo.deleteUser(uid)
+        }
+    }
+
     fun validatePassword(input:String):String?{
         return passwordValidator.validate(input)
     }

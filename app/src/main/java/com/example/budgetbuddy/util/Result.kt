@@ -19,6 +19,13 @@ data class PromptResult(
     val onDismiss: () -> Unit
 )
 
+data class ResultOkCancel(
+    val title: String,
+    val text:String,
+    val onOk:(dialog:AlertDialog) -> Unit,
+    val onDismiss: () -> Unit
+)
+
 data class TwoPromptResult(
     val title: String,
     val hint1:String,

@@ -21,6 +21,7 @@ import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
 import com.google.android.gms.tasks.OnCompleteListener
@@ -81,8 +82,10 @@ class ProfileFragment : Fragment() {
         binding.newPasswordConstraintLayout.setOnClickListener{
             reauthenticate(this::onPasswordChange)
         }
+        binding.deleteAccountConstraintLayout.setOnClickListener{
+            reauthenticate(this::onDeleteAccount)
+        }
     }
-
 
 
     private fun reauthenticate(onCompleteListener: (p: Task<Void>) -> Unit) {
@@ -162,6 +165,50 @@ class ProfileFragment : Fragment() {
             failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
         }
     }
+
+    private fun onDeleteAccount(task: Task<Void>) {
+        binding.profileFrame.alpha = 0.3f
+        if(task.isSuccessful){
+            val data = ResultOkCancel(
+                getString(R.string.delete_account),
+                getString(R.string.delete_account_message),
+                {
+                    firebaseUser.delete().addOnCompleteListener{
+                        lifecycleScope.launch {
+                            if(viewModel.deleteUser(firebaseUser.uid)){
+                                onDeleteAccountComplete(it)
+                            }
+                        }
+                    }
+                    it.dismiss()
+                },
+                {
+                    binding.profileFrame.alpha = 1f;
+                }
+            )
+            dialogFactory.createOkCancelDialog(binding.root, data)
+        }else{
+            failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
+        }
+    }
+
+    private fun onDeleteAccountComplete(task: Task<Void>) {
+        binding.profileFrame.alpha = 0.3f
+        if(task.isSuccessful){
+            val data = Result(
+                getString(R.string.success_title),
+                getString(R.string.delete_account_success),
+                getString(R.string.ok)
+            ){
+                goToLoginActivity()
+            }
+            dialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
+        }else{
+            failedChange(task.exception?.message ?: getString(R.string.delete_account_fail))
+        }
+    }
+
+
 
     private fun onPasswordChangeComplete(result: Task<Void>){
         binding.profileFrame.alpha = 0.3f

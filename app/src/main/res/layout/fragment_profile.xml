@@ -296,6 +296,63 @@
                         android:orientation="vertical"
                         app:layout_constraintGuide_percent="0.8" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/deleteAccountConstraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        app:tint="@color/md_theme_light_error"
+                        android:id="@+id/imgDeleteAccount"
+                        android:background="@drawable/custom_action_icon_bkg"
+                        android:layout_width="@dimen/action_icon_size"
+                        android:layout_height="@dimen/action_icon_size"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/guideline12"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@drawable/baseline_delete_forever_24"
+                        android:contentDescription="@string/delete_account_content_descriptor" />
+
+                    <TextView
+                        android:id="@+id/deleteAccountET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/guideline12"
+                        app:layout_constraintEnd_toEndOf="@id/guideline13"
+                        app:layout_constraintHorizontal_bias="0.15"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:text="@string/delete_account" />
+
+                    <ImageView
+                        android:id="@+id/deleteAccountArrow"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guideline13"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.2" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.8" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

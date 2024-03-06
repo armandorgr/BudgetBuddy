@@ -58,4 +58,9 @@
     <string name="change_password_hint">New password</string>
     <string name="change_password_success">Your password has been updated</string>
     <string name="change_password_fail">An error occurred trying to change your password</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_content_descriptor">Delete account button</string>
+    <string name="delete_account_message">Are you sure you want to delete your account?</string>
+    <string name="delete_account_fail">An error occurred when trying to delete your account</string>
+    <string name="delete_account_success">Account deleted successfully</string>
 </resources>
