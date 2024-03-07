@@ -1,20 +1,15 @@
 package com.example.budgetbuddy.fragments
 
 import android.content.Intent
-import android.os.Binder
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.budgetbuddy.R
-import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
 import com.example.budgetbuddy.model.User
@@ -25,18 +20,14 @@ import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
@@ -103,10 +94,13 @@ class ProfileFragment : Fragment() {
 
 
     private fun onChangeUsername(view: View?) {
+        binding.profileFrame.alpha = 0.3f
+        binding.determinateBar.visibility = View.INVISIBLE
         val data = PromptResult(
             getString(R.string.change_username_title),
             getString(R.string.change_username_hint),
             { dialog ->
+                binding.determinateBar.visibility = View.VISIBLE
                 val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                 var response: String? = viewModel.validateUsername(txt)
                 dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
@@ -120,6 +114,7 @@ class ProfileFragment : Fragment() {
                         if (response == null) {
                             viewModel.updateUsername(firebaseUser.uid, txt).addOnCompleteListener {
                                 onChangeUsernameComplete(it)
+                                binding.determinateBar.visibility = View.INVISIBLE
                                 dialog.dismiss()
                             }
                         }
@@ -150,6 +145,7 @@ class ProfileFragment : Fragment() {
             getString(R.string.email),
             getString(R.string.password),
             { dialog ->
+                binding.determinateBar.visibility = View.VISIBLE
                 val email =
                     dialog.findViewById<TextInputEditText>(R.id.EmailEditText).text.toString()
                 val password =
@@ -167,11 +163,12 @@ class ProfileFragment : Fragment() {
                 binding.profileFrame.alpha = 1f
             }
         )
-        dialogFactory.createTwoPromptLayout(binding.root, data)
+        dialogFactory.createTwoPromptLayout(binding.root, data, true)
     }
 
     private fun onChangeEmail(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
+        binding.determinateBar.visibility = View.INVISIBLE
         if (task.isSuccessful) {
             val data = PromptResult(
                 getString(R.string.new_email_title),
@@ -182,9 +179,14 @@ class ProfileFragment : Fragment() {
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {
+                        binding.determinateBar.visibility = View.VISIBLE
                         firebaseUser.verifyBeforeUpdateEmail(txt)
-                            .addOnCompleteListener(this::onEmailChangeComplete)
-                        dialog.dismiss()
+                            .addOnCompleteListener {
+                                dialog.dismiss()
+                                binding.determinateBar.visibility = View.INVISIBLE
+                                onEmailChangeComplete(it)
+                            }
+
                     }
                 },
                 {
@@ -201,11 +203,13 @@ class ProfileFragment : Fragment() {
 
     private fun onPasswordChange(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
+        binding.determinateBar.visibility = View.INVISIBLE
         if (task.isSuccessful) {
             val data = PromptResult(
                 getString(R.string.change_password_title),
                 getString(R.string.change_password_hint),
                 { dialog ->
+                    binding.determinateBar.visibility = View.INVISIBLE
                     val txt =
                         dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
                     val response: String? = viewModel.validatePassword(txt)
@@ -213,15 +217,19 @@ class ProfileFragment : Fragment() {
                         response ?: ""
                     if (response == null) {
                         firebaseUser.updatePassword(txt)
-                            .addOnCompleteListener(this::onPasswordChangeComplete)
-                        dialog.dismiss()
+                            .addOnCompleteListener {
+                                dialog.dismiss()
+                                binding.determinateBar.visibility = View.INVISIBLE
+                                onPasswordChangeComplete(it)
+                            }
+
                     }
                 },
                 {
                     binding.profileFrame.alpha = 1f
                 }
             )
-            dialogFactory.createPromptDialog(binding.root, data)
+            dialogFactory.createPromptDialog(binding.root, data, true)
         } else {
             failReauthentication(
                 task.exception?.message ?: getString(R.string.fail_reauthentication)
@@ -231,15 +239,18 @@ class ProfileFragment : Fragment() {
 
     private fun onDeleteAccount(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
+        binding.determinateBar.visibility = View.INVISIBLE
         if (task.isSuccessful) {
             val data = ResultOkCancel(
                 getString(R.string.delete_account),
                 getString(R.string.delete_account_message),
                 {
+                    binding.determinateBar.visibility = View.VISIBLE
                     firebaseUser.delete().addOnCompleteListener {
                         lifecycleScope.launch {
                             if (viewModel.deleteUser(firebaseUser.uid)) {
                                 onDeleteAccountComplete(it)
+                                binding.determinateBar.visibility = View.INVISIBLE
                             } else {
                                 failedChange(getString(R.string.delete_account_fail))
                             }

@@ -28,6 +28,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.003">
 
+
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/profileLinearLayout"
                 android:layout_width="0dp"
@@ -132,14 +134,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    style="@style/actionConstraint"
                     android:orientation="horizontal">
 
                     <ImageView
-                        app:tint="@color/md_theme_light_error"
+                        app:tint="@color/action_icon_purple"
                         android:id="@+id/imgLogout"
                         android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_purple_bkg"
                         android:layout_width="@dimen/action_icon_size"
                         android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guideline6"
                         app:layout_constraintTop_toTopOf="parent"
@@ -188,12 +193,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    style="@style/actionConstraint"
                     android:orientation="horizontal">
 
                     <ImageView
-                        app:tint="@color/md_theme_light_error"
+                        app:tint="@color/action_icon_orange"
                         android:id="@+id/imgNewEmail"
+                        android:padding="@dimen/margin_small"
                         android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_orange_bkg"
                         android:layout_width="@dimen/action_icon_size"
                         android:layout_height="@dimen/action_icon_size"
                         app:layout_constraintStart_toStartOf="parent"
@@ -245,14 +253,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    style="@style/actionConstraint"
                     android:orientation="horizontal">
 
                     <ImageView
-                        app:tint="@color/md_theme_light_error"
+                        app:tint="@color/action_icon_green"
                         android:id="@+id/imgNewPassword"
                         android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_green_bkg"
                         android:layout_width="@dimen/action_icon_size"
                         android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guideline10"
                         app:layout_constraintTop_toTopOf="parent"
@@ -302,14 +313,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    style="@style/actionConstraint"
                     android:orientation="horizontal">
 
                     <ImageView
-                        app:tint="@color/md_theme_light_error"
+                        app:tint="@color/action_icon_red"
                         android:id="@+id/imgDeleteAccount"
                         android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_red_bkg"
                         android:layout_width="@dimen/action_icon_size"
                         android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guideline12"
                         app:layout_constraintTop_toTopOf="parent"
@@ -359,14 +373,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
+                    style="@style/actionConstraint"
                     android:orientation="horizontal">
 
                     <ImageView
-                        app:tint="@color/md_theme_light_error"
+                        app:tint="@color/action_icon_blue"
                         android:id="@+id/imgChangeusername"
                         android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_blue_bkg"
                         android:layout_width="@dimen/action_icon_size"
                         android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guideline14"
                         app:layout_constraintTop_toTopOf="parent"
@@ -411,6 +428,19 @@
                         app:layout_constraintGuide_percent="0.8" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
+            <ProgressBar
+                android:id="@+id/determinateBar"
+                style="@android:style/Widget.Material.Light.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:indeterminateTint="@color/md_theme_light_primary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.motion.widget.MotionLayout>

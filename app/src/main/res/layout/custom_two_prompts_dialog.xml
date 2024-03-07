@@ -49,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            app:endIconMode="password_toggle"
             android:hint="@string/place_holder_username_profile">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -56,7 +57,7 @@
                 style="@style/inputText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
+                android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout

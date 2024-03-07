@@ -13,6 +13,10 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="actionConstraint">
+        <item name="android:layout_marginVertical">@dimen/action_constraint_margin</item>
+    </style>
+
     <style name="circularImg">
         <item name="shapeAppearance">@style/Circular</item>
         <item name="android:scaleType">centerCrop</item>
@@ -60,4 +64,5 @@
         <item name="helperTextTextAppearance">@style/inputText</item>
         <item name="endIconMode">clear_text</item>
     </style>
+
 </resources>
