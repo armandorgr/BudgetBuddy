@@ -24,6 +24,7 @@ import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
@@ -33,6 +34,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
@@ -46,9 +48,12 @@ class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUser: User
+    private lateinit var provider: String
     private val viewModel: ProfileViewModel by viewModels()
     private lateinit var dialogFactory: AlertDialogFactory
     private lateinit var firebaseUser: FirebaseUser
+    private val GOOGLE_PROVIDER = "google.com"
+    private val PASSWORD_PROVIDER = "password"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,12 +63,15 @@ class ProfileFragment : Fragment() {
         auth = Firebase.auth
         firebaseUser = auth.currentUser!!
         loadCurrentUser(firebaseUser)
-        prepareBinding(binding)
         dialogFactory = AlertDialogFactory(requireContext())
         return binding.root
     }
 
     private fun prepareBinding(binding: FragmentProfileBinding) {
+        if (provider == GOOGLE_PROVIDER) {
+            binding.newEmailConstraintLayout.visibility = View.GONE
+            binding.newPasswordConstraintLayout.visibility = View.GONE
+        }
         binding.logoutConstraintLayout.setOnClickListener {
             binding.profileFrame.alpha = 0.3f
             auth.signOut()
@@ -79,14 +87,20 @@ class ProfileFragment : Fragment() {
         binding.newEmailConstraintLayout.setOnClickListener {
             reauthenticate(this::onChangeEmail)
         }
-        binding.newPasswordConstraintLayout.setOnClickListener{
+        binding.newPasswordConstraintLayout.setOnClickListener {
             reauthenticate(this::onPasswordChange)
         }
-        binding.deleteAccountConstraintLayout.setOnClickListener{
-            reauthenticate(this::onDeleteAccount)
+        binding.deleteAccountConstraintLayout.setOnClickListener {
+            if (provider == GOOGLE_PROVIDER) {
+                reauthenticateWithGoogle(this::onDeleteAccount)
+            } else {
+                reauthenticate(this::onDeleteAccount)
+            }
+
         }
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
+
 
     private fun onChangeUsername(view: View?) {
         val data = PromptResult(
@@ -95,14 +109,16 @@ class ProfileFragment : Fragment() {
             { dialog ->
                 val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                 var response: String? = viewModel.validateUsername(txt)
-                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
+                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
+                    response ?: ""
                 lifecycleScope.launch {
-                    if(viewModel.findUserByUsername(txt) != null){
+                    if (viewModel.findUserByUsername(txt) != null) {
                         response = getString(R.string.username_already_exits)
-                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response
-                    }else{
+                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
+                            response
+                    } else {
                         if (response == null) {
-                            viewModel.updateUsername(firebaseUser.uid, txt).addOnCompleteListener{
+                            viewModel.updateUsername(firebaseUser.uid, txt).addOnCompleteListener {
                                 onChangeUsernameComplete(it)
                                 dialog.dismiss()
                             }
@@ -118,8 +134,14 @@ class ProfileFragment : Fragment() {
         dialogFactory.createPromptDialog(binding.root, data)
     }
 
-
-
+    private fun reauthenticateWithGoogle(onCompleteListener: (p: Task<Void>) -> Unit) {
+        binding.profileFrame.alpha = 0.3f
+        val acct = GoogleSignIn.getLastSignedInAccount(requireContext())
+        if (acct != null) {
+            val credential: AuthCredential = GoogleAuthProvider.getCredential(acct.idToken, null)
+            firebaseUser.reauthenticate(credential).addOnCompleteListener(onCompleteListener)
+        }
+    }
 
     private fun reauthenticate(onCompleteListener: (p: Task<Void>) -> Unit) {
         binding.profileFrame.alpha = 0.3f
@@ -157,7 +179,8 @@ class ProfileFragment : Fragment() {
                 { dialog ->
                     val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                     val response: String? = viewModel.validateEmail(txt)
-                    dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
+                    dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
+                        response ?: ""
                     if (response == null) {
                         firebaseUser.verifyBeforeUpdateEmail(txt)
                             .addOnCompleteListener(this::onEmailChangeComplete)
@@ -170,22 +193,27 @@ class ProfileFragment : Fragment() {
             )
             dialogFactory.createPromptDialog(binding.root, data)
         } else {
-            failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
+            failReauthentication(
+                task.exception?.message ?: getString(R.string.fail_reauthentication)
+            )
         }
     }
 
-    private fun onPasswordChange(task: Task<Void>){
+    private fun onPasswordChange(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
-        if(task.isSuccessful){
+        if (task.isSuccessful) {
             val data = PromptResult(
                 getString(R.string.change_password_title),
                 getString(R.string.change_password_hint),
-                {dialog ->
-                    val txt = dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
+                { dialog ->
+                    val txt =
+                        dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
                     val response: String? = viewModel.validatePassword(txt)
-                    dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
-                    if(response == null){
-                        firebaseUser.updatePassword(txt).addOnCompleteListener(this::onPasswordChangeComplete)
+                    dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
+                        response ?: ""
+                    if (response == null) {
+                        firebaseUser.updatePassword(txt)
+                            .addOnCompleteListener(this::onPasswordChangeComplete)
                         dialog.dismiss()
                     }
                 },
@@ -194,23 +222,25 @@ class ProfileFragment : Fragment() {
                 }
             )
             dialogFactory.createPromptDialog(binding.root, data)
-        }else{
-            failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
+        } else {
+            failReauthentication(
+                task.exception?.message ?: getString(R.string.fail_reauthentication)
+            )
         }
     }
 
     private fun onDeleteAccount(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
-        if(task.isSuccessful){
+        if (task.isSuccessful) {
             val data = ResultOkCancel(
                 getString(R.string.delete_account),
                 getString(R.string.delete_account_message),
                 {
-                    firebaseUser.delete().addOnCompleteListener{
+                    firebaseUser.delete().addOnCompleteListener {
                         lifecycleScope.launch {
-                            if(viewModel.deleteUser(firebaseUser.uid)){
+                            if (viewModel.deleteUser(firebaseUser.uid)) {
                                 onDeleteAccountComplete(it)
-                            }else{
+                            } else {
                                 failedChange(getString(R.string.delete_account_fail))
                             }
                         }
@@ -222,41 +252,47 @@ class ProfileFragment : Fragment() {
                 }
             )
             dialogFactory.createOkCancelDialog(binding.root, data)
-        }else{
-            failReauthentication(task.exception?.message ?: getString(R.string.fail_reauthentication))
+        } else {
+            failReauthentication(
+                task.exception?.message ?: getString(R.string.fail_reauthentication)
+            )
         }
     }
 
     private fun onDeleteAccountComplete(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
-        if(task.isSuccessful){
+        if (task.isSuccessful) {
             val data = Result(
                 getString(R.string.success_title),
                 getString(R.string.delete_account_success),
                 getString(R.string.ok)
-            ){
+            ) {
                 goToLoginActivity()
             }
             dialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
-        }else{
+        } else {
             failedChange(task.exception?.message ?: getString(R.string.delete_account_fail))
         }
     }
 
     private fun onChangeUsernameComplete(it: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
-        if(it.isSuccessful){
+        if (it.isSuccessful) {
             successChange(getString(R.string.change_username_success))
-        }else{
+            lifecycleScope.launch {
+                val usr = firebaseUser.uid.let { viewModel.findUser(it) }
+                binding.usernameTextView.text = usr?.username
+            }
+        } else {
             failedChange(getString(R.string.change_username_fail))
         }
     }
 
-    private fun onPasswordChangeComplete(result: Task<Void>){
+    private fun onPasswordChangeComplete(result: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
-        if(result.isSuccessful){
+        if (result.isSuccessful) {
             successChange(getString(R.string.change_password_success))
-        }else{
+        } else {
             failedChange(result.exception?.message ?: getString(R.string.change_password_fail))
         }
     }
@@ -270,7 +306,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun failedChange(message:String){
+    private fun failedChange(message: String) {
         val data = Result(
             getString(R.string.fail_title),
             message,
@@ -321,6 +357,13 @@ class ProfileFragment : Fragment() {
         lifecycleScope.launch {
             val usr = firebaseUser.uid.let { viewModel.findUser(it) }
             binding.usernameTextView.text = usr?.username
+            if (firebaseUser.providerData.size > 0) {
+                provider = firebaseUser.providerData[firebaseUser.providerData.size - 1].providerId
+            }
+            if (usr != null) {
+                currentUser = usr
+            }
+            prepareBinding(binding)
         }
     }
 }
