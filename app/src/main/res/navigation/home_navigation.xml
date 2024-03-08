@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_navigation"
-    app:startDestination="@id/nav_home">
+    app:startDestination="@id/nav_invitations">
 
     <fragment
         android:id="@+id/nav_home"
@@ -25,4 +25,9 @@
         android:label="Friends"
         android:name="com.example.budgetbuddy.fragments.FriendsFragment"
         tools:layout="@layout/fragment_friends"/>
+    <fragment
+        android:id="@+id/nav_invitations"
+        android:label="Invitations"
+        android:name="com.example.budgetbuddy.fragments.InvitationsFragment"
+        tools:layout="@layout/fragment_invitations"/>
 </navigation>
