@@ -16,10 +16,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.databinding.FragmentLoginBinding
+import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
@@ -33,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -45,10 +49,25 @@ class LoginFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        var usr:User?
         val currentUser = auth.currentUser
-        if(currentUser != null){
-            updateUI(currentUser)
+        lifecycleScope.launch {
+            if(currentUser != null){
+                usr = viewModel.findUserByUID(currentUser.uid)
+                if(usr!=null){
+                    goToHome()
+                }else{
+                    updateUI(currentUser)
+                }
+            }
         }
+    }
+
+    private fun goToHome(){
+        val intent: Intent = Intent(activity, HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +111,7 @@ class LoginFragment : Fragment() {
                     getString(R.string.go_to_home)
                 ) {
                     binding.frame.alpha = 1f
-                    updateUI(user)
+                    goToHome()
                 }
             } else {
                 dialogLayout = R.layout.error_dialog
@@ -204,9 +223,6 @@ class LoginFragment : Fragment() {
      * @param user Usuario con el cual se ha iniciado sesión
      * */
     private fun updateUI(user: FirebaseUser?) {
-        val intent:Intent = Intent(activity, HomeActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent)
+        findNavController().navigate(R.id.nav_login_to_personal_data)
     }
 }

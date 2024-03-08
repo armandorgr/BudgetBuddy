@@ -45,6 +45,13 @@ class RegisterViewModel @Inject constructor(
                     passwordError.value.equals("")
         }
 
+    val personalDataGood: Boolean
+        get(){
+            return userNameError.value.equals("") &&
+                    firstNameError.value.equals("") &&
+                    lastNameError.value.equals("")
+        }
+
     private val _username = MutableLiveData<String>()
     var username: LiveData<String> = _username
 
@@ -187,12 +194,24 @@ class RegisterViewModel @Inject constructor(
 
     suspend fun findUser(username: String): User? {
         return withContext(Dispatchers.IO){
-            try{
-                val snapshot = repo.findUserByUserName(username).await()
-                val user = snapshot.getValue(User::class.java)
-                user
-            }catch (e: Exception){
-                null
+            repo.findUserByUserName(username)
+        }
+    }
+
+    suspend fun findUserByUID(uid: String): User?{
+        return withContext(Dispatchers.IO){
+            repo.findUserByUID(uid)
+        }
+    }
+
+    suspend fun createNewUser(user:User, uid:String):Boolean{
+        return suspendCoroutine { continuation ->
+            repo.writeNewUser(user, uid).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    continuation.resume(true)
+                } else {
+                    continuation.resume(false)
+                }
             }
         }
     }
@@ -205,7 +224,6 @@ class RegisterViewModel @Inject constructor(
         val user = User(
             _firstName.value.toString(),
             _lastName.value.toString(),
-            _email.value.toString(),
             _username.value.toString()
         )
 

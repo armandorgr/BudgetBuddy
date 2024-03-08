@@ -7,5 +7,9 @@
     <dimen name="text_size_title_dialog">20sp</dimen>
     <dimen name="text_size_title_text">16sp</dimen>
     <dimen name="alert_dialog_padding">32dp</dimen>
-    <dimen name="btnTextSize">16dp</dimen>
+    <dimen name="btnTextSize">16sp</dimen>
+    <dimen name="action_icon_size">50dp</dimen>
+    <dimen name="username_text_size_profile">22sp</dimen>
+    <dimen name="email_text_size_profile">16sp</dimen>
+    <dimen name="action_constraint_margin">3dp</dimen>
 </resources>

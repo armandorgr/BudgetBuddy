@@ -13,6 +13,19 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="actionConstraint">
+        <item name="android:layout_marginVertical">@dimen/action_constraint_margin</item>
+    </style>
+
+    <style name="circularImg">
+        <item name="shapeAppearance">@style/Circular</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:padding">4dp</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="elevation">10dp</item>
+    </style>
+
     <style name="btnElevated" parent="Widget.Material3.Button.ElevatedButton">
         <item name="android:textColor">@color/md_theme_light_onPrimary</item>
         <item name="backgroundTint">@color/md_theme_light_primary</item>
@@ -30,10 +43,26 @@
         <item name="android:textColor">@color/gray</item>
     </style>
 
+    <style name="profile_username_text" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textAlignment">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/ptsans_bold</item>
+        <item name="android:textSize">@dimen/username_text_size_profile</item>
+        <item name="android:textColor">@color/md_theme_light_onPrimary</item>
+    </style>
+
+    <style name="profile_email_text" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/md_theme_light_onPrimary</item>
+        <item name="android:textSize">@dimen/email_text_size_profile</item>
+        <item name="fontFamily">@font/ptsans_regular</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="boxInputText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="helperTextEnabled">true</item>
         <item name="helperTextTextColor">@color/md_theme_light_error</item>
         <item name="helperTextTextAppearance">@style/inputText</item>
         <item name="endIconMode">clear_text</item>
     </style>
+
 </resources>

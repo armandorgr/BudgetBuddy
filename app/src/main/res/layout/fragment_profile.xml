@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/custom_gradient_bkg"
-    tools:context=".fragments.ProfileFragment">
+    tools:context=".fragments.ProfileFragment"
+    android:id="@+id/profileFrame">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/profileMotionLayout"
@@ -27,6 +28,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.003">
 
+
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/profileLinearLayout"
                 android:layout_width="0dp"
@@ -42,26 +45,18 @@
                 app:layout_constraintVertical_bias="0.5">
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:elevation="10dp"
-                    android:padding="4dp"
                     android:id="@+id/profle_pic"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearance="@style/Circular"
-                    app:strokeColor="@color/black"
-                    app:strokeWidth="2dp"
+                    style="@style/circularImg"
                     android:src="@drawable/default_profile_pic" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/usernameTextView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Md abu Ubayda" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="email@fmail.com" />
+                    style="@style/profile_username_text"
+                    android:text="@string/place_holder_username_profile" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -70,14 +65,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.3" />
+                app:layout_constraintGuide_percent="0.1" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.70" />
+                app:layout_constraintGuide_percent="0.9" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Guideline
@@ -117,7 +112,7 @@
                 android:id="@+id/titleOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account overview"
+                android:text="@string/account_overview"
                 app:layout_constraintBottom_toBottomOf="@id/guideline4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.05"
@@ -131,25 +126,31 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guideline5"
+                android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="@id/guideline4">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/logoutConstraintLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    style="@style/actionConstraint"
                     android:orientation="horizontal">
 
                     <ImageView
-                        app:tint="@color/md_theme_light_error"
+                        app:tint="@color/action_icon_purple"
                         android:id="@+id/imgLogout"
                         android:background="@drawable/custom_action_icon_bkg"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:backgroundTint="@color/action_icon_purple_bkg"
+                        android:layout_width="@dimen/action_icon_size"
+                        android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guideline6"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:src="@drawable/baseline_person_24" />
+                        android:src="@drawable/baseline_person_24"
+                        android:contentDescription="@string/log_out_content_description" />
 
                     <TextView
                         android:id="@+id/logOutTV"
@@ -160,17 +161,18 @@
                         app:layout_constraintHorizontal_bias="0.15"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:text="Log out" />
+                        android:text="@string/log_out_btn_text" />
 
                     <ImageView
                         android:id="@+id/logoutArrow"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
                         android:src="@drawable/baseline_keyboard_arrow_right_24"
-                        app:layout_constraintStart_toStartOf="@id/guideline7"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                        app:layout_constraintStart_toStartOf="@id/guideline7"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline6"
@@ -186,7 +188,259 @@
                         android:orientation="vertical"
                        app:layout_constraintGuide_percent="0.8" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/newEmailConstraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    style="@style/actionConstraint"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        app:tint="@color/action_icon_orange"
+                        android:id="@+id/imgNewEmail"
+                        android:padding="@dimen/margin_small"
+                        android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_orange_bkg"
+                        android:layout_width="@dimen/action_icon_size"
+                        android:layout_height="@dimen/action_icon_size"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/guideline8"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@drawable/baseline_email_24"
+                        android:contentDescription="@string/change_email_content_description" />
+
+                    <TextView
+                        android:id="@+id/newEmailET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/guideline8"
+                        app:layout_constraintEnd_toEndOf="@id/guideline9"
+                        app:layout_constraintHorizontal_bias="0.15"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:text="@string/change_email" />
+
+                    <ImageView
+                        android:id="@+id/newEmalArrow"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guideline9"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.2" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.8" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/newPasswordConstraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    style="@style/actionConstraint"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        app:tint="@color/action_icon_green"
+                        android:id="@+id/imgNewPassword"
+                        android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_green_bkg"
+                        android:layout_width="@dimen/action_icon_size"
+                        android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/guideline10"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@drawable/baseline_password_24"
+                        android:contentDescription="@string/change_email_content_description" />
+
+                    <TextView
+                        android:id="@+id/newPasswordET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/guideline10"
+                        app:layout_constraintEnd_toEndOf="@id/guideline11"
+                        app:layout_constraintHorizontal_bias="0.15"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:text="@string/change_password" />
+
+                    <ImageView
+                        android:id="@+id/newPasswordArrow"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guideline11"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.2" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.8" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/deleteAccountConstraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    style="@style/actionConstraint"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        app:tint="@color/action_icon_red"
+                        android:id="@+id/imgDeleteAccount"
+                        android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_red_bkg"
+                        android:layout_width="@dimen/action_icon_size"
+                        android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/guideline12"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@drawable/baseline_delete_forever_24"
+                        android:contentDescription="@string/delete_account_content_descriptor" />
+
+                    <TextView
+                        android:id="@+id/deleteAccountET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/guideline12"
+                        app:layout_constraintEnd_toEndOf="@id/guideline13"
+                        app:layout_constraintHorizontal_bias="0.15"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:text="@string/delete_account" />
+
+                    <ImageView
+                        android:id="@+id/deleteAccountArrow"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guideline13"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.2" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.8" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/changeUsernameConstraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    style="@style/actionConstraint"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        app:tint="@color/action_icon_blue"
+                        android:id="@+id/imgChangeusername"
+                        android:background="@drawable/custom_action_icon_bkg"
+                        android:backgroundTint="@color/action_icon_blue_bkg"
+                        android:layout_width="@dimen/action_icon_size"
+                        android:layout_height="@dimen/action_icon_size"
+                        android:padding="@dimen/margin_small"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/guideline14"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:src="@drawable/baseline_drive_file_rename_outline_24"
+                        android:contentDescription="@string/change_email_content_description" />
+
+                    <TextView
+                        android:id="@+id/changeUsernameET"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="@id/guideline14"
+                        app:layout_constraintEnd_toEndOf="@id/guideline15"
+                        app:layout_constraintHorizontal_bias="0.15"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:text="@string/change_username" />
+
+                    <ImageView
+                        android:id="@+id/changeUsernameArrow"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@string/arrow_content_description"
+                        android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/guideline15"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.2" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.8" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
+            <ProgressBar
+                android:id="@+id/determinateBar"
+                style="@android:style/Widget.Material.Light.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                android:indeterminateTint="@color/md_theme_light_primary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
