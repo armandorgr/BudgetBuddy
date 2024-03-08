@@ -69,4 +69,6 @@
     <string name="change_username_hint">Enter new username</string>
     <string name="change_username_success">Username successfully changed</string>
     <string name="change_username_fail">An error occurred trying to change your username</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
