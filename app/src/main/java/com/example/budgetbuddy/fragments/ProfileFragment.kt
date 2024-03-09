@@ -7,17 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
-import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
+import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.tasks.Task
@@ -25,47 +27,42 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var currentUser: User
-    private lateinit var provider: String
     private val viewModel: ProfileViewModel by viewModels()
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var dialogFactory: AlertDialogFactory
-    private lateinit var firebaseUser: FirebaseUser
     private val GOOGLE_PROVIDER = "google.com"
     private val PASSWORD_PROVIDER = "password"
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
-        auth = Firebase.auth
-        firebaseUser = auth.currentUser!!
-        loadCurrentUser(firebaseUser)
+        prepareBinding(binding)
         dialogFactory = AlertDialogFactory(requireContext())
         return binding.root
     }
 
     private fun prepareBinding(binding: FragmentProfileBinding) {
-        if (provider == GOOGLE_PROVIDER) {
+        binding.usernameTextView.text = homeViewModel.currentUser.value?.username
+        if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
             binding.newEmailConstraintLayout.visibility = View.GONE
             binding.newPasswordConstraintLayout.visibility = View.GONE
         }
         binding.logoutConstraintLayout.setOnClickListener {
             binding.profileFrame.alpha = 0.3f
-            auth.signOut()
+            homeViewModel.auth.signOut()
             val data = Result(
                 getString(R.string.success_title),
                 getString(R.string.logout_success),
@@ -82,7 +79,7 @@ class ProfileFragment : Fragment() {
             reauthenticate(this::onPasswordChange)
         }
         binding.deleteAccountConstraintLayout.setOnClickListener {
-            if (provider == GOOGLE_PROVIDER) {
+            if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
                 reauthenticateWithGoogle(this::onDeleteAccount)
             } else {
                 reauthenticate(this::onDeleteAccount)
@@ -112,11 +109,12 @@ class ProfileFragment : Fragment() {
                             response
                     } else {
                         if (response == null) {
-                            viewModel.updateUsername(firebaseUser.uid, txt).addOnCompleteListener {
-                                onChangeUsernameComplete(it)
-                                binding.determinateBar.visibility = View.INVISIBLE
-                                dialog.dismiss()
-                            }
+                            viewModel.updateUsername(homeViewModel.firebaseUser.value!!.uid, txt)
+                                .addOnCompleteListener {
+                                    onChangeUsernameComplete(it)
+                                    binding.determinateBar.visibility = View.INVISIBLE
+                                    dialog.dismiss()
+                                }
                         }
                     }
 
@@ -134,7 +132,8 @@ class ProfileFragment : Fragment() {
         val acct = GoogleSignIn.getLastSignedInAccount(requireContext())
         if (acct != null) {
             val credential: AuthCredential = GoogleAuthProvider.getCredential(acct.idToken, null)
-            firebaseUser.reauthenticate(credential).addOnCompleteListener(onCompleteListener)
+            homeViewModel.firebaseUser.value?.reauthenticate(credential)
+                ?.addOnCompleteListener(onCompleteListener)
         }
     }
 
@@ -153,10 +152,11 @@ class ProfileFragment : Fragment() {
                 if (email != "" && password != "") {
                     val credential: AuthCredential =
                         EmailAuthProvider.getCredential(email, password)
-                    firebaseUser.reauthenticate(credential).addOnCompleteListener {
-                        dialog.dismiss()
-                        onCompleteListener(it)
-                    }
+                    homeViewModel.firebaseUser.value?.reauthenticate(credential)
+                        ?.addOnCompleteListener {
+                            dialog.dismiss()
+                            onCompleteListener(it)
+                        }
                 }
             },
             {
@@ -180,8 +180,8 @@ class ProfileFragment : Fragment() {
                         response ?: ""
                     if (response == null) {
                         binding.determinateBar.visibility = View.VISIBLE
-                        firebaseUser.verifyBeforeUpdateEmail(txt)
-                            .addOnCompleteListener {
+                        homeViewModel.firebaseUser.value?.verifyBeforeUpdateEmail(txt)
+                            ?.addOnCompleteListener {
                                 dialog.dismiss()
                                 binding.determinateBar.visibility = View.INVISIBLE
                                 onEmailChangeComplete(it)
@@ -216,8 +216,8 @@ class ProfileFragment : Fragment() {
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {
-                        firebaseUser.updatePassword(txt)
-                            .addOnCompleteListener {
+                        homeViewModel.firebaseUser.value?.updatePassword(txt)
+                            ?.addOnCompleteListener {
                                 dialog.dismiss()
                                 binding.determinateBar.visibility = View.INVISIBLE
                                 onPasswordChangeComplete(it)
@@ -246,9 +246,9 @@ class ProfileFragment : Fragment() {
                 getString(R.string.delete_account_message),
                 {
                     binding.determinateBar.visibility = View.VISIBLE
-                    firebaseUser.delete().addOnCompleteListener {
+                    homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {
                         lifecycleScope.launch {
-                            if (viewModel.deleteUser(firebaseUser.uid)) {
+                            if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
                                 onDeleteAccountComplete(it)
                                 binding.determinateBar.visibility = View.INVISIBLE
                             } else {
@@ -291,7 +291,8 @@ class ProfileFragment : Fragment() {
         if (it.isSuccessful) {
             successChange(getString(R.string.change_username_success))
             lifecycleScope.launch {
-                val usr = firebaseUser.uid.let { viewModel.findUser(it) }
+                val usr = homeViewModel.firebaseUser.value?.uid?.let { viewModel.findUser(it) }
+                if (usr != null) homeViewModel.updateUser(usr)
                 binding.usernameTextView.text = usr?.username
             }
         } else {
@@ -361,20 +362,5 @@ class ProfileFragment : Fragment() {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent)
-    }
-
-
-    private fun loadCurrentUser(firebaseUser: FirebaseUser) {
-        lifecycleScope.launch {
-            val usr = firebaseUser.uid.let { viewModel.findUser(it) }
-            binding.usernameTextView.text = usr?.username
-            if (firebaseUser.providerData.size > 0) {
-                provider = firebaseUser.providerData[firebaseUser.providerData.size - 1].providerId
-            }
-            if (usr != null) {
-                currentUser = usr
-            }
-            prepareBinding(binding)
-        }
     }
 }

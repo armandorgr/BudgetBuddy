@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
@@ -14,13 +16,21 @@ import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.viewHolders.InvitationViewHolder
+import com.example.budgetbuddy.viewmodels.InvitationsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
+@AndroidEntryPoint
 class InvitationsFragment : Fragment() {
     private lateinit var binding: FragmentInvitationsBinding
+    private val viewModel:InvitationsViewModel by viewModels()
+
     private val onAccept = object : InvitationAdapter.OnClickListener{
         override fun onItemClick(invitation: InvitationUiModel) {
-
+            lifecycleScope.launch {
+                viewModel.writeInvitation("pepe", invitation)
+            }
         }
     }
 

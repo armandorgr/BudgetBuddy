@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.modules
 
+import com.example.budgetbuddy.repositories.InvitationsRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import dagger.Module
 import dagger.Provides
@@ -17,4 +18,7 @@ import dagger.hilt.components.SingletonComponent
 class ReposModules {
     @Provides
     fun provideUsersRepo(): UsersRepository = UsersRepository()
+
+    @Provides
+    fun provideInvitationsRepo(): InvitationsRepository = InvitationsRepository()
 }
