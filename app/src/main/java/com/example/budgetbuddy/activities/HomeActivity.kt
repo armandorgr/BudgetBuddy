@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.ActivityHomeBinding
 import com.example.budgetbuddy.viewmodels.HomeViewModel
+import com.example.budgetbuddy.viewmodels.InvitationsViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,14 +26,19 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding
+    private lateinit var invitationsViewModel: InvitationsViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setSupportActionBar(findViewById(R.id.bottomAppBar))
+        setSupportActionBar(findViewById(R.id.toolbar))
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        invitationsViewModel = ViewModelProvider(this)[InvitationsViewModel::class.java]
+
         lifecycleScope.launch {
             viewModel.loadCurrentUser()
+            viewModel.firebaseUser.value?.uid?.let { invitationsViewModel.loadInvitations(it) }
         }
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.home_nav_host_fragment) as NavHostFragment

@@ -8,11 +8,13 @@ import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.viewHolders.InvitationViewHolder
 import com.example.budgetbuddy.viewHolders.ListItemViewHolder
+import com.google.firebase.auth.FirebaseUser
 
 class InvitationAdapter(
     private val layoutInflater: LayoutInflater,
     private val onAcceptListener: OnClickListener,
-    private val onDeclineListener: OnClickListener
+    private val onDeclineListener: OnClickListener,
+    private val currentUser: FirebaseUser
 ) : RecyclerView.Adapter<ListItemViewHolder>() {
 
     private val listData = mutableListOf<ListItemUiModel>()
@@ -24,7 +26,7 @@ class InvitationAdapter(
     }
 
     interface OnClickListener {
-        fun onItemClick(invitation: InvitationUiModel)
+         fun onItemClick(invitation: InvitationUiModel, currentUser: FirebaseUser)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
@@ -32,13 +34,11 @@ class InvitationAdapter(
         return InvitationViewHolder(view,
             object : InvitationViewHolder.OnClickListener {
                 override fun onClick(invitation: InvitationUiModel, position: Int) {
-                    onAcceptListener.onItemClick(invitation)
-                    removeItem(position)
+                    onAcceptListener.onItemClick(invitation, currentUser)
                 }
             }, object : InvitationViewHolder.OnClickListener {
                 override fun onClick(invitation: InvitationUiModel, position: Int) {
-                    onDeclineListener.onItemClick(invitation)
-                    removeItem(position)
+                    onDeclineListener.onItemClick(invitation, currentUser)
                 }
 
             })

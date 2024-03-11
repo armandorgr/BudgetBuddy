@@ -72,6 +72,11 @@
         <item name="cornerSize">20%</item>
     </style>
 
+    <style name="Theme.BottomNavigation.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.BottomNavigation.PopupOverlay"
+        parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="profile_email_text" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textColor">@color/md_theme_light_onPrimary</item>
         <item name="android:textSize">@dimen/email_text_size_profile</item>

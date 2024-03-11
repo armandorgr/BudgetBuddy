@@ -1,10 +1,9 @@
 package com.example.budgetbuddy.model
 
-import java.time.LocalDateTime
-
 data class InvitationUiModel(
-    val senderUid: String,
-    val text:String,
-    val type: INVITATION_TYPE,
-    val dateSent: LocalDateTime
+    val senderUid: String? = null,
+    val senderUsername: String? = null,
+    val text: String? = null,
+    val type: INVITATION_TYPE? = null,
+    var dateSent: String? = null
 )

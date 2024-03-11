@@ -121,6 +121,7 @@ class ProfileFragment : Fragment() {
                 }
             },
             {
+                binding.determinateBar.visibility = View.INVISIBLE
                 binding.profileFrame.alpha = 1f
             }
         )
@@ -160,6 +161,7 @@ class ProfileFragment : Fragment() {
                 }
             },
             {
+                binding.determinateBar.visibility = View.INVISIBLE
                 binding.profileFrame.alpha = 1f
             }
         )
@@ -190,6 +192,7 @@ class ProfileFragment : Fragment() {
                     }
                 },
                 {
+                    binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f
                 }
             )
@@ -226,6 +229,7 @@ class ProfileFragment : Fragment() {
                     }
                 },
                 {
+                    binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f
                 }
             )
@@ -259,6 +263,7 @@ class ProfileFragment : Fragment() {
                     it.dismiss()
                 },
                 {
+                    binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f;
                 }
             )

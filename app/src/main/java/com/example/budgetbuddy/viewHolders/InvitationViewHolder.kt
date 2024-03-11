@@ -6,6 +6,10 @@ import android.widget.TextView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -13,12 +17,12 @@ class InvitationViewHolder(
     private val containerView: View,
     private val onAcceptListener: OnClickListener,
     private val onDeclineListener: OnClickListener
-) : ListItemViewHolder(containerView){
+) : ListItemViewHolder(containerView) {
 
-    private val textView: TextView by lazy{
+    private val textView: TextView by lazy {
         containerView.findViewById(R.id.item_text_view)
     }
-    private val agoView: TextView by lazy{
+    private val agoView: TextView by lazy {
         containerView.findViewById(R.id.item_ago_view)
     }
     private val acceptBtn: Button by lazy {
@@ -29,16 +33,21 @@ class InvitationViewHolder(
     }
 
     override fun bindData(listItem: ListItemUiModel) {
-        require(listItem is ListItemUiModel.Invitation){
+        require(listItem is ListItemUiModel.Invitation) {
             "Expected ListItemUiModel.Invitation $listItem"
         }
         val invitationData = listItem.invitationUiModel
 
-        acceptBtn.setOnClickListener{
+        acceptBtn.setOnClickListener {
             onAcceptListener.onClick(invitationData, adapterPosition)
         }
-        textView.text = String.format(invitationData.text, invitationData.senderUid)
-        agoView.text = getTimeAgo(invitationData.dateSent)
+        declineBtn.setOnClickListener {
+            onDeclineListener.onClick(invitationData, adapterPosition)
+        }
+
+        textView.text =
+            invitationData.text?.let { String.format(it, invitationData.senderUsername) }
+        agoView.text = invitationData.dateSent?.let { getTimeAgo((LocalDateTime.parse(it))) }
     }
 
     fun getTimeAgo(date: LocalDateTime): String {
@@ -61,7 +70,7 @@ class InvitationViewHolder(
         }
     }
 
-    interface OnClickListener{
-        fun onClick(invitation: InvitationUiModel, position:Int)
+    interface OnClickListener {
+        fun onClick(invitation: InvitationUiModel, position: Int)
     }
 }
