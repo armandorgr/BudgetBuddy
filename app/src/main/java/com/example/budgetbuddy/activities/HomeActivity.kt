@@ -7,6 +7,7 @@ import android.widget.Toolbar
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,6 +19,7 @@ import com.example.budgetbuddy.databinding.ActivityHomeBinding
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.InvitationsViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -54,6 +56,9 @@ class HomeActivity : AppCompatActivity() {
             navController
         )
         findViewById<BottomNavigationView>(R.id.bottomNavigationView).background = null
+        findViewById<FloatingActionButton>(R.id.floatingBtn).setOnClickListener{
+            navController.navigate(R.id.nav_to_newGroup)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -12,9 +12,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.budgetbuddy.R
 import com.google.android.material.textfield.TextInputEditText
@@ -51,6 +53,40 @@ class AlertDialogFactory(private val context: Context) {
         return dialogView
     }
 
+
+    @SuppressLint("MissingInflatedId")
+    fun createDatePickerDialog(view: View, result:DateResult):View {
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.dateDialogConstraintLayout)
+        val dialogView = LayoutInflater.from(context)
+            .inflate(R.layout.custom_date_prompt_dialog, constraintLayout)
+        val btnOk = dialogView.findViewById<Button>(R.id.dialog_button_ok)
+        val btnCancel = dialogView.findViewById<Button>(R.id.dialog_button_cancel)
+        val title = dialogView.findViewById<TextView>(R.id.alertDialogTitle)
+        val datePicker = dialogView.findViewById<DatePicker>(R.id.datePicker)
+        title.text = result.title
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+
+
+        alertDialog.show()
+
+        alertDialog.setOnDismissListener {
+            result.onDismiss()
+        }
+        if (alertDialog.window != null) {
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        btnOk.setOnClickListener {
+            result.onOk(alertDialog)
+            alertDialog.dismiss()
+        }
+        btnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
+        return dialogView
+    }
 
     fun createPromptDialog(view: View, result: PromptResult, isPassword: Boolean = false): View {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.promptConstraintLayout)

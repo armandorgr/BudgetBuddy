@@ -68,6 +68,13 @@
         <item name="iconGravity">textStart</item>
     </style>
 
+    <style name="dateView">
+        <item name="android:background">@drawable/custom_dialog_bkg</item>
+        <item name="android:padding">@dimen/date_view_padding</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_margin">@dimen/date_view_margin</item>
+    </style>
+
     <style name="square">
         <item name="cornerSize">20%</item>
     </style>

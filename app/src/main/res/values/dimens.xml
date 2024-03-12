@@ -12,4 +12,6 @@
     <dimen name="username_text_size_profile">22sp</dimen>
     <dimen name="email_text_size_profile">16sp</dimen>
     <dimen name="action_constraint_margin">3dp</dimen>
+    <dimen name="date_view_padding">10dp</dimen>
+    <dimen name="date_view_margin">6dp</dimen>
 </resources>

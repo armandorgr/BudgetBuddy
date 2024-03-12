@@ -10,28 +10,38 @@
         android:name="com.example.budgetbuddy.fragments.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
-        <action android:id="@+id/nav_home_to_invitations"
+        <action
+            android:id="@+id/nav_home_to_invitations"
             app:destination="@+id/nav_invitations"
-            app:popUpTo="@id/nav_home"/>
+            app:popUpTo="@id/nav_home" />
     </fragment>
+    <action
+        android:id="@+id/nav_to_newGroup"
+        app:destination="@+id/nav_newGroup" />
+    <fragment
+        android:id="@+id/nav_newGroup"
+        android:name="com.example.budgetbuddy.fragments.NewGroupFragment"
+        android:label="New Group"
+        tools:layout="@layout/fragment_new_group" />
+
     <fragment
         android:id="@+id/nav_profile"
-        android:label="Profile"
         android:name="com.example.budgetbuddy.fragments.ProfileFragment"
-        tools:layout="@layout/fragment_profile"/>
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/nav_groups"
-        android:label="Groups"
         android:name="com.example.budgetbuddy.fragments.GroupsFragment"
-        tools:layout="@layout/fragment_groups"/>
+        android:label="Groups"
+        tools:layout="@layout/fragment_groups" />
     <fragment
         android:id="@+id/nav_friends"
-        android:label="Friends"
         android:name="com.example.budgetbuddy.fragments.FriendsFragment"
-        tools:layout="@layout/fragment_friends"/>
+        android:label="Friends"
+        tools:layout="@layout/fragment_friends" />
     <fragment
         android:id="@+id/nav_invitations"
-        android:label="Invitations"
         android:name="com.example.budgetbuddy.fragments.InvitationsFragment"
-        tools:layout="@layout/fragment_invitations"/>
+        android:label="Invitations"
+        tools:layout="@layout/fragment_invitations" />
 </navigation>
