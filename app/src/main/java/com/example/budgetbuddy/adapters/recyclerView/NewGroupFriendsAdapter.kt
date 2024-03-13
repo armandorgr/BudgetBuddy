@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.adapters.recyclerView
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class NewGroupFriendsAdapter(
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
     private val listData = mutableListOf<ListItemUiModel>()
     private val shownData = mutableListOf<ListItemUiModel>()
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(newItems: List<ListItemUiModel>) {
         listData.clear()
         listData.addAll(newItems)

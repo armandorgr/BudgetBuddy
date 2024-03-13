@@ -3,6 +3,7 @@ package com.example.budgetbuddy.viewmodels
 import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.budgetbuddy.adapters.recyclerView.GroupsAdapter
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.repositories.GroupRepository
@@ -23,6 +24,12 @@ class GroupsViewModel @Inject constructor(
     private var childEventsAdded: Boolean =
         false // Se usa esta variable para que no se carguen los grupos mas de una vez
     val groupList: StateFlow<List<ListItemUiModel>> = _groupsList
+
+    val onClick = object : GroupsAdapter.OnClickListener{
+        override fun onItemClick(group: ListItemUiModel.Group, position: Int) {
+            Log.d("prueba", "Grupo seleccionado: ${group.groupUiModel.name}")
+        }
+    }
 
     private fun updateList(newGroups: List<ListItemUiModel>) {
         _groupsList.value = newGroups

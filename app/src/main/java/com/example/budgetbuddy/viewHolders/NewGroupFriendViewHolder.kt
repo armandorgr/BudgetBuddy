@@ -1,12 +1,10 @@
 package com.example.budgetbuddy.viewHolders
 
-import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
-import com.example.budgetbuddy.model.User
 class NewGroupFriendViewHolder(
     private val containerView: View,
     private val onCheckClickListener: OnCheckClickListener,
