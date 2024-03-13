@@ -105,8 +105,25 @@
                             android:layout_height="wrap_content"
                             android:text="@string/date_placeholder" />
                     </LinearLayout>
-
-
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/searchView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/friendsRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                    <Button
+                        android:layout_gravity="center"
+                        android:id="@+id/createGroupBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_group_btn_text"/>
                 </LinearLayout>
             </ScrollView>
 

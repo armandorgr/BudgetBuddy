@@ -7,6 +7,7 @@ import android.widget.Toolbar
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -16,8 +17,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.ActivityHomeBinding
+import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.InvitationsViewModel
+import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +32,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityHomeBinding
     private lateinit var invitationsViewModel: InvitationsViewModel
+    private lateinit var friendsViewModel: FriendsViewModel
+    private lateinit var navController:NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,14 +42,18 @@ class HomeActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         invitationsViewModel = ViewModelProvider(this)[InvitationsViewModel::class.java]
+        friendsViewModel = ViewModelProvider(this)[FriendsViewModel::class.java]
 
         lifecycleScope.launch {
             viewModel.loadCurrentUser()
-            viewModel.firebaseUser.value?.uid?.let { invitationsViewModel.loadInvitations(it) }
+            viewModel.firebaseUser.value?.uid?.let {
+                invitationsViewModel.loadInvitations(it)
+                friendsViewModel.loadFriends(it)
+            }
         }
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.home_nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -56,9 +65,13 @@ class HomeActivity : AppCompatActivity() {
             navController
         )
         findViewById<BottomNavigationView>(R.id.bottomNavigationView).background = null
-        findViewById<FloatingActionButton>(R.id.floatingBtn).setOnClickListener{
+        findViewById<FloatingActionButton>(R.id.floatingBtn).setOnClickListener {
             navController.navigate(R.id.nav_to_newGroup)
         }
+    }
+
+    fun goToGroups(){
+        navController.navigate(R.id.nav_groups)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -81,4 +81,6 @@
     <string name="end_date_error">The end data can not be before the start date</string>
     <string name="end_date_limit_error">The end data can not be after 2030-01-01</string>
     <string name="end_date_title">Select an End date</string>
+    <string name="new_group_btn_text">Create New Group</string>
+    <string name="new_group_success_text">New Group created successfully!</string>
 </resources>

@@ -123,6 +123,6 @@ class InvitationsViewModel @Inject constructor(
         val reference = repo.getInvitationsReference(uid)
         reference.addValueEventListener(valueEventListener)
         reference.removeEventListener(valueEventListener)
-        reference.addChildEventListener(childEventListener)
+        //reference.addChildEventListener(childEventListener)
     }
 }

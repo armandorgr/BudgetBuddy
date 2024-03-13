@@ -61,6 +61,10 @@ class UsersRepository {
         return database.child(uid).child("username").setValue(newUsername)
     }
 
+    fun getUserFriendsListReference(userUid: String):DatabaseReference{
+        return database.child(userUid).child("friends")
+    }
+
     suspend fun findUserByUID(uid:String):User?{
         return try{
             val snapshot = database.child(uid).get().await()
@@ -69,5 +73,9 @@ class UsersRepository {
         }catch (e: Exception){
             null
         }
+    }
+
+    fun findUserByUIDNotSuspend(uid:String): Task<DataSnapshot>{
+        return database.child(uid).get()
     }
 }
