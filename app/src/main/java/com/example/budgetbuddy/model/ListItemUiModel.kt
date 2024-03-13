@@ -1,6 +1,5 @@
 package com.example.budgetbuddy.model
 
-import java.time.LocalDateTime
 
 sealed class ListItemUiModel {
     data class Invitation(
@@ -9,6 +8,11 @@ sealed class ListItemUiModel {
 
     data class User(
         val userUiModel: com.example.budgetbuddy.model.User,
-        var selected:Boolean = false
+        var selected: Boolean = false
+    ) : ListItemUiModel()
+
+    data class Group(
+        val uid:String,
+        val groupUiModel: com.example.budgetbuddy.model.Group
     ) : ListItemUiModel()
 }
