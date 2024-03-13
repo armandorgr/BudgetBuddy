@@ -44,31 +44,7 @@ class NewGroupFragment : Fragment() {
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var homeViewModel: HomeViewModel
 
-    private val searchViewFilter = object : SearchView.OnQueryTextListener{
-        override fun onQueryTextSubmit(query: String?): Boolean {
-            if(query!=null){
-                friendsAdapter.filterData(query)
-            }else{
-                friendsAdapter.resetData()
-            }
-            return true
-        }
 
-        override fun onQueryTextChange(newText: String?): Boolean {
-            if(newText!=null){
-                friendsAdapter.filterData(newText)
-            }else{
-                friendsAdapter.resetData()
-            }
-            return true
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        //friendsAdapter.resetData()
-        friendsViewModel.resetChecked()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,9 +82,13 @@ class NewGroupFragment : Fragment() {
     private fun prepareBinding(binding: FragmentNewGroupBinding){
         binding.friendsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.adapter = friendsAdapter
-        binding.searchView.setOnQueryTextListener(searchViewFilter)
-        binding.startDate.setOnClickListener(this::onStartDateClick)
-        binding.endDate.setOnClickListener(this::onEndDateClick)
+        binding.searchView.setOnQueryTextListener(viewModel.getSearchViewFilter(friendsAdapter))
+        binding.startDate.setOnClickListener{
+            viewModel.onStartDateClick(requireContext(), binding.root)
+        }
+        binding.endDate.setOnClickListener{
+            viewModel.onEndDateClick(requireContext(), binding.root)
+        }
         binding.createGroupBtn.setOnClickListener{
             if(viewModel.allGood){
                 if(homeViewModel.firebaseUser.value != null){
@@ -138,48 +118,5 @@ class NewGroupFragment : Fragment() {
         viewModel.endDate.observe(viewLifecycleOwner){
             binding.endDate.text = it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }
-    }
-
-    private fun onEndDateClick(view: View?) {
-        val dateResult = DateResult(
-            getString(R.string.end_date_title),
-            {
-                val datePicker = it.findViewById<DatePicker>(R.id.datePicker)
-                val response:String? = viewModel.validateEndDate(getDate(datePicker), requireContext())
-                if(response != null){
-                    showToast(response)
-                }
-            },{}
-        )
-        viewModel.showDatePickerDialog(requireContext(), dateResult, binding.root)
-    }
-
-    private fun getDate(datePicker: DatePicker): LocalDateTime {
-        return LocalDateTime.of(
-            datePicker.year,
-            datePicker.month + 1,
-            datePicker.dayOfMonth,
-            0,
-            0,
-            0
-        )
-    }
-
-    private fun showToast(message: String){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-    }
-
-    private fun onStartDateClick(view: View?) {
-        val dateResult = DateResult(
-            getString(R.string.new_group),
-            {
-                val datePicker = it.findViewById<DatePicker>(R.id.datePicker)
-                val response:String? = viewModel.validateStartDate(getDate(datePicker), requireContext())
-                if(response != null){
-                    showToast(response)
-                }
-            }, {}
-        )
-        viewModel.showDatePickerDialog(requireContext(), dateResult, binding.root)
     }
 }

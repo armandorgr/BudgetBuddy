@@ -24,6 +24,18 @@
         android:label="New Group"
         tools:layout="@layout/fragment_new_group" />
 
+    <fragment android:id="@+id/nav_group_overview"
+        android:name="com.example.budgetbuddy.fragments.GroupOverviewFragment"
+        android:label="Group Overview"
+        tools:layout="@layout/fragment_new_group">
+        <argument
+            android:name="selectedGroup"
+            app:argType="com.example.budgetbuddy.model.Group"/>
+        <argument
+            android:name="selectedGroupUID"
+            app:argType="string"/>
+    </fragment>
+
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.budgetbuddy.fragments.ProfileFragment"
@@ -33,7 +45,13 @@
         android:id="@+id/nav_groups"
         android:name="com.example.budgetbuddy.fragments.GroupsFragment"
         android:label="Groups"
-        tools:layout="@layout/fragment_groups" />
+        tools:layout="@layout/fragment_groups">
+        <action
+            android:id="@+id/nav_groups_to_overview"
+            app:destination="@id/nav_group_overview"
+            app:popUpTo="@id/nav_groups">
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/nav_friends"
         android:name="com.example.budgetbuddy.fragments.FriendsFragment"

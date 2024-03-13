@@ -74,6 +74,10 @@ class HomeActivity : AppCompatActivity() {
         navController.navigate(R.id.nav_groups)
     }
 
+    fun goToGroupOverview(){
+        navController.navigate(R.id.nav_groups_to_overview)
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.home_nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()

@@ -34,16 +34,16 @@ class FriendsViewModel @Inject constructor(
         }
     }
 
-    fun addFriend(friend: User) {
+    fun addFriend(uid:String, friend: User) {
         val updatedFriends = _friendsUidList.value.toMutableList().apply {
-            add(ListItemUiModel.User(friend))
+            add(ListItemUiModel.User(uid, friend))
         }
         _friendsUidList.value = updatedFriends
     }
 
     private fun removeFriend(uid: String) {
         val updatedList = _friendsUidList.value.toMutableList().apply {
-            removeIf { friend -> (friend as ListItemUiModel.User).userUiModel.uid == uid }
+            removeIf { friend -> (friend as ListItemUiModel.User).uid == uid }
         }
         updateList(updatedList)
     }
@@ -56,9 +56,8 @@ class FriendsViewModel @Inject constructor(
                     repo.findUserByUIDNotSuspend(friend.key!!).addOnCompleteListener {
                         if (it.isSuccessful) {
                             val _friend = it.result.getValue(User::class.java)
-                            _friend?.uid = friend.key
                             if (_friend != null) {
-                                addFriend(_friend)
+                                addFriend(friend.key!!, _friend)
                             }
                         } else {
                             Log.d("prueba", "Error cargando amigo: ${it.exception?.message}")
@@ -81,9 +80,8 @@ class FriendsViewModel @Inject constructor(
                 repo.findUserByUIDNotSuspend(it).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val _friend = task.result.getValue(User::class.java)
-                        _friend?.uid = it
                         if (_friend != null) {
-                            addFriend(_friend)
+                            addFriend(key, _friend)
                         }
                     } else {
                         Log.d("prueba", "Error cargando amigo: ${task.exception?.message}")

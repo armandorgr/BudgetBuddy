@@ -12,7 +12,7 @@ import com.example.budgetbuddy.viewHolders.NewGroupFriendViewHolder
 
 class NewGroupFriendsAdapter(
     private val layoutInflater: LayoutInflater,
-    private val selectedList : MutableList<User>,
+    private val selectedList : MutableList<ListItemUiModel.User>,
     private val onCheckClickListener: OnCheckClickListener? = null,
     private val onUnCheckClickListener: OnCheckClickListener? = null,
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
@@ -46,15 +46,15 @@ class NewGroupFriendsAdapter(
 
     private val onCheckClickEvent = object : NewGroupFriendViewHolder.OnCheckClickListener {
         override fun onCheckClicked(user: ListItemUiModel.User, position: Int) {
-            Log.d("prueba", "Elemento añadido: ${selectedList.add(user.userUiModel)}")
+            user.selected = true
+            Log.d("prueba", "Elemento añadido: ${selectedList.add(user)}")
             Log.d("prueba", "selected users: ${selectedList}")
             onCheckClickListener?.onCheckClick(user.userUiModel, position)
-            user.selected = true
         }
     }
     private val onUnCheckEvent = object : NewGroupFriendViewHolder.OnCheckClickListener {
         override fun onCheckClicked(user: ListItemUiModel.User, position: Int) {
-            Log.d("prueba", "Elemento eleminado: ${selectedList.remove(user.userUiModel)}")
+            Log.d("prueba", "Elemento eleminado: ${selectedList.remove(user)}")
             Log.d("prueba", "selected users: ${selectedList}")
             onUnCheckClickListener?.onCheckClick(user.userUiModel, position)
             user.selected = false

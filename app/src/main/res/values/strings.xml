@@ -82,5 +82,12 @@
     <string name="end_date_limit_error">The end data can not be after 2030-01-01</string>
     <string name="end_date_title">Select an End date</string>
     <string name="new_group_btn_text">Create New Group</string>
+    <string name="update_group_btn_text">Update Group data</string>
+    <string name="delete_groupo_btn_text">Delete group</string>
     <string name="new_group_success_text">New Group created successfully!</string>
+    <string name="selected_group_arg_name">SELECTED GROUP</string>
+    <string name="group_update_success">Group updated successfully!</string>
+    <string name="group_update_fail">Group update failed</string>
+    <string name="group_delete_success">Group deleted successfully!</string>
+    <string name="group_delete_fail">Group delete failed</string>
 </resources>

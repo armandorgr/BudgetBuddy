@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.viewHolders
 
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
@@ -24,6 +25,7 @@ class NewGroupFriendViewHolder(
         }
         val userData = listItem.userUiModel
         checkBox.isChecked = listItem.selected
+        Log.d("prueba", "Elemento ${listItem.userUiModel.username} selected: ${listItem.selected}")
         checkBox.setOnClickListener{
             if(checkBox.isChecked){
                 onCheckClickListener.onCheckClicked(listItem, adapterPosition)

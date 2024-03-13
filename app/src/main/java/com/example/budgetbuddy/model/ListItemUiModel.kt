@@ -7,6 +7,7 @@ sealed class ListItemUiModel {
     ) : ListItemUiModel()
 
     data class User(
+        val uid:String,
         val userUiModel: com.example.budgetbuddy.model.User,
         var selected: Boolean = false
     ) : ListItemUiModel()
