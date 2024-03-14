@@ -9,7 +9,9 @@ import com.example.budgetbuddy.adapters.recyclerView.InvitationAdapter
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.InvitationsRepository
+import com.example.budgetbuddy.repositories.UsersRepository
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -25,12 +27,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InvitationsViewModel @Inject constructor(
-    private val repo: InvitationsRepository
+    private val repo: InvitationsRepository,
+    private val userRepo: UsersRepository
 ) : ViewModel() {
     private val _invitationsList = MutableStateFlow<List<ListItemUiModel>>(emptyList())
     val invitationsList: StateFlow<List<ListItemUiModel>> = _invitationsList
 
     private lateinit var adapter: InvitationAdapter
+
+    suspend fun findUIDByUsername(username: String): User? {
+        return withContext(Dispatchers.IO) {
+            userRepo.findUserByUserName(username)
+        }
+    }
+
+    fun writeNewInvitation(uid:String, currentUserUid: String, invitation: InvitationUiModel){
+        repo.writeNewInvitation(uid, currentUserUid, invitation)
+    }
 
     fun setAdapter(adapter: InvitationAdapter) {
         this.adapter = adapter

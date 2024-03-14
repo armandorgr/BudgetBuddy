@@ -26,6 +26,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * Clase del activity principal el cual se configura la navegacion y ademas se cargan datos correspondientes al usuario
+ * que inicio sesion. Ademas se añaden eventos para cargar los amigos e invitaciones del usuario.
+ * */
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
     private lateinit var viewModel: HomeViewModel
@@ -33,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var invitationsViewModel: InvitationsViewModel
     private lateinit var friendsViewModel: FriendsViewModel
-    private lateinit var navController:NavController
+    private lateinit var navController: NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +48,7 @@ class HomeActivity : AppCompatActivity() {
         invitationsViewModel = ViewModelProvider(this)[InvitationsViewModel::class.java]
         friendsViewModel = ViewModelProvider(this)[FriendsViewModel::class.java]
 
+        //Se cargan el usuario actual asi como las invitaciones que tenga y sus amigos
         lifecycleScope.launch {
             viewModel.loadCurrentUser()
             viewModel.firebaseUser.value?.uid?.let {
@@ -55,6 +60,7 @@ class HomeActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.home_nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
+        //Diferences pestañas del menu de navagacion
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_groups, R.id.nav_friends, R.id.nav_profile
@@ -65,16 +71,23 @@ class HomeActivity : AppCompatActivity() {
             navController
         )
         findViewById<BottomNavigationView>(R.id.bottomNavigationView).background = null
+        //Se añade evento de navagacion al boton flotante del centro
         findViewById<FloatingActionButton>(R.id.floatingBtn).setOnClickListener {
             navController.navigate(R.id.nav_to_newGroup)
         }
     }
 
-    fun goToGroups(){
+    /**
+     * Metodo que sirve para navegar al fragmento de grupos
+     * */
+    fun goToGroups() {
         navController.navigate(R.id.nav_groups)
     }
 
-    fun goToGroupOverview(){
+    /**
+     * Metodo que sirve para navegar al fragmento de group overview
+     * */
+    fun goToGroupOverview() {
         navController.navigate(R.id.nav_groups_to_overview)
     }
 
@@ -82,6 +95,4 @@ class HomeActivity : AppCompatActivity() {
         val navController = findNavController(R.id.home_nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
-
 }

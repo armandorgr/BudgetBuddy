@@ -8,6 +8,10 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.viewHolders.GroupViewHolder
 
+/**
+ * Clase la cual sirve para cargar la lista de los grupos a los que pertenece el usuario a un [RecyclerView]
+ * y añadirle a cada elemento un evento el cual se ejecutara cuando se haga click sobre el layout del grupo
+ * */
 class GroupsAdapter(
     private val layoutInflater: LayoutInflater,
     private val onClickListener: OnClickListener
@@ -15,6 +19,10 @@ class GroupsAdapter(
     private val listData = mutableListOf<ListItemUiModel>()
     //TODO HACER UNA LISTA FILTRADA COMO CON LOS AMIGOS
 
+    /**
+     * Metodo que sirve para establecer la lista de los grupos cargados y actualizar el [RecyclerView]
+     * @param newItems Lista con los nuevos grupos a establecer en el [RecyclerView]
+     * */
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newItems: List<ListItemUiModel>) {
         listData.clear()
@@ -22,6 +30,10 @@ class GroupsAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Objeto anonimo que implementa la interfaz [GroupViewHolder.OnClickListener]
+     * ejecutando el metodo onItemClick del objeto pasado como parametro al constructor del Adapter
+     * */
     private val onClick = object : GroupViewHolder.OnClickListener {
         override fun onClick(group: ListItemUiModel.Group, position: Int) {
             onClickListener.onItemClick(group, position)
@@ -29,7 +41,17 @@ class GroupsAdapter(
 
     }
 
+    /**
+     * Interfaz la cual declara un unico metodo el cual sera el que se ejecute al hacer click sobre uno
+     * de los elementos del [RecyclerView]
+     * */
     interface OnClickListener {
+        /**
+         * Metodo abstracto que sera el que se
+         * ejecute al hacer un click sobre un elemento del [RecyclerView]
+         * @param group Grupo sobre el cual se ha hecho click
+         * @param position Posicion que ocupa el objeto en el Adapter
+         * */
         fun onItemClick(group: ListItemUiModel.Group, position: Int)
     }
 

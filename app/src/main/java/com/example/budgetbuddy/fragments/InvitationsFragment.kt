@@ -5,26 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.InvitationAdapter
 import com.example.budgetbuddy.databinding.FragmentInvitationsBinding
-import com.example.budgetbuddy.model.DateSent
-import com.example.budgetbuddy.model.INVITATION_TYPE
-import com.example.budgetbuddy.model.InvitationUiModel
-import com.example.budgetbuddy.model.ListItemUiModel
-import com.example.budgetbuddy.viewHolders.InvitationViewHolder
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.InvitationsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 
+/**
+ * Clase responsable de vincular la logica definida en [InvitationsViewModel] con la vista del fragmento [InvitationsFragment]
+ * */
 @AndroidEntryPoint
 class InvitationsFragment : Fragment() {
     private lateinit var binding: FragmentInvitationsBinding
@@ -36,7 +29,7 @@ class InvitationsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewModel = ViewModelProvider(requireActivity())[InvitationsViewModel::class.java]
         binding = FragmentInvitationsBinding.inflate(layoutInflater, container, false)
 
@@ -50,40 +43,11 @@ class InvitationsFragment : Fragment() {
             homeViewModel.firebaseUser.value!!
         )
         binding.invitationsRecyclerView.adapter = invitationsAdapter
-        /* para crear invitaciones de prueba descomentar esto y comentar la ultima parte menos en return
-        invitationsAdapter.setData(
-            listOf(
-                ListItemUiModel.Invitation(
-                    InvitationUiModel(
-                        "cbeklEpJUxUHOWKtXN1y8KX7MBx2",
-                        "Pepe",
-                        "%s quiere conectar contigo",
-                        INVITATION_TYPE.FRIEND_REQUEST,
-                        LocalDateTime.now().toString()
-                    )
-                ),
-                ListItemUiModel.Invitation(
-                    InvitationUiModel(
-                        "RzyILMaJGzUUdW139dBSxn3Xups1",
-                        "Luis",
-                        "%s quiere conectar contigo",
-                        INVITATION_TYPE.FRIEND_REQUEST,
-                        LocalDateTime.now().toString()
-                    )
-                ),
-                ListItemUiModel.Invitation(
-                    InvitationUiModel(
-                        "Rvv11I8zGAYaWYM8oUNZWTKEV5E2",
-                        "Maria",
-                        "%s quiere conectar contigo",
-                        INVITATION_TYPE.FRIEND_REQUEST,
-                        LocalDateTime.now().toString()
-                    )
-                )
-            )
-        )*/
+
 
         viewModel.setAdapter(invitationsAdapter)
+        //Se cargan las invitaciones del usuario logeado con collect, para que cada vez que el valor de esta lista
+        //cambia el adapter tambien se actaliza
         lifecycleScope.launch {
             viewModel.invitationsList.collect {
                 invitationsAdapter.setData(it)

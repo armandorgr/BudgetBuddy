@@ -16,7 +16,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         binding.invitationsBtn.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_home_to_invitations))
         return binding.root

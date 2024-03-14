@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -29,10 +28,12 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-
+/**
+ * Clase responsable de vincular la logica definida en el viewmodel [ProfileViewModel] con los widgets del fragmento [ProfileFragment]
+ * Este fragmento servira para manejar la cuenta del usuario y cerrar sesion.
+ * */
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
@@ -46,7 +47,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         prepareBinding(binding)
@@ -54,8 +55,14 @@ class ProfileFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Metodo que sirve para vincular los eventos que se producen en la vista con los metodos
+     * definidos en el viewmodel [ProfileViewModel]
+     * @param binding Binding contenedor de las referencias a todos los widgets del fragmento
+     * */
     private fun prepareBinding(binding: FragmentProfileBinding) {
         binding.usernameTextView.text = homeViewModel.currentUser.value?.username
+        // si se inicio sesion con Google se ocultan las opciones de cambio de correo y contraseña
         if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
             binding.newEmailConstraintLayout.visibility = View.GONE
             binding.newPasswordConstraintLayout.visibility = View.GONE
@@ -89,7 +96,12 @@ class ProfileFragment : Fragment() {
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
 
-
+    /**
+     * Metodo que se ejecuta cuando se hace click sobre el boton para cambiar nombre de usuario
+     * Se muestra un alertDialog para introducir el nuevo nombre y valida que no exista ya.
+     * Si es correcto se cambia el nombre de usuario y se muestra un mensaje de exito
+     * @param view Vista que activo el evento
+     * */
     private fun onChangeUsername(view: View?) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -128,6 +140,12 @@ class ProfileFragment : Fragment() {
         dialogFactory.createPromptDialog(binding.root, data)
     }
 
+    /**
+     * Para firebase ciertas acciones como borrar la cuenta o cambiar el correo son acciones sensibles,
+     * por lo que se debe haber autenticado recientemente para poder hacer dichas acciones.
+     * Este metodo sirve para reautenticar la cuenta de Google con la que se ha iniciado sesion
+     * @param onCompleteListener Metodo que se ejecutara cuando la reautenticacion termine
+     * */
     private fun reauthenticateWithGoogle(onCompleteListener: (p: Task<Void>) -> Unit) {
         binding.profileFrame.alpha = 0.3f
         val acct = GoogleSignIn.getLastSignedInAccount(requireContext())
@@ -138,6 +156,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Para firebase ciertas acciones como borrar la cuenta o cambiar el correo son acciones sensibles,
+     * por lo que se debe haber autenticado recientemente para poder hacer dichas acciones.
+     * Este metodo muestra un dialog para introducir correo y contraseña y se intenta reautenticar
+     * @param onCompleteListener Metodo que se ejecutara cuando la reautenticacion termine
+     * */
     private fun reauthenticate(onCompleteListener: (p: Task<Void>) -> Unit) {
         binding.profileFrame.alpha = 0.3f
         val data = TwoPromptResult(
@@ -168,6 +192,12 @@ class ProfileFragment : Fragment() {
         dialogFactory.createTwoPromptLayout(binding.root, data, true)
     }
 
+    /**
+     * Metodo que se ejecutara cuando se haga click sobre el boton de cambiar email.
+     * Este metodo se para como onCompleteListener para el metodo de [reauthenticate]
+     * ya que cambiar el correo es una accion sensible
+     * @param task Resultado de la reautenticacion
+     * */
     private fun onChangeEmail(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -204,6 +234,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se haga click sobre cambiar contraseña
+     * Este metodo se pasa como onCompleteListener al metodo [reauthenticate]
+     * ya que cambiar la contraseña es una accion sensible
+     * @param task Resultado de la reautenticacion
+     * */
     private fun onPasswordChange(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -211,6 +247,7 @@ class ProfileFragment : Fragment() {
             val data = PromptResult(
                 getString(R.string.change_password_title),
                 getString(R.string.change_password_hint),
+                //Este es la funcion que se ejecutara cuando se presione el boton del dialog
                 { dialog ->
                     binding.determinateBar.visibility = View.INVISIBLE
                     val txt =
@@ -241,6 +278,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se presione el boton de borrar cuenta
+     * Este metodo se pasa como onCompleteListener al metodo [reauthenticate]
+     * Ya que borrar la cuenta es una accion sensible
+     * @param task Resultado de la reautenticacion
+     * */
     private fun onDeleteAccount(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -249,6 +292,7 @@ class ProfileFragment : Fragment() {
                 getString(R.string.delete_account),
                 getString(R.string.delete_account_message),
                 {
+                    // este es la funcion que se ejecutara cuando se haga click sobre el boton ok del dialog
                     binding.determinateBar.visibility = View.VISIBLE
                     homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {
                         lifecycleScope.launch {
@@ -263,6 +307,7 @@ class ProfileFragment : Fragment() {
                     it.dismiss()
                 },
                 {
+                    //esto se ejecuta cuando se hace cancel
                     binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f;
                 }
@@ -275,6 +320,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se complete la tarea de borrar la cuenta
+     * @param task El resultado de borrar la cuenta si es exitosa, se muestra mensaje de exito, de error si fallo
+     * */
     private fun onDeleteAccountComplete(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         if (task.isSuccessful) {
@@ -291,6 +340,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se complete la tarea de cambiar el nombre de usuarios
+     * @param it Resultado de la tarea de cambiar el nombre de usuario, si es correcto se muestra mensaje de exito y de error si fallo
+     * */
     private fun onChangeUsernameComplete(it: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         if (it.isSuccessful) {

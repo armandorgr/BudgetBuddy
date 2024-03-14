@@ -35,6 +35,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
+/**
+ * Clase responsable de vincular la logica definida en el ViewModel [NewGroupViewModel] con la vista de [NewGroupFragment]
+ * */
 @AndroidEntryPoint
 class NewGroupFragment : Fragment() {
     private lateinit var binding: FragmentNewGroupBinding
@@ -56,8 +59,11 @@ class NewGroupFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_group,container, false)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
+        //Se carga el adapter con un lista de los amigos seleccionados
         friendsAdapter = NewGroupFriendsAdapter(layoutInflater, viewModel.getSelectedList())
         prepareBinding(binding)
+        //se cargan los amigos del usuario actual, con collect cada vez que se actualice la lista, el adapter tambien se
+        //actulizara
         lifecycleScope.launch {
             friendsViewModel.friendsUidList.collect{
                 friendsAdapter.setData(it)
@@ -66,6 +72,26 @@ class NewGroupFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Metodo que sirve para mostrar una ventana emergent con un mensaje de error y un boton.
+     * Al hacer click sobre el boton de ok o simplemente fuera de la ventana, no se hara nada mas que cerrar la ventana
+     * @param message Mensaje a mostrar sobre la ventana de error
+     * */
+    private fun showFailDialog(message: String) {
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        val data = Result(
+            getString(R.string.fail_title),
+            message,
+            getString(R.string.try_again)
+        ) {
+
+        }
+        alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
+    }
+
+    /**
+     * Metodo que sirve para mostrar una ventada emergente con un mensaje de exito
+     * */
     private fun showSuccessDialog(){
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val data = Result(
@@ -79,6 +105,11 @@ class NewGroupFragment : Fragment() {
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
+    /**
+     * Metodo que sirve para vincular los eventos de la vista del fragmento [NewGroupFragment] con los metodos
+     * definidos en [NewGroupViewModel]
+     * @param binding Binding generado por el view binding contenedor de las referencias a las vistas
+     * */
     private fun prepareBinding(binding: FragmentNewGroupBinding){
         binding.friendsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.adapter = friendsAdapter
@@ -98,12 +129,13 @@ class NewGroupFragment : Fragment() {
                         if(it.isSuccessful){
                             showSuccessDialog()
                         }else{
-
+                            showFailDialog(getString(R.string.group_create_fail))
                         }
                     }
                 }
             }
         }
+        //Se añaden eventos a los editText para obtener el contenido y validadorlo
         binding.groupNameEditText.addTextChangedListener(afterTextChanged = {text ->
             viewModel.setGroupName(text.toString())
             viewModel.validateGroupName(text.toString(), requireContext())
@@ -112,6 +144,7 @@ class NewGroupFragment : Fragment() {
             viewModel.setGroupDescription(text.toString())
             viewModel.validateGroupDescription(text.toString(), requireContext())
         })
+        //Se observan las propiedades de fecha del viewmodel, de modo que cada vez que cambien se formatean y se muestran por pantalla
         viewModel.startDate.observe(viewLifecycleOwner){
             binding.startDate.text = it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }

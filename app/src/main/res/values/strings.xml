@@ -90,4 +90,8 @@
     <string name="group_update_fail">Group update failed</string>
     <string name="group_delete_success">Group deleted successfully!</string>
     <string name="group_delete_fail">Group delete failed</string>
+    <string name="group_create_fail">Group creation failed</string>
+    <string name="send_invitation_button_text">Invite friends</string>
+    <string name="send_invitation_title">Send invitation</string>
+    <string name="send_invitation_hint">Username to send invitation</string>
 </resources>

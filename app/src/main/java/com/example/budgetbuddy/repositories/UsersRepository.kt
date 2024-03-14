@@ -25,7 +25,16 @@ class UsersRepository {
         return database.child(uid).setValue(user)
     }
 
-
+    suspend fun findUserUIDByUsername(username:String):String?{
+        return try{
+            val snapshot = database.orderByChild("username").equalTo(username).get().await()
+            val key = snapshot.getValue(User::class.java)
+            Log.d("prueba","valor:$key")
+            key?.username
+        }catch (e: Exception){
+            null
+        }
+    }
 
     suspend fun findUserByUserName(username:String):User?{
        return try{

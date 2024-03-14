@@ -1,60 +1,87 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.databinding.FragmentFriendsBinding
+import com.example.budgetbuddy.model.INVITATION_TYPE
+import com.example.budgetbuddy.model.InvitationUiModel
+import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.PromptResult
+import com.example.budgetbuddy.viewmodels.HomeViewModel
+import com.example.budgetbuddy.viewmodels.InvitationsViewModel
+import com.google.android.material.textfield.TextInputLayout
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [FriendsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class FriendsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentFriendsBinding? = null
+    private val viewModel: InvitationsViewModel by viewModels()
+    private lateinit var homeViewModel: HomeViewModel
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false)
+    ): View {
+        homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        _binding = FragmentFriendsBinding.inflate(inflater, container, false)
+        prepareBinding()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FriendsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FriendsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun prepareBinding() {
+        binding.sendInvitationBtn.setOnClickListener(this::onSendInvitationClick)
+    }
+
+    private fun onSendInvitationClick(view: View?) {
+        val dialogFactory = AlertDialogFactory(requireContext())
+        val data = PromptResult(
+            getString(R.string.send_invitation_title),
+            getString(R.string.send_invitation_hint),
+            { dialog ->
+                val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
+                if (txt != "") {
+                    lifecycleScope.launch {
+                        val userUID: User? = viewModel.findUIDByUsername(txt)
+                        Log.d("prueba", "$userUID")
+                        if (userUID != null) {
+                            homeViewModel.firebaseUser.value?.uid?.let {
+                                val invitation = InvitationUiModel(
+                                    it,
+                                    homeViewModel.currentUser.value?.username,
+                                    "%s quiere conectar contigo",
+                                    INVITATION_TYPE.FRIEND_REQUEST,
+                                    LocalDateTime.now().toString()
+                                )
+                                viewModel.writeNewInvitation(txt, it, invitation)
+                                dialog.dismiss()
+                            }
+                        } else {
+                            dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
+                                "No existe un usuario con este username"
+                        }
+                    }
                 }
-            }
+            },
+            {}
+        )
+        dialogFactory.createPromptDialog(binding.root, data)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
