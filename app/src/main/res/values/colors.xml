@@ -25,6 +25,7 @@
     <color name="action_icon_green_bkg">#d2e7d6</color>
     <color name="action_icon_purple">#B19CD8</color>
     <color name="action_icon_purple_bkg">#E6D1F2</color>
+    <color name="light_blue_card_friend">#808080</color>
     <!-- Tema Oscuro -->
     <color name="dark_theme_primary">#323C46</color> <!-- Gris Oscuro Azulado -->
     <color name="dark_theme_secondary">#4A6572</color> <!-- Azul Petróleo Pastel -->
