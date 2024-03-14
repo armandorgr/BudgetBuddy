@@ -4,22 +4,22 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.renderscript.ScriptGroup.Input
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.databinding.FragmentLoginBinding
+import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -45,10 +46,29 @@ class LoginFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        var usr: User?
+        //se valida si hay un usuario logeado, TODO al implementar el splash screen esta logica se debera hacer alli
         val currentUser = auth.currentUser
-        if(currentUser != null){
-            updateUI(currentUser)
+        lifecycleScope.launch {
+            if (currentUser != null) {
+                usr = viewModel.findUserByUID(currentUser.uid)
+                if (usr != null) {
+                    goToHome()
+                } else {
+                    updateUI(currentUser)
+                }
+            }
         }
+    }
+
+    /**
+     * Metodo que sirve para hacer un intent e ir al activity HOME
+     * */
+    private fun goToHome() {
+        val intent: Intent = Intent(activity, HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +96,11 @@ class LoginFragment : Fragment() {
         intent.launch(signInIntent)
     }
 
+    /**
+     * Metodo que sirve para iniciar sesion mediante correo y contraseña
+     * @param email Direccion de correo con la cual se intentara iniciar sesion
+     * @param password Contraseña con la cual se intentara iniciar sesion
+     * */
     private fun signInWithEmailPassword(email: String, password: String) {
         val dialogFactory = AlertDialogFactory(requireContext())
         var dialogLayout: Int = 0
@@ -92,7 +117,7 @@ class LoginFragment : Fragment() {
                     getString(R.string.go_to_home)
                 ) {
                     binding.frame.alpha = 1f
-                    updateUI(user)
+                    goToHome()
                 }
             } else {
                 dialogLayout = R.layout.error_dialog
@@ -179,11 +204,12 @@ class LoginFragment : Fragment() {
         auth = Firebase.auth
         binding.textViewSignUp.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_login_to_register))
         binding.signUpBtn.setOnClickListener {
-            signInWithEmailPassword(
-                binding.emailEditText.text.toString(),
-                binding.passwordEditText.text.toString()
-            )
-            hideKeyboard()
+            val email = binding.emailEditText.text.toString()
+            val password = binding.passwordEditText.text.toString()
+            if (email != "" && password != "") {
+                signInWithEmailPassword(email, password)
+                hideKeyboard()
+            }
         }
         binding.google.setOnClickListener {
             signIn()
@@ -192,6 +218,9 @@ class LoginFragment : Fragment() {
     }
 
 
+    /**
+     * Metodo que sirve para esconder el teclado
+     * */
     private fun hideKeyboard() {
         requireActivity().currentFocus?.let { view ->
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -204,9 +233,6 @@ class LoginFragment : Fragment() {
      * @param user Usuario con el cual se ha iniciado sesión
      * */
     private fun updateUI(user: FirebaseUser?) {
-        val intent:Intent = Intent(activity, HomeActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent)
+        findNavController().navigate(R.id.nav_login_to_personal_data)
     }
 }

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.example.budgetbuddy.viewmodels.NewGroupViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.NewGroupFragment">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/determinateBar"
+                style="@android:style/Widget.Material.Light.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/md_theme_light_primary"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+
+            <ScrollView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/horizontalDescriptionGuide"
+                app:layout_constraintEnd_toEndOf="@id/verticalGuideEnd"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/verticalGuideStart"
+                app:layout_constraintTop_toTopOf="@id/horizontalGuideTop"
+                app:layout_constraintVertical_bias="1.0">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/groupNameLayout"
+                        style="@style/boxInputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/group_name_hint"
+                        app:helperText="@{viewmodel.groupNameError}"
+                        app:layout_constraintBottom_toTopOf="@id/groupDescriptionLayout"
+                        app:layout_constraintEnd_toEndOf="@id/verticalGuideEnd"
+                        app:layout_constraintStart_toStartOf="@id/verticalGuideStart"
+                        app:layout_constraintTop_toTopOf="@id/horizontalGuideTop">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/groupNameEditText"
+                            style="@style/inputText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:text="@{viewmodel.groupName}" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/groupDescriptionLayout"
+                        style="@style/boxInputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/group_description_hint"
+                        app:helperText="@{viewmodel.groupDescriptionError}">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/groupDescriptionEditText"
+                            style="@style/inputText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="start"
+                            android:inputType="textMultiLine"
+                            android:text="@{viewmodel.groupDescription}" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:id="@+id/datesLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/startDate"
+                            style="@style/dateView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date_placeholder" />
+
+                        <TextView
+                            android:id="@+id/endDate"
+                            style="@style/dateView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/date_placeholder" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/searchView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/friendsRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/buttonsLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="@dimen/group_friends_recyclerView_margin">
+                        <Button
+                            android:id="@+id/createGroupBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/new_group_btn_text" />
+                        <Button
+                            android:id="@+id/updateGroupBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:text="@string/update_group_btn_text" />
+                        <Button
+                            android:id="@+id/deleteGroupBtn"
+                            android:backgroundTint="@color/md_theme_light_red"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:text="@string/delete_groupo_btn_text" />
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/verticalGuideStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.15" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/verticalGuideEnd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.85" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/horizontalGuideTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.15" />
+
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/horizontalDescriptionGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.9" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

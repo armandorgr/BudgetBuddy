@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/custom_dialog_bkg"
+    android:padding="@dimen/margin_small"
+    android:layout_width="match_parent"
+    android:layout_margin="@dimen/margin_small"
+    android:layout_height="50dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        style="@style/circularImg"
+        android:id="@+id/item_img_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@drawable/default_profile_pic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEndImg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+        <TextView
+            app:layout_constraintStart_toStartOf="@id/guidelineEndImg"
+            app:layout_constraintEnd_toEndOf="@id/guidelineEndText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/item_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/place_holder_username_profile"/>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEndImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEndText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+        <CheckBox
+            app:layout_constraintStart_toStartOf="@id/guidelineEndText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/acceptInvitationBtn"
+            android:layout_width="40dp"
+            android:id="@+id/checkbox"
+            android:layout_height="40dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

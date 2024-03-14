@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.example.budgetbuddy.viewmodels.RegisterViewModel" />
+    </data>
+    <FrameLayout
+        android:id="@+id/personalDataFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.PersonalDataFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/personalDataConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/determinateBar"
+                style="@android:style/Widget.Material.Light.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/md_theme_light_primary"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <LinearLayout
+                android:id="@+id/linearLogo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="24dp"
+                app:layout_constraintBottom_toTopOf="@id/personalDataFields"
+                app:layout_constraintEnd_toEndOf="@id/guideline9"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/guideline8"
+                app:layout_constraintTop_toTopOf="@id/guideline10"
+                app:layout_constraintVertical_weight="0.4">
+
+                <ImageView
+                    android:id="@+id/icon_app"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:contentDescription="@string/icon_description"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/app_icon_test" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    style="@style/Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/personal_data_title"
+                    android:textAlignment="center" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/more_data"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="center_horizontal"
+                app:layout_constraintVertical_weight="0.5"
+                app:layout_constraintStart_toStartOf="@id/guideline8"
+                app:layout_constraintEnd_toEndOf="@id/guideline9"
+                app:layout_constraintBottom_toBottomOf="@id/guideline11"
+                app:layout_constraintTop_toBottomOf="@id/linearLogo"
+                android:id="@+id/personalDataFields"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/boxInputText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/first_name"
+                    app:helperText="@{viewmodel.firstNameError}">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/firstNameEditText"
+                        style="@style/inputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:text="@{viewmodel.firstName}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/boxInputText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/last_name"
+                    app:helperText="@{viewmodel.lastNameError}">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/lastNameEditText"
+                        style="@style/inputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:text="@{viewmodel.lastName}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/boxInputText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/username"
+                    app:helperText="@{viewmodel.userNameError}">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/usernameEditText"
+                        style="@style/inputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:text="@{viewmodel.username}" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/createUserBtn"
+                    style="@style/btnElevated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:elevation="8dp"
+                    android:text="@string/go_to_home" />
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.1" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.9" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.1" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.9" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

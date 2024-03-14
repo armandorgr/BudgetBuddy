@@ -13,6 +13,19 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="actionConstraint">
+        <item name="android:layout_marginVertical">@dimen/action_constraint_margin</item>
+    </style>
+
+    <style name="circularImg">
+        <item name="shapeAppearance">@style/Circular</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:padding">4dp</item>
+        <item name="strokeColor">@color/black</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="elevation">10dp</item>
+    </style>
+
     <style name="btnElevated" parent="Widget.Material3.Button.ElevatedButton">
         <item name="android:textColor">@color/md_theme_light_onPrimary</item>
         <item name="backgroundTint">@color/md_theme_light_primary</item>
@@ -30,10 +43,59 @@
         <item name="android:textColor">@color/gray</item>
     </style>
 
+    <style name="profile_username_text" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textAlignment">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/ptsans_bold</item>
+        <item name="android:textSize">@dimen/username_text_size_profile</item>
+        <item name="android:textColor">@color/md_theme_light_onPrimary</item>
+    </style>
+
+    <style name="acceptInvitationBtn" parent="ThemeOverlay.Material3.Button">
+        <item name="backgroundTint">@color/action_icon_green</item>
+        <item name="shapeAppearance">@style/square</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="icon">@drawable/baseline_check_24</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconSize">25sp</item>
+    </style>
+
+    <style name="declineInvitationBtn" parent="ThemeOverlay.Material3.Button">
+        <item name="backgroundTint">@color/action_icon_red</item>
+        <item name="shapeAppearance">@style/square</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="icon">@drawable/baseline_remove_24</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="dateView">
+        <item name="android:background">@drawable/custom_dialog_bkg</item>
+        <item name="android:padding">@dimen/date_view_padding</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_margin">@dimen/date_view_margin</item>
+    </style>
+
+    <style name="square">
+        <item name="cornerSize">20%</item>
+    </style>
+
+    <style name="Theme.BottomNavigation.AppBarOverlay"
+        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.BottomNavigation.PopupOverlay"
+        parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="profile_email_text" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/md_theme_light_onPrimary</item>
+        <item name="android:textSize">@dimen/email_text_size_profile</item>
+        <item name="fontFamily">@font/ptsans_regular</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="boxInputText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="helperTextEnabled">true</item>
         <item name="helperTextTextColor">@color/md_theme_light_error</item>
         <item name="helperTextTextAppearance">@style/inputText</item>
         <item name="endIconMode">clear_text</item>
     </style>
+
 </resources>
