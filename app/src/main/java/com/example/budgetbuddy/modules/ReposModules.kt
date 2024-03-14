@@ -1,6 +1,11 @@
 package com.example.budgetbuddy.modules
 
+import com.example.budgetbuddy.repositories.GroupRepository
+import com.example.budgetbuddy.repositories.InvitationsRepository
 import com.example.budgetbuddy.repositories.UsersRepository
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +22,10 @@ import dagger.hilt.components.SingletonComponent
 class ReposModules {
     @Provides
     fun provideUsersRepo(): UsersRepository = UsersRepository()
+
+    @Provides
+    fun provideInvitationsRepo(): InvitationsRepository = InvitationsRepository()
+
+    @Provides
+    fun provideGroupRepo(): GroupRepository = GroupRepository()
 }

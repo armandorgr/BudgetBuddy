@@ -8,16 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
-import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
+import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.tasks.Task
@@ -25,47 +26,50 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-
+/**
+ * Clase responsable de vincular la logica definida en el viewmodel [ProfileViewModel] con los widgets del fragmento [ProfileFragment]
+ * Este fragmento servira para manejar la cuenta del usuario y cerrar sesion.
+ * */
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var currentUser: User
-    private lateinit var provider: String
     private val viewModel: ProfileViewModel by viewModels()
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var dialogFactory: AlertDialogFactory
-    private lateinit var firebaseUser: FirebaseUser
     private val GOOGLE_PROVIDER = "google.com"
     private val PASSWORD_PROVIDER = "password"
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
-        auth = Firebase.auth
-        firebaseUser = auth.currentUser!!
-        loadCurrentUser(firebaseUser)
+        prepareBinding(binding)
         dialogFactory = AlertDialogFactory(requireContext())
         return binding.root
     }
 
+    /**
+     * Metodo que sirve para vincular los eventos que se producen en la vista con los metodos
+     * definidos en el viewmodel [ProfileViewModel]
+     * @param binding Binding contenedor de las referencias a todos los widgets del fragmento
+     * */
     private fun prepareBinding(binding: FragmentProfileBinding) {
-        if (provider == GOOGLE_PROVIDER) {
+        binding.usernameTextView.text = homeViewModel.currentUser.value?.username
+        // si se inicio sesion con Google se ocultan las opciones de cambio de correo y contraseña
+        if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
             binding.newEmailConstraintLayout.visibility = View.GONE
             binding.newPasswordConstraintLayout.visibility = View.GONE
         }
         binding.logoutConstraintLayout.setOnClickListener {
             binding.profileFrame.alpha = 0.3f
-            auth.signOut()
+            homeViewModel.auth.signOut()
             val data = Result(
                 getString(R.string.success_title),
                 getString(R.string.logout_success),
@@ -82,7 +86,7 @@ class ProfileFragment : Fragment() {
             reauthenticate(this::onPasswordChange)
         }
         binding.deleteAccountConstraintLayout.setOnClickListener {
-            if (provider == GOOGLE_PROVIDER) {
+            if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
                 reauthenticateWithGoogle(this::onDeleteAccount)
             } else {
                 reauthenticate(this::onDeleteAccount)
@@ -92,7 +96,12 @@ class ProfileFragment : Fragment() {
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
 
-
+    /**
+     * Metodo que se ejecuta cuando se hace click sobre el boton para cambiar nombre de usuario
+     * Se muestra un alertDialog para introducir el nuevo nombre y valida que no exista ya.
+     * Si es correcto se cambia el nombre de usuario y se muestra un mensaje de exito
+     * @param view Vista que activo el evento
+     * */
     private fun onChangeUsername(view: View?) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -112,32 +121,47 @@ class ProfileFragment : Fragment() {
                             response
                     } else {
                         if (response == null) {
-                            viewModel.updateUsername(firebaseUser.uid, txt).addOnCompleteListener {
-                                onChangeUsernameComplete(it)
-                                binding.determinateBar.visibility = View.INVISIBLE
-                                dialog.dismiss()
-                            }
+                            viewModel.updateUsername(homeViewModel.firebaseUser.value!!.uid, txt)
+                                .addOnCompleteListener {
+                                    onChangeUsernameComplete(it)
+                                    binding.determinateBar.visibility = View.INVISIBLE
+                                    dialog.dismiss()
+                                }
                         }
                     }
 
                 }
             },
             {
+                binding.determinateBar.visibility = View.INVISIBLE
                 binding.profileFrame.alpha = 1f
             }
         )
         dialogFactory.createPromptDialog(binding.root, data)
     }
 
+    /**
+     * Para firebase ciertas acciones como borrar la cuenta o cambiar el correo son acciones sensibles,
+     * por lo que se debe haber autenticado recientemente para poder hacer dichas acciones.
+     * Este metodo sirve para reautenticar la cuenta de Google con la que se ha iniciado sesion
+     * @param onCompleteListener Metodo que se ejecutara cuando la reautenticacion termine
+     * */
     private fun reauthenticateWithGoogle(onCompleteListener: (p: Task<Void>) -> Unit) {
         binding.profileFrame.alpha = 0.3f
         val acct = GoogleSignIn.getLastSignedInAccount(requireContext())
         if (acct != null) {
             val credential: AuthCredential = GoogleAuthProvider.getCredential(acct.idToken, null)
-            firebaseUser.reauthenticate(credential).addOnCompleteListener(onCompleteListener)
+            homeViewModel.firebaseUser.value?.reauthenticate(credential)
+                ?.addOnCompleteListener(onCompleteListener)
         }
     }
 
+    /**
+     * Para firebase ciertas acciones como borrar la cuenta o cambiar el correo son acciones sensibles,
+     * por lo que se debe haber autenticado recientemente para poder hacer dichas acciones.
+     * Este metodo muestra un dialog para introducir correo y contraseña y se intenta reautenticar
+     * @param onCompleteListener Metodo que se ejecutara cuando la reautenticacion termine
+     * */
     private fun reauthenticate(onCompleteListener: (p: Task<Void>) -> Unit) {
         binding.profileFrame.alpha = 0.3f
         val data = TwoPromptResult(
@@ -153,19 +177,27 @@ class ProfileFragment : Fragment() {
                 if (email != "" && password != "") {
                     val credential: AuthCredential =
                         EmailAuthProvider.getCredential(email, password)
-                    firebaseUser.reauthenticate(credential).addOnCompleteListener {
-                        dialog.dismiss()
-                        onCompleteListener(it)
-                    }
+                    homeViewModel.firebaseUser.value?.reauthenticate(credential)
+                        ?.addOnCompleteListener {
+                            dialog.dismiss()
+                            onCompleteListener(it)
+                        }
                 }
             },
             {
+                binding.determinateBar.visibility = View.INVISIBLE
                 binding.profileFrame.alpha = 1f
             }
         )
         dialogFactory.createTwoPromptLayout(binding.root, data, true)
     }
 
+    /**
+     * Metodo que se ejecutara cuando se haga click sobre el boton de cambiar email.
+     * Este metodo se para como onCompleteListener para el metodo de [reauthenticate]
+     * ya que cambiar el correo es una accion sensible
+     * @param task Resultado de la reautenticacion
+     * */
     private fun onChangeEmail(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -180,8 +212,8 @@ class ProfileFragment : Fragment() {
                         response ?: ""
                     if (response == null) {
                         binding.determinateBar.visibility = View.VISIBLE
-                        firebaseUser.verifyBeforeUpdateEmail(txt)
-                            .addOnCompleteListener {
+                        homeViewModel.firebaseUser.value?.verifyBeforeUpdateEmail(txt)
+                            ?.addOnCompleteListener {
                                 dialog.dismiss()
                                 binding.determinateBar.visibility = View.INVISIBLE
                                 onEmailChangeComplete(it)
@@ -190,6 +222,7 @@ class ProfileFragment : Fragment() {
                     }
                 },
                 {
+                    binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f
                 }
             )
@@ -201,6 +234,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se haga click sobre cambiar contraseña
+     * Este metodo se pasa como onCompleteListener al metodo [reauthenticate]
+     * ya que cambiar la contraseña es una accion sensible
+     * @param task Resultado de la reautenticacion
+     * */
     private fun onPasswordChange(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -208,6 +247,7 @@ class ProfileFragment : Fragment() {
             val data = PromptResult(
                 getString(R.string.change_password_title),
                 getString(R.string.change_password_hint),
+                //Este es la funcion que se ejecutara cuando se presione el boton del dialog
                 { dialog ->
                     binding.determinateBar.visibility = View.INVISIBLE
                     val txt =
@@ -216,8 +256,8 @@ class ProfileFragment : Fragment() {
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {
-                        firebaseUser.updatePassword(txt)
-                            .addOnCompleteListener {
+                        homeViewModel.firebaseUser.value?.updatePassword(txt)
+                            ?.addOnCompleteListener {
                                 dialog.dismiss()
                                 binding.determinateBar.visibility = View.INVISIBLE
                                 onPasswordChangeComplete(it)
@@ -226,6 +266,7 @@ class ProfileFragment : Fragment() {
                     }
                 },
                 {
+                    binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f
                 }
             )
@@ -237,6 +278,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se presione el boton de borrar cuenta
+     * Este metodo se pasa como onCompleteListener al metodo [reauthenticate]
+     * Ya que borrar la cuenta es una accion sensible
+     * @param task Resultado de la reautenticacion
+     * */
     private fun onDeleteAccount(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
@@ -245,10 +292,11 @@ class ProfileFragment : Fragment() {
                 getString(R.string.delete_account),
                 getString(R.string.delete_account_message),
                 {
+                    // este es la funcion que se ejecutara cuando se haga click sobre el boton ok del dialog
                     binding.determinateBar.visibility = View.VISIBLE
-                    firebaseUser.delete().addOnCompleteListener {
+                    homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {
                         lifecycleScope.launch {
-                            if (viewModel.deleteUser(firebaseUser.uid)) {
+                            if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
                                 onDeleteAccountComplete(it)
                                 binding.determinateBar.visibility = View.INVISIBLE
                             } else {
@@ -259,6 +307,8 @@ class ProfileFragment : Fragment() {
                     it.dismiss()
                 },
                 {
+                    //esto se ejecuta cuando se hace cancel
+                    binding.determinateBar.visibility = View.INVISIBLE
                     binding.profileFrame.alpha = 1f;
                 }
             )
@@ -270,6 +320,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se complete la tarea de borrar la cuenta
+     * @param task El resultado de borrar la cuenta si es exitosa, se muestra mensaje de exito, de error si fallo
+     * */
     private fun onDeleteAccountComplete(task: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         if (task.isSuccessful) {
@@ -286,12 +340,17 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Metodo que se ejecutara cuando se complete la tarea de cambiar el nombre de usuarios
+     * @param it Resultado de la tarea de cambiar el nombre de usuario, si es correcto se muestra mensaje de exito y de error si fallo
+     * */
     private fun onChangeUsernameComplete(it: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         if (it.isSuccessful) {
             successChange(getString(R.string.change_username_success))
             lifecycleScope.launch {
-                val usr = firebaseUser.uid.let { viewModel.findUser(it) }
+                val usr = homeViewModel.firebaseUser.value?.uid?.let { viewModel.findUser(it) }
+                if (usr != null) homeViewModel.updateUser(usr)
                 binding.usernameTextView.text = usr?.username
             }
         } else {
@@ -361,20 +420,5 @@ class ProfileFragment : Fragment() {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent)
-    }
-
-
-    private fun loadCurrentUser(firebaseUser: FirebaseUser) {
-        lifecycleScope.launch {
-            val usr = firebaseUser.uid.let { viewModel.findUser(it) }
-            binding.usernameTextView.text = usr?.username
-            if (firebaseUser.providerData.size > 0) {
-                provider = firebaseUser.providerData[firebaseUser.providerData.size - 1].providerId
-            }
-            if (usr != null) {
-                currentUser = usr
-            }
-            prepareBinding(binding)
-        }
     }
 }
