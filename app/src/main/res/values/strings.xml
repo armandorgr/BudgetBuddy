@@ -34,5 +34,11 @@
     <string name="profile">Profile</string>
     <string name="buscarAmigo">Buscar amigo</string>
     <string name="buscar">Buscar</string>
+    <string name="pedro">Pedro</string>
+    <string name="viajeAMadrid">Viaje a Madrid</string>
+    <string name="vacacionesEnIbiza">Vacaciones en Ibiza</string>
+    <string name="detallesViajeCompleto">VER DETALLES DEL VIAJE COMPLETO</string>
+    <string name="pedirPago">PETICIÓN PAGO</string>
+    <string name="mandarMensaje">MANDAR MENSAJE</string>
 
 </resources>
