@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +17,16 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
 import com.example.budgetbuddy.model.Group
+import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,10 +45,12 @@ class GroupOverviewFragment : Fragment() {
     private val args: GroupOverviewFragmentArgs by navArgs()
     private val binding get() = _binding!!
     private val viewModel: NewGroupViewModel by viewModels()
+    private lateinit var friendsViewModel:FriendsViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var selectedGroup: Group
     private lateinit var selectedGroupUID: String
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
+    private lateinit var membersAdapter: NewGroupFriendsAdapter
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     override fun onCreateView(
@@ -51,6 +58,7 @@ class GroupOverviewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        friendsViewModel = ViewModelProvider(requireActivity())[FriendsViewModel::class.java]
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         _binding = FragmentNewGroupBinding.inflate(inflater, container, false)
         binding.viewmodel = viewModel
@@ -60,15 +68,26 @@ class GroupOverviewFragment : Fragment() {
         selectedGroupUID = args.selectedGroupUID
 
         homeViewModel.firebaseUser.value?.uid?.let { viewModel.setCurrentUserUID(it) }
+        //Se cargn los miembros del grupo cargado
+        selectedGroupUID.let { viewModel.loadMembers(it) }
         friendsAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList())
-
+        membersAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList())
         prepareBinding()
         //Se cargan en el Adapter los miembros del grupo cargado
         //Al hacer collect cada vez que se cambie la lista, se ejecuta el codigo
         // que lo pasa al Adapter y la lista de actualiza
         lifecycleScope.launch {
-            viewModel.members.collect {
-                friendsAdapter.setData(it)
+                viewModel.members.collect {
+                    friendsAdapter.setData(it)
+                }
+        }
+        lifecycleScope.launch {
+            friendsViewModel.friendsUidList.collect{
+                val filteredList = it.toMutableList().apply {
+                    removeIf { item -> selectedGroup.members?.contains((item as ListItemUiModel.User).uid) ?: false}
+                    map { item -> (item as ListItemUiModel.User).selected = false }
+                }
+                membersAdapter.setData(filteredList)
             }
         }
         return binding.root
@@ -139,12 +158,16 @@ class GroupOverviewFragment : Fragment() {
      * */
     private fun prepareBinding() {
         binding.title.text = getString(R.string.group_overview_title)
+        binding.friendsTitle.text = getString(R.string.members_text)
+        binding.membersLinearLayout.visibility = View.VISIBLE
+        binding.membersTitle.visibility = View.VISIBLE
+
         binding.leaveGroup.visibility = View.VISIBLE
-        //Se cargn los miembros del grupo cargado
-        selectedGroupUID.let { viewModel.loadMembers(it) }
+        binding.membersRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.adapter = friendsAdapter
+        binding.membersRecyclerView.adapter = membersAdapter
 
         binding.createGroupBtn.visibility = View.GONE //Se esconde el boton de crear grupo
         //Se hace visible el boton de borrar grupo
@@ -187,6 +210,8 @@ class GroupOverviewFragment : Fragment() {
         viewModel.setStartDate(LocalDateTime.parse(selectedGroup.startDate))
         viewModel.setEndDate(LocalDateTime.parse(selectedGroup.endDate))
 
+        binding.searchView.setOnQueryTextListener(viewModel.getSearchViewFilter(friendsAdapter))
+        binding.searchViewMembers.setOnQueryTextListener(viewModel.getSearchViewFilter(membersAdapter))
 
         //Se añaden eventos en caso de que el usuario quiera cambiar y los datos y validar estos antes de actualizar
         binding.startDate.setOnClickListener {

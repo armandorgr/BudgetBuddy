@@ -36,9 +36,11 @@ class NewGroupFriendsAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newItems: List<ListItemUiModel>) {
         listData.clear()
-        listData.addAll(newItems)
+        val filteredData = newItems.toMutableList().apply { filter { item -> !selectedList.any { item2 -> item2.uid == (item as ListItemUiModel.User).uid }}}
+        Log.d("prueba", "filtered data: $filteredData")
+        listData.addAll(filteredData)
         shownData.clear()
-        shownData.addAll(newItems)
+        shownData.addAll(filteredData)
         notifyDataSetChanged()
     }
 

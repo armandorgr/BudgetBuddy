@@ -150,6 +150,34 @@
                         </LinearLayout>
                     </LinearLayout>
                     <TextView
+                        android:id="@+id/membersTitle"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/friends"
+                        android:layout_marginVertical="@dimen/margin_small"/>
+                    <LinearLayout
+                        android:id="@+id/membersLinearLayout"
+                        android:visibility="gone"
+                        android:background="@drawable/recycler_view_bkg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/searchViewMembers"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/search_friends_hint"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/membersRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/friendsTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/friends"
@@ -170,6 +198,7 @@
                             android:id="@+id/friendsRecyclerView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
+
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/buttonsLinearLayout"
