@@ -18,6 +18,7 @@ import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -109,6 +110,7 @@ class ProfileFragment : Fragment() {
             getString(R.string.change_username_title),
             getString(R.string.change_username_hint),
             { dialog ->
+                Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE
                 val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                 var response: String? = viewModel.validateUsername(txt)
@@ -169,6 +171,7 @@ class ProfileFragment : Fragment() {
             getString(R.string.email),
             getString(R.string.password),
             { dialog ->
+                Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE
                 val email =
                     dialog.findViewById<TextInputEditText>(R.id.EmailEditText).text.toString()
@@ -206,6 +209,7 @@ class ProfileFragment : Fragment() {
                 getString(R.string.new_email_title),
                 getString(R.string.new_email),
                 { dialog ->
+                    Utilities.hideKeyboard(requireActivity(), requireContext())
                     val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                     val response: String? = viewModel.validateEmail(txt)
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
@@ -249,6 +253,7 @@ class ProfileFragment : Fragment() {
                 getString(R.string.change_password_hint),
                 //Este es la funcion que se ejecutara cuando se presione el boton del dialog
                 { dialog ->
+                    Utilities.hideKeyboard(requireActivity(), requireContext())
                     binding.determinateBar.visibility = View.INVISIBLE
                     val txt =
                         dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
@@ -288,6 +293,7 @@ class ProfileFragment : Fragment() {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
         if (task.isSuccessful) {
+            Utilities.hideKeyboard(requireActivity(), requireContext())
             val data = ResultOkCancel(
                 getString(R.string.delete_account),
                 getString(R.string.delete_account_message),

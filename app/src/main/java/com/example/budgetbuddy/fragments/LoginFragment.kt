@@ -22,6 +22,7 @@ import com.example.budgetbuddy.databinding.FragmentLoginBinding
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -207,24 +208,13 @@ class LoginFragment : Fragment() {
             val password = binding.passwordEditText.text.toString()
             if (email != "" && password != "") {
                 signInWithEmailPassword(email, password)
-                hideKeyboard()
+                Utilities.hideKeyboard(requireActivity(), requireContext())
             }
         }
         binding.google.setOnClickListener {
             signIn()
         }
         return view
-    }
-
-
-    /**
-     * Metodo que sirve para esconder el teclado
-     * */
-    private fun hideKeyboard() {
-        requireActivity().currentFocus?.let { view ->
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
-        }
     }
 
     /**
