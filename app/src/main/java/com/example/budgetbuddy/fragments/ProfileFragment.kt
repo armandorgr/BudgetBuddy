@@ -294,14 +294,14 @@ class ProfileFragment : Fragment() {
                 {
                     // este es la funcion que se ejecutara cuando se haga click sobre el boton ok del dialog
                     binding.determinateBar.visibility = View.VISIBLE
-                    homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {
-                        lifecycleScope.launch {
-                            if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
-                                onDeleteAccountComplete(it)
+                    lifecycleScope.launch {
+                        if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
+                            homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {t->
+                                onDeleteAccountComplete(t)
                                 binding.determinateBar.visibility = View.INVISIBLE
-                            } else {
-                                failedChange(getString(R.string.delete_account_fail))
                             }
+                        } else {
+                            failedChange(getString(R.string.delete_account_fail))
                         }
                     }
                     it.dismiss()

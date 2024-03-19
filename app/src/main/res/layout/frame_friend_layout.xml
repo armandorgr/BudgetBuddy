@@ -26,8 +26,7 @@
 
     <!-- Primera tarjeta de viaje -->
     <androidx.cardview.widget.CardView
-        android:cardCornerRadius="8dp"
-        android:cardElevation="4dp"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp">
@@ -60,8 +59,6 @@
 
     <!-- Segunda tarjeta de viaje -->
     <androidx.cardview.widget.CardView
-        android:cardCornerRadius="8dp"
-        android:cardElevation="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp">

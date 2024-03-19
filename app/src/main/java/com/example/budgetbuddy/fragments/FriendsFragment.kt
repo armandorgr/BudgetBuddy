@@ -37,12 +37,7 @@ class FriendsFragment : Fragment() {
     ): View {
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         _binding = FragmentFriendsBinding.inflate(inflater, container, false)
-        prepareBinding()
         return binding.root
-    }
-
-    private fun prepareBinding() {
-        binding.sendInvitationBtn.setOnClickListener(this::onSendInvitationClick)
     }
 
     private fun onSendInvitationClick(view: View?) {
