@@ -1,39 +1,28 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
-import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
-import com.example.budgetbuddy.util.DateResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.text.FieldPosition
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 /**
  * Clase responsable de vincular la logica definida en el ViewModel [NewGroupViewModel] con la vista de [NewGroupFragment]
@@ -46,7 +35,6 @@ class NewGroupFragment : Fragment() {
     private lateinit var friendsViewModel: FriendsViewModel
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var homeViewModel: HomeViewModel
-
 
 
     override fun onCreateView(

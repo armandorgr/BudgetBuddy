@@ -138,6 +138,8 @@ class GroupOverviewFragment : Fragment() {
      * Metodo que sirve para vincular la vista con la logica del [NewGroupViewModel]
      * */
     private fun prepareBinding() {
+        binding.title.text = getString(R.string.group_overview_title)
+        binding.leaveGroup.visibility = View.VISIBLE
         //Se cargn los miembros del grupo cargado
         selectedGroupUID.let { viewModel.loadMembers(it) }
         binding.friendsRecyclerView.layoutManager =

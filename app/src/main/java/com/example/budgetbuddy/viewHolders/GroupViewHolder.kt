@@ -17,6 +17,9 @@ class GroupViewHolder(
     private val textView: TextView by lazy {
         containerView.findViewById(R.id.item_text_view)
     }
+    private val descriptionView: TextView by lazy {
+        containerView.findViewById(R.id.item_description_view)
+    }
 
     override fun bindData(listItem: ListItemUiModel) {
         require(listItem is ListItemUiModel.Group) {
@@ -24,6 +27,7 @@ class GroupViewHolder(
         }
         val groupData = listItem.groupUiModel
         textView.text = groupData.name
+        descriptionView.text = groupData.description
         containerView.setOnClickListener {
             onClickListener.onClick(listItem, adapterPosition)
         }

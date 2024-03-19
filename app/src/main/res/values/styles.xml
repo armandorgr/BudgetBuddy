@@ -37,6 +37,11 @@
         <item name="fontFamily">@font/ptsans_bold</item>
     </style>
 
+    <style name="groupName">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="alertDialogText" parent="TextAppearance.AppCompat.Caption">
         <item name="android:textSize">@dimen/text_size_title_text</item>
         <item name="fontFamily">@font/ptsans_bold</item>
