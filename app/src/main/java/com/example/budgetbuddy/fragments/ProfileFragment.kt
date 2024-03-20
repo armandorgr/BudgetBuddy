@@ -21,6 +21,7 @@ import com.example.budgetbuddy.util.TwoPromptResult
 import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
+import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+    private val registerViewModel: RegisterViewModel by viewModels()
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var dialogFactory: AlertDialogFactory
     private val GOOGLE_PROVIDER = "google.com"
@@ -113,7 +115,7 @@ class ProfileFragment : Fragment() {
                 Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE
                 val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
-                var response: String? = viewModel.validateUsername(txt)
+                var response: String? = registerViewModel.validateUserName(txt, requireContext())
                 dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                     response ?: ""
                 lifecycleScope.launch {
@@ -211,7 +213,7 @@ class ProfileFragment : Fragment() {
                 { dialog ->
                     Utilities.hideKeyboard(requireActivity(), requireContext())
                     val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
-                    val response: String? = viewModel.validateEmail(txt)
+                    val response: String? = registerViewModel.validateEmail(txt, requireContext())
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {
@@ -257,7 +259,7 @@ class ProfileFragment : Fragment() {
                     binding.determinateBar.visibility = View.INVISIBLE
                     val txt =
                         dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
-                    val response: String? = viewModel.validatePassword(txt)
+                    val response: String? = registerViewModel.validatePassword(txt, txt, requireContext())
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {

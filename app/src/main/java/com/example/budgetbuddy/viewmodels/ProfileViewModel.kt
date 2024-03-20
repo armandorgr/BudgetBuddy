@@ -14,10 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val repo: UsersRepository,
-    private val emailValidator: EmailValidator,
-    private val usernameValidator: UsernameValidator,
-    private val passwordValidator: PasswordValidator
+    private val repo: UsersRepository
 ) : ViewModel() {
 
     suspend fun findUser(uid: String): User? {
@@ -40,17 +37,5 @@ class ProfileViewModel @Inject constructor(
 
     fun updateUsername(uid: String, newUsername: String): Task<Void> {
         return repo.updateUsername(uid, newUsername)
-    }
-
-    fun validateUsername(input: String): String? {
-        return usernameValidator.validate(input)
-    }
-
-    fun validatePassword(input: String): String? {
-        return passwordValidator.validate(input)
-    }
-
-    fun validateEmail(input: String): String? {
-        return emailValidator.validate(input)
     }
 }

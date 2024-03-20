@@ -2,7 +2,6 @@ package com.example.budgetbuddy.viewmodels
 
 import android.content.Context
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
@@ -12,7 +11,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
-import com.example.budgetbuddy.model.DateSent
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
@@ -20,10 +18,8 @@ import com.example.budgetbuddy.repositories.GroupRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.DateResult
-import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.validations.validators.GroupDescriptionValidator
 import com.example.budgetbuddy.validations.validators.GroupNameValidator
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot

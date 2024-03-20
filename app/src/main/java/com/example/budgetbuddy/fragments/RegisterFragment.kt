@@ -1,13 +1,11 @@
 package com.example.budgetbuddy.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
@@ -145,30 +143,30 @@ class RegisterFragment : Fragment() {
         //Se añaden eventos a los widgets de las vistas para aplicar la logica definida en el ViewModel
         binding.usernameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setUserName(text.toString())
-            viewModel.validateUserName(text.toString())
+            viewModel.validateUserName(text.toString(), requireContext())
         })
         binding.emailEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setEmail(text.toString())
-            viewModel.validateEmail(text.toString())
+            viewModel.validateEmail(text.toString(), requireContext())
         })
         binding.firstNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setFirstName(text.toString())
-            viewModel.validateFirstName(text.toString())
+            viewModel.validateFirstName(text.toString(), requireContext())
         })
         binding.lastNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setLastName(text.toString())
-            viewModel.validateLastName(text.toString())
+            viewModel.validateLastName(text.toString(), requireContext())
         })
         binding.passwordEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setPassword(text.toString())
             viewModel.validatePassword(
                 text.toString(),
-                binding.repeatPasswordEditText.text.toString()
+                binding.repeatPasswordEditText.text.toString(), requireContext()
             )
         })
         binding.repeatPasswordEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setRepeatPassword(text.toString())
-            viewModel.validatePassword(text.toString(), binding.passwordEditText.text.toString())
+            viewModel.validatePassword(text.toString(), binding.passwordEditText.text.toString(), requireContext())
         })
 
     }

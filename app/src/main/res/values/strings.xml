@@ -109,4 +109,6 @@
     <string name="group_overview_title">Group Overview</string>
     <string name="leave_group_btn_text">Leave group</string>
     <string name="members_text">Members</string>
+    <string name="space_validation_error">%s can\'t contain spaces</string>
+    <string name="passwords_are_not_the_same">The passwords are not the same</string>
 </resources>

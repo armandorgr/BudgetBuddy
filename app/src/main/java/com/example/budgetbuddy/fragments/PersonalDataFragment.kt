@@ -85,15 +85,15 @@ class PersonalDataFragment : Fragment(), OnClickListener {
 
         binding.usernameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setUserName(text.toString())
-            viewModel.validateUserName(text.toString())
+            viewModel.validateUserName(text.toString(), requireContext())
         })
         binding.firstNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setFirstName(text.toString())
-            viewModel.validateFirstName(text.toString())
+            viewModel.validateFirstName(text.toString(), requireContext())
         })
         binding.lastNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setLastName(text.toString())
-            viewModel.validateLastName(text.toString())
+            viewModel.validateLastName(text.toString(), requireContext())
         })
     }
 

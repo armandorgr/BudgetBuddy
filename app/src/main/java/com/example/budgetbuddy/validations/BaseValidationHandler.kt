@@ -12,7 +12,7 @@ abstract class BaseValidationHandler : ValidationHandler{
         return this
     }
 
-    override fun validate(input: String): String? {
+    override fun validate(input: Any): String? {
         return nextHandler?.validate(input)
     }
 }

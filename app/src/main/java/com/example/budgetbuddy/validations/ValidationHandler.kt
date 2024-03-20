@@ -16,5 +16,5 @@ interface ValidationHandler {
      * @param input Entrada a validar
      * @return El resultado de validar, String si no pasa la validacion y null si lo hace.
      * */
-    fun validate(input:String):String?
+    fun validate(input:Any):String?
 }
