@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,7 +39,10 @@ class HomeViewModel @Inject constructor(
              val usr = auth.currentUser!!
              _firebaseUser.postValue(usr)
              usr.uid.let {
-                 _currentUser.postValue(repo.findUserByUID(it))
+                 val user = repo.findUserByUID(it)!!
+                 user.profilePic = usr.photoUrl.toString()
+                 Log.d("prueba", "profile pic: ${usr.photoUrl}")
+                 _currentUser.postValue(user)
              }
              if(usr.providerData.size>0){
                  _provider.postValue(usr.providerData[usr.providerData.size - 1].providerId)

@@ -2,6 +2,7 @@ package com.example.budgetbuddy.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.EditText
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
@@ -65,6 +67,10 @@ class ProfileFragment : Fragment() {
      * */
     private fun prepareBinding(binding: FragmentProfileBinding) {
         binding.usernameTextView.text = homeViewModel.currentUser.value?.username
+        homeViewModel.currentUser.value?.profilePic?.let {
+            Glide.with(requireContext()).load(it).into(binding.proflePic)
+            Log.d("prueba", "profile pic: $it")
+        }
         // si se inicio sesion con Google se ocultan las opciones de cambio de correo y contraseña
         if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
             binding.newEmailConstraintLayout.visibility = View.GONE
