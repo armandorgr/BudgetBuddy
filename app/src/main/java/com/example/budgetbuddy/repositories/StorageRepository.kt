@@ -13,15 +13,15 @@ import java.util.UUID
 class StorageRepository {
     private val reference = FirebaseStorage.getInstance().reference
 
-    fun saveImageFromUri(uri: Uri):UploadTask{
-       return reference.child("images/${UUID.randomUUID()}").putFile(uri)
+    fun saveImageFromUri(uri: Uri, path: String):UploadTask{
+       return reference.child("images/$path").putFile(uri)
     }
 
-    fun saveImageFromBitmap(bitmap: Bitmap):UploadTask{
+    fun saveImageFromBitmap(bitmap: Bitmap, path: String):UploadTask{
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         val data = byteArrayOutputStream.toByteArray()
-        return reference.child("images/${UUID.randomUUID()}").putBytes(data)
+        return reference.child("images/$path").putBytes(data)
     }
 
     fun getImageUriFromPath(path:String):Task<Uri>{

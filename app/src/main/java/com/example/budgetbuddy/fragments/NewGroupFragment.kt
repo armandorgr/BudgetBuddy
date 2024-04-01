@@ -16,6 +16,8 @@ import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ImageLoader
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
@@ -48,7 +50,7 @@ class NewGroupFragment : Fragment() {
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
         //Se carga el adapter con un lista de los amigos seleccionados
-        friendsAdapter = NewGroupFriendsAdapter(layoutInflater, viewModel.getSelectedList())
+        friendsAdapter = NewGroupFriendsAdapter(layoutInflater, viewModel.getSelectedList(), ListItemImageLoader(requireContext()))
         prepareBinding(binding)
         //se cargan los amigos del usuario actual, con collect cada vez que se actualice la lista, el adapter tambien se
         //actulizara

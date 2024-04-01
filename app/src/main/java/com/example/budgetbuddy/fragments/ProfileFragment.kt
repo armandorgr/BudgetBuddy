@@ -22,6 +22,7 @@ import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
@@ -86,12 +87,7 @@ class ProfileFragment : Fragment() {
         val profilePic = homeViewModel.currentUser.value?.profilePic
 
         if(profilePic != null){
-            Log.d("prueba", "profile pic: $profilePic")
-            if(homeViewModel.provider.value == PASSWORD_PROVIDER){
-                viewModel.loadProfilePic(profilePic, binding.proflePic, requireContext())
-            }else{
-                Glide.with(requireContext()).load(homeViewModel.currentUser.value?.profilePic).into(binding.proflePic)
-            }
+            viewModel.loadProfilePic(requireContext(), profilePic, binding.proflePic)
         }
         // si se inicio sesion con Google se ocultan las opciones de cambio de correo y contraseña
         if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
@@ -134,9 +130,10 @@ class ProfileFragment : Fragment() {
 
     private fun onSuccessCamera(img: Bitmap) {
         homeViewModel.firebaseUser.value?.uid?.let {uid->
-            viewModel.uploadProfilePicByBitmap(img, uid){
+            viewModel.uploadProfilePicByBitmap(Utilities.PROFILE_PIC_ST ,img, uid){it, path->
                 if(it.isSuccessful){
                     Glide.with(requireContext()).load(img).into(binding.proflePic)
+                    homeViewModel.currentUser.value?.profilePic = path
                 }else{
                     Toast.makeText(requireContext(), it.exception?.message, Toast.LENGTH_SHORT).show()
                 }
@@ -146,9 +143,10 @@ class ProfileFragment : Fragment() {
 
     private fun onSuccessGallery(uri: Uri) {
         homeViewModel.firebaseUser.value?.uid?.let {uid->
-            viewModel.uploadProfilePicByUri(uri, uid){
+            viewModel.uploadProfilePicByUri(Utilities.PROFILE_PIC_ST, uri, uid){it, path ->
                 if(it.isSuccessful){
                     Glide.with(requireContext()).load(uri).into(binding.proflePic)
+                    homeViewModel.currentUser.value?.profilePic = path
                 }else{
                     Toast.makeText(requireContext(), it.exception?.message, Toast.LENGTH_SHORT).show()
                 }

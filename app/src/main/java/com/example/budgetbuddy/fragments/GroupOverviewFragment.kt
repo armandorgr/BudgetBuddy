@@ -19,6 +19,7 @@ import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
@@ -70,8 +71,8 @@ class GroupOverviewFragment : Fragment() {
         homeViewModel.firebaseUser.value?.uid?.let { viewModel.setCurrentUserUID(it) }
         //Se cargn los miembros del grupo cargado
         selectedGroupUID.let { viewModel.loadMembers(it) }
-        friendsAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList())
-        membersAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList())
+        friendsAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList(), ListItemImageLoader(requireContext()))
+        membersAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList(), ListItemImageLoader(requireContext()))
         prepareBinding()
         //Se cargan en el Adapter los miembros del grupo cargado
         //Al hacer collect cada vez que se cambie la lista, se ejecuta el codigo

@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.StorageRepository
 import com.example.budgetbuddy.repositories.UsersRepository
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.validations.validators.EmailValidator
 import com.example.budgetbuddy.validations.validators.PasswordValidator
 import com.example.budgetbuddy.validations.validators.UsernameValidator
@@ -48,34 +49,50 @@ class ProfileViewModel @Inject constructor(
         return repo.updateUsername(uid, newUsername)
     }
 
-    fun uploadProfilePicByUri(uri:Uri,currentUserUid:String ,onCompleteListener:(Task<Void>)->Unit){
-        storageRepository.saveImageFromUri(uri).addOnCompleteListener{
-            if(it.isSuccessful){
+    fun uploadProfilePicByUri(
+        prefix: String,
+        uri: Uri,
+        currentUserUid: String,
+        onCompleteListener: (Task<Void>, path: String) -> Unit
+    ) {
+        storageRepository.saveImageFromUri(uri, currentUserUid).addOnCompleteListener {
+            if (it.isSuccessful) {
                 it.result.metadata?.let { it1 ->
-                    repo.setProfilePic(it1.path, currentUserUid).addOnCompleteListener(onCompleteListener)
+                    repo.setProfilePic(prefix + it1.path, currentUserUid)
+                        .addOnCompleteListener { task ->
+                            onCompleteListener(
+                                task,
+                                prefix + it1.path
+                            )
+                        }
                 }
             }
         }
     }
 
-    fun uploadProfilePicByBitmap(bitmap: Bitmap, currentUserUid: String, onCompleteListener:(Task<Void>)->Unit){
-        storageRepository.saveImageFromBitmap(bitmap).addOnCompleteListener{
-            if(it.isSuccessful){
-                it.result.metadata?.let { it1->
-                    repo.setProfilePic(it1.path, currentUserUid).addOnCompleteListener(onCompleteListener)
+    fun uploadProfilePicByBitmap(
+        prefix: String,
+        bitmap: Bitmap,
+        currentUserUid: String,
+        onCompleteListener: (Task<Void>, path: String) -> Unit
+    ) {
+        storageRepository.saveImageFromBitmap(bitmap, currentUserUid).addOnCompleteListener {
+            if (it.isSuccessful) {
+                it.result.metadata?.let { it1 ->
+                    repo.setProfilePic(prefix + it1.path, currentUserUid)
+                        .addOnCompleteListener { task ->
+                            onCompleteListener(
+                                task,
+                                prefix + it1.path
+                            )
+                        }
                 }
             }
         }
     }
 
-    fun loadProfilePic(path:String, view:ImageView, context: Context){
-        storageRepository.getImageUriFromPath(path).addOnCompleteListener {
-            if(it.isSuccessful){
-                val uri = it.result as Uri
-                Glide.with(context).load(uri).into(view)
-            }else{
-                Log.d("prueba","error: ${it.exception?.message}")
-            }
-        }
+    fun loadProfilePic(context: Context, path:String, view:ImageView) {
+        val imageLoader = ListItemImageLoader(context)
+        imageLoader.loadImage(path, view)
     }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.UsersRepository
+import com.example.budgetbuddy.util.Utilities
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -41,7 +42,9 @@ class HomeViewModel @Inject constructor(
              usr.uid.let {
                  val user = repo.findUserByUID(it)!!
                  if(usr.photoUrl != null){
-                     user.profilePic = usr.photoUrl.toString()
+                     val photoUrl = Utilities.PROFILE_PIC_GG + usr.photoUrl.toString()
+                     user.profilePic = photoUrl
+                     repo.setProfilePic(photoUrl, usr.uid)
                  }
                  _currentUser.postValue(user)
              }

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewHolders.NewGroupFriendViewHolder
 
 /**
@@ -17,6 +18,7 @@ import com.example.budgetbuddy.viewHolders.NewGroupFriendViewHolder
 class NewGroupFriendsAdapter(
     private val layoutInflater: LayoutInflater,
     private val selectedList : MutableList<ListItemUiModel.User>,
+    private val imageLoader: ListItemImageLoader,
     private val onCheckClickListener: OnCheckClickListener? = null,
     private val onUnCheckClickListener: OnCheckClickListener? = null,
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
@@ -96,7 +98,7 @@ class NewGroupFriendsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewGroupFriendViewHolder {
         val view = layoutInflater.inflate(R.layout.new_group_friend_layout, parent, false)
-        return NewGroupFriendViewHolder(view, onCheckClickEvent, onUnCheckEvent)
+        return NewGroupFriendViewHolder(view, imageLoader ,onCheckClickEvent, onUnCheckEvent)
     }
 
     override fun getItemCount(): Int {
