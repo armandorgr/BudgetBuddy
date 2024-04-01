@@ -40,8 +40,9 @@ class HomeViewModel @Inject constructor(
              _firebaseUser.postValue(usr)
              usr.uid.let {
                  val user = repo.findUserByUID(it)!!
-                 user.profilePic = usr.photoUrl.toString()
-                 Log.d("prueba", "profile pic: ${usr.photoUrl}")
+                 if(usr.photoUrl != null){
+                     user.profilePic = usr.photoUrl.toString()
+                 }
                  _currentUser.postValue(user)
              }
              if(usr.providerData.size>0){

@@ -1,6 +1,9 @@
 package com.example.budgetbuddy.fragments
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +21,7 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
@@ -47,7 +53,11 @@ class ProfileFragment : Fragment() {
     private lateinit var dialogFactory: AlertDialogFactory
     private val GOOGLE_PROVIDER = "google.com"
     private val PASSWORD_PROVIDER = "password"
+    private val imageLoader = ImageLoader(this,this::onSuccessGallery,this::onSuccessCamera,this::onPhotoLoadFail)
 
+    private fun onPhotoLoadFail() {
+        Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,10 +76,22 @@ class ProfileFragment : Fragment() {
      * @param binding Binding contenedor de las referencias a todos los widgets del fragmento
      * */
     private fun prepareBinding(binding: FragmentProfileBinding) {
+        if(homeViewModel.provider.value?.equals(PASSWORD_PROVIDER) == true){
+            binding.addPhotoIcon.visibility = View.VISIBLE
+            binding.proflePic.setOnClickListener(this::onAddPhotoClick)
+        }
+        
         binding.usernameTextView.text = homeViewModel.currentUser.value?.username
-        homeViewModel.currentUser.value?.profilePic?.let {
-            Glide.with(requireContext()).load(it).into(binding.proflePic)
-            Log.d("prueba", "profile pic: $it")
+
+        val profilePic = homeViewModel.currentUser.value?.profilePic
+
+        if(profilePic != null){
+            Log.d("prueba", "profile pic: $profilePic")
+            if(homeViewModel.provider.value == PASSWORD_PROVIDER){
+                viewModel.loadProfilePic(profilePic, binding.proflePic, requireContext())
+            }else{
+                Glide.with(requireContext()).load(homeViewModel.currentUser.value?.profilePic).into(binding.proflePic)
+            }
         }
         // si se inicio sesion con Google se ocultan las opciones de cambio de correo y contraseña
         if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
@@ -103,6 +125,35 @@ class ProfileFragment : Fragment() {
 
         }
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
+    }
+
+    private fun onAddPhotoClick(view: View?) {
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() })
+    }
+
+    private fun onSuccessCamera(img: Bitmap) {
+        homeViewModel.firebaseUser.value?.uid?.let {uid->
+            viewModel.uploadProfilePicByBitmap(img, uid){
+                if(it.isSuccessful){
+                    Glide.with(requireContext()).load(img).into(binding.proflePic)
+                }else{
+                    Toast.makeText(requireContext(), it.exception?.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun onSuccessGallery(uri: Uri) {
+        homeViewModel.firebaseUser.value?.uid?.let {uid->
+            viewModel.uploadProfilePicByUri(uri, uid){
+                if(it.isSuccessful){
+                    Glide.with(requireContext()).load(uri).into(binding.proflePic)
+                }else{
+                    Toast.makeText(requireContext(), it.exception?.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     /**

@@ -111,4 +111,8 @@
     <string name="members_text">Members</string>
     <string name="space_validation_error">%s can\'t contain spaces</string>
     <string name="passwords_are_not_the_same">The passwords are not the same</string>
+    <string name="camera_btn_txt">Camera</string>
+    <string name="galley_btn_txt">Gallery</string>
+    <string name="select_photo_title">Select image from…</string>
+    <string name="select_photo_error">Error loading image</string>
 </resources>

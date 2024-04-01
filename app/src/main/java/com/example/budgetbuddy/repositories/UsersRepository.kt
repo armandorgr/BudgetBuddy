@@ -87,4 +87,8 @@ class UsersRepository {
     fun findUserByUIDNotSuspend(uid:String): Task<DataSnapshot>{
         return database.child(uid).get()
     }
+
+    fun setProfilePic(path:String, currentUserUid:String):Task<Void>{
+        return database.child(currentUserUid).child("profilePic").setValue(path)
+    }
 }

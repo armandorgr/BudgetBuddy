@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.budgetbuddy.R
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textfield.TextInputLayout.EndIconMode
@@ -202,6 +203,31 @@ class AlertDialogFactory(private val context: Context) {
             alertDialog.dismiss()
         }
 
+        return dialogView
+    }
+
+    fun createPhotoDialog(view:View, onGallery:()->Unit, onCamera:()->Unit):View{
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.photoConstraintLayout)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_photo_dialog, constraintLayout)
+        val btnGallery = dialogView.findViewById<MaterialButton>(R.id.dialog_button_galley)
+        val btnCamera = dialogView.findViewById<MaterialButton>(R.id.dialog_button_camera)
+
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        if (alertDialog.window != null) {
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        btnGallery.setOnClickListener{
+            onGallery()
+            alertDialog.dismiss()
+        }
+        btnCamera.setOnClickListener{
+            onCamera()
+            alertDialog.dismiss()
+        }
+        alertDialog.show()
         return dialogView
     }
 }
