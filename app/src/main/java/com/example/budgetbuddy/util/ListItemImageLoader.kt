@@ -12,7 +12,7 @@ import com.google.firebase.storage.ktx.storage
 class ListItemImageLoader(
     private val context: Context
 ) {
-    fun loadImage(path:String, view: ImageView){
+    fun loadImage(path:String, view: ImageView, onComplete:((uri:Uri)->Unit)?=null){
         val prefix = path.substring(0,2)
         val url = path.substring(2)
         if(prefix == Utilities.PROFILE_PIC_ST){
@@ -20,6 +20,7 @@ class ListItemImageLoader(
             storageReference.downloadUrl.addOnCompleteListener {
                 if(it.isSuccessful){
                     val uri = it.result as Uri
+                    if(onComplete != null) onComplete(uri)
                     Glide.with(context).load(uri).placeholder(R.drawable.default_profile_pic).into(view)
                 }else{
                     Log.d("prueba", "error: ${it.exception?.message}")

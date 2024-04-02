@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewHolders.GroupViewHolder
 
 /**
@@ -14,6 +15,7 @@ import com.example.budgetbuddy.viewHolders.GroupViewHolder
  * */
 class GroupsAdapter(
     private val layoutInflater: LayoutInflater,
+    private val imageLoader: ListItemImageLoader,
     private val onClickListener: OnClickListener
 ) : RecyclerView.Adapter<GroupViewHolder>() {
     private val listData = mutableListOf<ListItemUiModel>()
@@ -57,7 +59,7 @@ class GroupsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         val view = layoutInflater.inflate(R.layout.group_layout, parent, false)
-        return GroupViewHolder(view, onClick)
+        return GroupViewHolder(view, imageLoader, onClick)
     }
 
     override fun getItemCount(): Int {

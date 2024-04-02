@@ -1,6 +1,8 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.widget.DatePicker
@@ -15,9 +17,11 @@ import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.GroupRepository
+import com.example.budgetbuddy.repositories.StorageRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.DateResult
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.validations.validators.GroupDescriptionValidator
 import com.example.budgetbuddy.validations.validators.GroupNameValidator
 import com.google.android.gms.tasks.Task
@@ -34,11 +38,13 @@ import javax.inject.Inject
 @HiltViewModel
 class NewGroupViewModel @Inject constructor(
     private val repo: GroupRepository,
-    private val userRepo: UsersRepository
+    private val userRepo: UsersRepository,
+    private val storageRepository:StorageRepository
 ) : ViewModel() {
     private var childEventsAdded = false
     private var _currentUserUid: String? = null
     private val currentUserUid get() = _currentUserUid!!
+    private var groupPhoto:Any? = null
     private val startDateLimit = LocalDateTime.of(2000, 1, 1, 0, 0)
     private val endDateLimit = LocalDateTime.of(2030, 1, 1, 0, 0)
     private val selectedUsers: MutableList<ListItemUiModel.User> = mutableListOf()
@@ -50,6 +56,14 @@ class NewGroupViewModel @Inject constructor(
 
     fun setCurrentUserUID(uid: String) {
         this._currentUserUid = uid
+    }
+
+    fun setGroupPhoto(photo:Any){
+        this.groupPhoto = photo
+    }
+
+    fun getGroupPhoto():Any?{
+        return this.groupPhoto
     }
 
     private fun getDate(datePicker: DatePicker): LocalDateTime {
@@ -87,6 +101,7 @@ class NewGroupViewModel @Inject constructor(
                 .associateWith { true } as HashMap<String, Boolean>
         members[currentUserUid] = true
         val group = Group(
+            "${Utilities.PROFILE_PIC_ST}images/$groupUID",
             currentUserUid,
             _groupName.value,
             _groupDescription.value,
@@ -94,8 +109,24 @@ class NewGroupViewModel @Inject constructor(
             _endDate.value.toString(),
             members
         )
-        repo.updateGroup(group, groupUID).addOnCompleteListener {
-            onCompleteListener(it)
+        repo.updateGroup(group, groupUID).addOnCompleteListener {task->
+            groupPhoto.let {pic->
+                when(pic){
+                    is Uri -> {
+                        storageRepository.saveImageFromUri(pic, groupUID).addOnCompleteListener{
+                            onCompleteListener(task)
+                        }
+                    }
+                    is Bitmap -> {
+                        storageRepository.saveImageFromBitmap(pic, groupUID).addOnCompleteListener{
+                            onCompleteListener(task)
+                        }
+                    }
+                    else -> {
+                        onCompleteListener(task)
+                    }
+                }
+            }
         }
     }
 
@@ -213,7 +244,9 @@ class NewGroupViewModel @Inject constructor(
             selectedUsers.map { it.uid }
                 .associateWith { true } as HashMap<String, Boolean>
         members[currentUserUid] = true
+
         val group = Group(
+            "${Utilities.PROFILE_PIC_ST}images/",
             currentUserUid,
             _groupName.value,
             _groupDescription.value,
@@ -221,8 +254,22 @@ class NewGroupViewModel @Inject constructor(
             _endDate.value.toString(),
             members
         )
-        repo.createNewGroup(group, currentUserUid)?.addOnCompleteListener {
-            onCompleteListener(it)
+        repo.createNewGroup(group, currentUserUid){ task, uid ->
+            groupPhoto.let {pic->
+                when(pic){
+                    is Uri -> {
+                        storageRepository.saveImageFromUri(pic, uid).addOnCompleteListener{
+                            onCompleteListener(task)
+                        }
+                    }
+                    is Bitmap -> {
+                        storageRepository.saveImageFromBitmap(pic, uid).addOnCompleteListener{
+                            onCompleteListener(task)
+                        }
+                    }
+                    else -> { onCompleteListener(task)}
+                }
+            }
         }
     }
 

@@ -1,10 +1,13 @@
 package com.example.budgetbuddy.fragments
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,12 +16,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
@@ -46,13 +51,33 @@ class GroupOverviewFragment : Fragment() {
     private val args: GroupOverviewFragmentArgs by navArgs()
     private val binding get() = _binding!!
     private val viewModel: NewGroupViewModel by viewModels()
-    private lateinit var friendsViewModel:FriendsViewModel
+    private lateinit var friendsViewModel: FriendsViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var selectedGroup: Group
     private lateinit var selectedGroupUID: String
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var membersAdapter: NewGroupFriendsAdapter
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val imageLoader =
+        ImageLoader(this, this::onSuccessGallery, this::onSuccessCamera, this::onPhotoLoadFail)
+
+    private fun onPhotoLoadFail() {
+        Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    private fun onSuccessCamera(img: Bitmap) {
+        viewModel.setGroupPhoto(img)
+        Glide.with(requireContext()).load(img).placeholder(R.drawable.default_group_pic)
+            .into(binding.groupPic)
+    }
+
+    private fun onSuccessGallery(uri: Uri) {
+        viewModel.setGroupPhoto(uri)
+        Glide.with(requireContext()).load(uri).placeholder(R.drawable.default_group_pic)
+            .into(binding.groupPic)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,24 +93,35 @@ class GroupOverviewFragment : Fragment() {
         selectedGroup = args.selectedGroup
         selectedGroupUID = args.selectedGroupUID
 
+
         homeViewModel.firebaseUser.value?.uid?.let { viewModel.setCurrentUserUID(it) }
         //Se cargn los miembros del grupo cargado
         selectedGroupUID.let { viewModel.loadMembers(it) }
-        friendsAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList(), ListItemImageLoader(requireContext()))
-        membersAdapter = NewGroupFriendsAdapter(inflater, viewModel.getSelectedList(), ListItemImageLoader(requireContext()))
+        friendsAdapter = NewGroupFriendsAdapter(
+            inflater,
+            viewModel.getSelectedList(),
+            ListItemImageLoader(requireContext())
+        )
+        membersAdapter = NewGroupFriendsAdapter(
+            inflater,
+            viewModel.getSelectedList(),
+            ListItemImageLoader(requireContext())
+        )
         prepareBinding()
         //Se cargan en el Adapter los miembros del grupo cargado
         //Al hacer collect cada vez que se cambie la lista, se ejecuta el codigo
         // que lo pasa al Adapter y la lista de actualiza
         lifecycleScope.launch {
-                viewModel.members.collect {
-                    friendsAdapter.setData(it)
-                }
+            viewModel.members.collect {
+                friendsAdapter.setData(it)
+            }
         }
         lifecycleScope.launch {
-            friendsViewModel.friendsUidList.collect{
+            friendsViewModel.friendsUidList.collect {
                 val filteredList = it.toMutableList().apply {
-                    removeIf { item -> selectedGroup.members?.contains((item as ListItemUiModel.User).uid) ?: false}
+                    removeIf { item ->
+                        selectedGroup.members?.contains((item as ListItemUiModel.User).uid) ?: false
+                    }
                     map { item -> (item as ListItemUiModel.User).selected = false }
                 }
                 membersAdapter.setData(filteredList)
@@ -134,6 +170,7 @@ class GroupOverviewFragment : Fragment() {
      * @param task Tarea devuelta por el metodo del repositorio al intentar actualizar el grupo
      * */
     private fun onGroupUpdateComplete(task: Task<Void>) {
+        binding.determinateBar.visibility = View.GONE
         if (task.isSuccessful) {
             showSuccessDialog(getString(R.string.group_update_success))
         } else {
@@ -164,11 +201,20 @@ class GroupOverviewFragment : Fragment() {
         binding.membersTitle.visibility = View.VISIBLE
 
         binding.leaveGroup.visibility = View.VISIBLE
-        binding.membersRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.membersRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.adapter = friendsAdapter
         binding.membersRecyclerView.adapter = membersAdapter
+
+        binding.groupPic.setOnClickListener(this::onAddPhotoClick)
+
+        selectedGroup.pic?.let {
+            ListItemImageLoader(requireContext()).loadImage(it, binding.groupPic) { uri ->
+                viewModel.setGroupPhoto(uri)
+            }
+        }
 
         binding.createGroupBtn.visibility = View.GONE //Se esconde el boton de crear grupo
         //Se hace visible el boton de borrar grupo
@@ -187,6 +233,7 @@ class GroupOverviewFragment : Fragment() {
             //Se añade evento en caso de click para intentar actualizar el grupo
             setOnClickListener {
                 if (viewModel.allGood) {
+                    binding.determinateBar.visibility = View.VISIBLE
                     viewModel.updateGroup(selectedGroupUID) {
                         onGroupUpdateComplete(it)
                     }
@@ -212,7 +259,11 @@ class GroupOverviewFragment : Fragment() {
         viewModel.setEndDate(LocalDateTime.parse(selectedGroup.endDate))
 
         binding.searchView.setOnQueryTextListener(viewModel.getSearchViewFilter(friendsAdapter))
-        binding.searchViewMembers.setOnQueryTextListener(viewModel.getSearchViewFilter(membersAdapter))
+        binding.searchViewMembers.setOnQueryTextListener(
+            viewModel.getSearchViewFilter(
+                membersAdapter
+            )
+        )
 
         //Se añaden eventos en caso de que el usuario quiera cambiar y los datos y validar estos antes de actualizar
         binding.startDate.setOnClickListener {
@@ -229,6 +280,14 @@ class GroupOverviewFragment : Fragment() {
             viewModel.setGroupDescription(text.toString())
             viewModel.validateGroupDescription(text.toString(), requireContext())
         })
+    }
+
+    private fun onAddPhotoClick(view: View?) {
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        alertDialogFactory.createPhotoDialog(
+            binding.root,
+            { imageLoader.getPhotoFromGallery() },
+            { imageLoader.getPhotoFromCamera() })
     }
 
     override fun onDestroyView() {

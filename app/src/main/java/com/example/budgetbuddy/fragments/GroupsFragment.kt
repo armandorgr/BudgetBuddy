@@ -14,6 +14,7 @@ import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.adapters.recyclerView.GroupsAdapter
 import com.example.budgetbuddy.databinding.FragmentGroupsBinding
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewmodels.GroupsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,7 +53,7 @@ class GroupsFragment : Fragment() {
         _binding = FragmentGroupsBinding.inflate(layoutInflater, container, false)
         //Se cargan los grupos a los que pertenece el usuario actual
         homeViewModel.firebaseUser.value?.uid?.let { viewModel.loadGroups(it) }
-        groupsAdapter = GroupsAdapter(layoutInflater, onClick)
+        groupsAdapter = GroupsAdapter(layoutInflater, ListItemImageLoader(requireContext()), onClick)
         prepareBinding(binding)
         return binding.root
     }

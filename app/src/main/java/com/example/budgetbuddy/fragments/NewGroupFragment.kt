@@ -1,16 +1,20 @@
 package com.example.budgetbuddy.fragments
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
@@ -19,10 +23,12 @@ import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import hilt_aggregated_deps._com_example_budgetbuddy_fragments_InvitationsFragment_GeneratedInjector
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
@@ -37,6 +43,7 @@ class NewGroupFragment : Fragment() {
     private lateinit var friendsViewModel: FriendsViewModel
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var homeViewModel: HomeViewModel
+    private val imageLoader = ImageLoader(this, this::onSuccessGallery, this::onSuccessCamera, this::onPhotoLoadFail)
 
 
     override fun onCreateView(
@@ -95,6 +102,25 @@ class NewGroupFragment : Fragment() {
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
+    private fun onSuccessCamera(img: Bitmap) {
+        viewModel.setGroupPhoto(img)
+        Glide.with(requireContext()).load(img).placeholder(R.drawable.default_group_pic).into(binding.groupPic)
+    }
+
+    private fun onPhotoLoadFail() {
+        Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun onSuccessGallery(uri: Uri) {
+        viewModel.setGroupPhoto(uri)
+        Glide.with(requireContext()).load(uri).placeholder(R.drawable.default_group_pic).into(binding.groupPic)
+    }
+
+    private fun onAddPhotoClick(view: View?) {
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() })
+    }
+
     /**
      * Metodo que sirve para vincular los eventos de la vista del fragmento [NewGroupFragment] con los metodos
      * definidos en [NewGroupViewModel]
@@ -110,6 +136,11 @@ class NewGroupFragment : Fragment() {
         binding.endDate.setOnClickListener{
             viewModel.onEndDateClick(requireContext(), binding.root)
         }
+
+        viewModel.getGroupPhoto()?.let { Glide.with(requireContext()).load(it).placeholder(R.drawable.default_group_pic).into(binding.groupPic) }
+        //Se añade evento para añadir foto al grupo
+        binding.groupPic.setOnClickListener(this::onAddPhotoClick)
+
         binding.createGroupBtn.setOnClickListener{
             if(viewModel.allGood){
                 if(homeViewModel.firebaseUser.value != null){
