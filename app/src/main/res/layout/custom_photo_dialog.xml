@@ -47,5 +47,15 @@
                 android:layout_margin="@dimen/margin_small"
                 app:icon="@drawable/baseline_add_a_photo_24"/>
         </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:backgroundTint="@color/md_theme_light_red"
+            android:visibility="gone"
+            android:id="@+id/dialog_button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_photo_btn_text"
+            android:layout_margin="@dimen/margin_small"
+            app:icon="@drawable/baseline_delete_forever_24"
+            />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

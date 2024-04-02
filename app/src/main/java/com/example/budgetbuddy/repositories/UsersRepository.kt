@@ -25,6 +25,10 @@ class UsersRepository {
         return database.child(uid).setValue(user)
     }
 
+    fun deleteProfilePic(uid:String):Task<Void>{
+        return database.child(uid).child("profilePic").setValue(null)
+    }
+
     suspend fun findUserUIDByUsername(username:String):String?{
         return try{
             val snapshot = database.orderByChild("username").equalTo(username).get().await()

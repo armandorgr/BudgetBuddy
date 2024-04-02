@@ -282,12 +282,19 @@ class GroupOverviewFragment : Fragment() {
         })
     }
 
+    private fun onDeletePhoto(){
+        viewModel.setGroupPhoto(null)
+        Glide.with(requireContext()).load(R.drawable.default_group_pic).into(binding.groupPic)
+    }
+
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
+        val onDelete = if(viewModel.getGroupPhoto() != null) this::onDeletePhoto else null
         alertDialogFactory.createPhotoDialog(
             binding.root,
             { imageLoader.getPhotoFromGallery() },
-            { imageLoader.getPhotoFromCamera() })
+            { imageLoader.getPhotoFromCamera() },
+            onDelete)
     }
 
     override fun onDestroyView() {

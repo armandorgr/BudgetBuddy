@@ -49,6 +49,18 @@ class ProfileViewModel @Inject constructor(
         return repo.updateUsername(uid, newUsername)
     }
 
+    fun deleteProfilePic(path:String, currentUserUid: String, onComplete:(task:Task<Void>)->Unit){
+        storageRepository.deletePhoto(path).addOnCompleteListener {
+            if(it.isSuccessful){
+                repo.deleteProfilePic(currentUserUid).addOnCompleteListener {task->
+                    onComplete(task)
+                }
+            }else{
+                onComplete(it)
+            }
+        }
+    }
+
     fun uploadProfilePicByUri(
         prefix: String,
         uri: Uri,

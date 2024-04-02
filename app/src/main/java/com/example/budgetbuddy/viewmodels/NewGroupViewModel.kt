@@ -58,7 +58,7 @@ class NewGroupViewModel @Inject constructor(
         this._currentUserUid = uid
     }
 
-    fun setGroupPhoto(photo:Any){
+    fun setGroupPhoto(photo:Any?){
         this.groupPhoto = photo
     }
 
@@ -123,7 +123,9 @@ class NewGroupViewModel @Inject constructor(
                         }
                     }
                     else -> {
-                        onCompleteListener(task)
+                        storageRepository.deletePhoto("images/$groupUID").addOnCompleteListener{
+                            onCompleteListener(task)
+                        }
                     }
                 }
             }
@@ -132,7 +134,10 @@ class NewGroupViewModel @Inject constructor(
 
     fun deleteGroup(groupUID: String, completeListener: (task: Task<Void>) -> Unit) {
         addMember(currentUserUid, User())
-        repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener(completeListener)
+        repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener{
+            storageRepository.deletePhoto("images/$groupUID")
+            completeListener(it)
+        }
     }
 
     fun onStartDateClick(context: Context, view: View) {

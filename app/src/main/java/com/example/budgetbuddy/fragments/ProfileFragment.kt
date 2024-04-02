@@ -123,9 +123,27 @@ class ProfileFragment : Fragment() {
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
 
+    private fun onDeleteProfilePic(){
+        val path = homeViewModel.currentUser.value?.profilePic?.substring(2)
+        path?.let {
+            homeViewModel.firebaseUser.value?.uid?.let { it1 ->
+                viewModel.deleteProfilePic(it, it1){ task ->
+                    if(task.isSuccessful){
+                        Toast.makeText(requireContext(), getString(R.string.delete_photo_success),Toast.LENGTH_SHORT).show()
+                        homeViewModel.currentUser.value?.profilePic = null
+                        Glide.with(requireContext()).load(R.drawable.default_profile_pic).into(binding.proflePic)
+                    }else{
+                        Toast.makeText(requireContext(), path,Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
-        alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() })
+        val onDelete = if(homeViewModel.currentUser.value?.profilePic != null) this::onDeleteProfilePic else null
+        alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() }, onDelete)
     }
 
     private fun onSuccessCamera(img: Bitmap) {
@@ -359,6 +377,12 @@ class ProfileFragment : Fragment() {
                     binding.determinateBar.visibility = View.VISIBLE
                     lifecycleScope.launch {
                         if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
+                            val path = homeViewModel.currentUser.value?.profilePic?.substring(2)
+                            path?.let {
+                                homeViewModel.firebaseUser.value?.uid?.let { it1 ->
+                                    viewModel.deleteProfilePic(it, it1){}
+                                }
+                            }
                             homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {t->
                                 onDeleteAccountComplete(t)
                                 binding.determinateBar.visibility = View.INVISIBLE

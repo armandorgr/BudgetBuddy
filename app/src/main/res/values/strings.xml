@@ -115,4 +115,7 @@
     <string name="galley_btn_txt">Gallery</string>
     <string name="select_photo_title">Select image from…</string>
     <string name="select_photo_error">Error loading image</string>
+    <string name="delete_photo_btn_text">Delete photo</string>
+    <string name="delete_photo_success">Photo deleted successfully</string>
+    <string name="delete_photo_fail">Photo delete failed</string>
 </resources>

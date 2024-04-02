@@ -24,6 +24,10 @@ class StorageRepository {
         return reference.child("images/$path").putBytes(data)
     }
 
+    fun deletePhoto(path:String):Task<Void>{
+        return reference.child(path).delete()
+    }
+
     fun getImageUriFromPath(path:String):Task<Uri>{
         return reference.child(path).downloadUrl
     }

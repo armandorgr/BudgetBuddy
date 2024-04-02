@@ -56,7 +56,7 @@ class AlertDialogFactory(private val context: Context) {
 
 
     @SuppressLint("MissingInflatedId")
-    fun createDatePickerDialog(view: View, result:DateResult):View {
+    fun createDatePickerDialog(view: View, result: DateResult): View {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.dateDialogConstraintLayout)
         val dialogView = LayoutInflater.from(context)
             .inflate(R.layout.custom_date_prompt_dialog, constraintLayout)
@@ -206,11 +206,19 @@ class AlertDialogFactory(private val context: Context) {
         return dialogView
     }
 
-    fun createPhotoDialog(view:View, onGallery:()->Unit, onCamera:()->Unit):View{
+    @SuppressLint("MissingInflatedId")
+    fun createPhotoDialog(
+        view: View,
+        onGallery: () -> Unit,
+        onCamera: () -> Unit,
+        onDelete: (() -> Unit)? = null
+    ): View {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.photoConstraintLayout)
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_photo_dialog, constraintLayout)
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.custom_photo_dialog, constraintLayout)
         val btnGallery = dialogView.findViewById<MaterialButton>(R.id.dialog_button_galley)
         val btnCamera = dialogView.findViewById<MaterialButton>(R.id.dialog_button_camera)
+        val btnDelete = dialogView.findViewById<MaterialButton>(R.id.dialog_button_delete)
 
 
         val builder = AlertDialog.Builder(context)
@@ -219,13 +227,20 @@ class AlertDialogFactory(private val context: Context) {
         if (alertDialog.window != null) {
             alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
         }
-        btnGallery.setOnClickListener{
+        btnGallery.setOnClickListener {
             onGallery()
             alertDialog.dismiss()
         }
-        btnCamera.setOnClickListener{
+        btnCamera.setOnClickListener {
             onCamera()
             alertDialog.dismiss()
+        }
+        onDelete?.let {
+            btnDelete.visibility = View.VISIBLE
+            btnDelete.setOnClickListener{
+                onDelete()
+                alertDialog.dismiss()
+            }
         }
         alertDialog.show()
         return dialogView
