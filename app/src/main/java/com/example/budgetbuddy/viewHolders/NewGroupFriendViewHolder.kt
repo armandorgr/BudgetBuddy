@@ -19,6 +19,9 @@ class NewGroupFriendViewHolder(
     private val userNameView: TextView by lazy {
         containerView.findViewById(R.id.item_text_view)
     }
+    private val roleView: TextView by lazy {
+        containerView.findViewById(R.id.role_text_view)
+    }
     private val checkBox: CheckBox by lazy {
         containerView.findViewById(R.id.checkbox)
     }
@@ -34,13 +37,22 @@ class NewGroupFriendViewHolder(
         checkBox.isChecked = listItem.selected
 
         userData.profilePic?.let { path -> imageLoader.loadImage(path, profilePic) }
-
+        listItem.role?.let {
+            roleView.visibility = View.VISIBLE
+            roleView.text = if(it) "Admin" else "Member"
+        }
         Log.d("prueba", "Elemento ${listItem.userUiModel.username} selected: ${listItem.selected}")
-        checkBox.setOnClickListener {
-            if (checkBox.isChecked) {
-                onCheckClickListener.onCheckClicked(listItem, adapterPosition)
-            } else {
-                onUnCheckClickListener.onCheckClicked(listItem, adapterPosition)
+
+        if(listItem.editable != true){
+            checkBox.isClickable = false
+            Log.d("prueba", " editable: ${listItem.editable}")
+        }else{
+            checkBox.setOnClickListener {
+                if (checkBox.isChecked) {
+                    onCheckClickListener.onCheckClicked(listItem, adapterPosition)
+                } else {
+                    onUnCheckClickListener.onCheckClicked(listItem, adapterPosition)
+                }
             }
         }
         userNameView.text = userData.username

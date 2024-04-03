@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.adapters.recyclerView
 
 import android.annotation.SuppressLint
+import android.text.BoringLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ class NewGroupFriendsAdapter(
     private val onCheckClickListener: OnCheckClickListener? = null,
     private val onUnCheckClickListener: OnCheckClickListener? = null,
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
+
+    private var editable = true
     /**
      * Lista la cual contendra todos los amigos cargados del usuario
      * */
@@ -38,11 +41,19 @@ class NewGroupFriendsAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newItems: List<ListItemUiModel>) {
         listData.clear()
+        newItems.forEach { (it as ListItemUiModel.User).editable = editable }
         val filteredData = newItems.toMutableList().apply { filter { item -> !selectedList.any { item2 -> item2.uid == (item as ListItemUiModel.User).uid }}}
         Log.d("prueba", "filtered data: $filteredData")
         listData.addAll(filteredData)
         shownData.clear()
         shownData.addAll(filteredData)
+        notifyDataSetChanged()
+    }
+
+    fun setEditable(editable:Boolean){
+        this.editable = editable
+        listData.forEach { (it as ListItemUiModel.User).editable = editable }
+        shownData.forEach { (it as ListItemUiModel.User).editable = editable }
         notifyDataSetChanged()
     }
 

@@ -280,6 +280,22 @@ class GroupOverviewFragment : Fragment() {
             viewModel.setGroupDescription(text.toString())
             viewModel.validateGroupDescription(text.toString(), requireContext())
         })
+
+        lifecycleScope.launch {
+            viewModel.currentUserRole.collect{
+                if(!it){
+                    friendsAdapter.setEditable(it)
+                    binding.deleteGroupBtn.visibility = View.GONE
+                    binding.groupNameEditText.isEnabled = it
+                    binding.groupDescriptionEditText.isEnabled = it
+                    binding.startDate.isClickable = it
+                    binding.endDate.isClickable = it
+                    binding.groupPic.isClickable = it
+                }else{
+
+                }
+            }
+        }
     }
 
     private fun onDeletePhoto(){

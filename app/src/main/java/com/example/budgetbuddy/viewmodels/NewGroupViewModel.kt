@@ -41,17 +41,20 @@ import javax.inject.Inject
 class NewGroupViewModel @Inject constructor(
     private val repo: GroupRepository,
     private val userRepo: UsersRepository,
-    private val storageRepository:StorageRepository
+    private val storageRepository: StorageRepository
 ) : ViewModel() {
     private var childEventsAdded = false
     private var _currentUserUid: String? = null
     private val currentUserUid get() = _currentUserUid!!
-    private var groupPhoto:Any? = null
+    private var groupPhoto: Any? = null
     private val startDateLimit = LocalDateTime.of(2000, 1, 1, 0, 0)
     private val endDateLimit = LocalDateTime.of(2030, 1, 1, 0, 0)
     private val selectedUsers: MutableList<ListItemUiModel.User> = mutableListOf()
     private val _members = MutableStateFlow<List<ListItemUiModel.User>>(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
+
+    private val _currentUserRole:MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val currentUserRole:StateFlow<Boolean> = _currentUserRole
 
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
@@ -60,11 +63,11 @@ class NewGroupViewModel @Inject constructor(
         this._currentUserUid = uid
     }
 
-    fun setGroupPhoto(photo:Any?){
+    fun setGroupPhoto(photo: Any?) {
         this.groupPhoto = photo
     }
 
-    fun getGroupPhoto():Any?{
+    fun getGroupPhoto(): Any? {
         return this.groupPhoto
     }
 
@@ -98,8 +101,23 @@ class NewGroupViewModel @Inject constructor(
     }
 
     fun updateGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
-        val membersToDelete = _members.value.filter { i -> !selectedUsers.contains(i) }.map { it.uid }
-        val friendsToInvite = selectedUsers.filter { i -> !_members.value.contains(i) }.map { it.uid }
+        val membersToDelete = mutableListOf<String>()
+        val friendsToInvite = mutableListOf<String>()
+
+        for(member in _members.value){
+            if(!selectedUsers.any { selectedUser -> selectedUser.uid==member.uid }){
+                membersToDelete.add(member.uid)
+            }
+        }
+        for(user in selectedUsers){
+            if(!_members.value.any { member -> member.uid==user.uid }){
+                friendsToInvite.add(user.uid)
+            }
+        }
+
+        Log.d("prueba","selected users $selectedUsers")
+        Log.d("prueba","membersToDelete $membersToDelete")
+        Log.d("prueba","friendsToInvite $friendsToInvite")
 
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/$groupUID",
@@ -111,32 +129,38 @@ class NewGroupViewModel @Inject constructor(
             null
         )
 
-        repo.updateGroup(group, groupUID, membersToDelete, friendsToInvite).addOnCompleteListener {task->
-            groupPhoto.let {pic->
-                when(pic){
-                    is Uri -> {
-                        storageRepository.saveImageFromUri(pic, groupUID).addOnCompleteListener{
-                            onCompleteListener(task)
+        repo.updateGroup(group, groupUID, membersToDelete, friendsToInvite)
+            .addOnCompleteListener { task ->
+                groupPhoto.let { pic ->
+                    when (pic) {
+                        is Uri -> {
+                            storageRepository.saveImageFromUri(pic, groupUID)
+                                .addOnCompleteListener {
+                                    onCompleteListener(task)
+                                }
                         }
-                    }
-                    is Bitmap -> {
-                        storageRepository.saveImageFromBitmap(pic, groupUID).addOnCompleteListener{
-                            onCompleteListener(task)
+
+                        is Bitmap -> {
+                            storageRepository.saveImageFromBitmap(pic, groupUID)
+                                .addOnCompleteListener {
+                                    onCompleteListener(task)
+                                }
                         }
-                    }
-                    else -> {
-                        storageRepository.deletePhoto("images/$groupUID").addOnCompleteListener{
-                            onCompleteListener(task)
+
+                        else -> {
+                            storageRepository.deletePhoto("images/$groupUID")
+                                .addOnCompleteListener {
+                                    onCompleteListener(task)
+                                }
                         }
                     }
                 }
             }
-        }
     }
 
     fun deleteGroup(groupUID: String, completeListener: (task: Task<Void>) -> Unit) {
-        addMember(currentUserUid, User())
-        repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener{
+        addMember(currentUserUid, User(), null)
+        repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener {
             storageRepository.deletePhoto("images/$groupUID")
             completeListener(it)
         }
@@ -171,9 +195,9 @@ class NewGroupViewModel @Inject constructor(
         _members.value = newMembers
     }
 
-    private fun addMember(uid: String, member: User) {
+    private fun addMember(uid: String, member: User, role: Boolean?) {
         val updatedList = _members.value.toMutableList().apply {
-            add(ListItemUiModel.User(uid, member, true))
+            add(ListItemUiModel.User(uid, member, true, role))
         }
         updateList(updatedList)
     }
@@ -188,14 +212,21 @@ class NewGroupViewModel @Inject constructor(
     private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val key = snapshot.key
+            val role = snapshot.getValue(Boolean::class.java)
+            Log.d("prueba", "role: $role")
             key?.let {
                 userRepo.findUserByUIDNotSuspend(it).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = task.result.getValue(User::class.java)
                         user?.let { u ->
                             if (currentUserUid != it) {
-                                selectedUsers.add(ListItemUiModel.User(key, u, true))
-                                addMember(key, u)
+                                selectedUsers.add(ListItemUiModel.User(key, u, true, role))
+                                addMember(key, u, role)
+                                // se carga el rol de usuario actual para ver si puede o no realizar modificaciones
+                            }else{
+                                if (role != null) {
+                                    _currentUserRole.value = role
+                                }
                             }
                         }
                     } else {
@@ -245,7 +276,11 @@ class NewGroupViewModel @Inject constructor(
     private val _groupDescriptionError = MutableLiveData<String?>()
     val groupDescriptionError: LiveData<String?> = _groupDescriptionError
 
-    fun createNewGroup(currentUserUid: String, username:String ,onCompleteListener: (task: Task<Void>) -> Unit) {
+    fun createNewGroup(
+        currentUserUid: String,
+        username: String,
+        onCompleteListener: (task: Task<Void>) -> Unit
+    ) {
         val members: MutableList<String> = selectedUsers.map { user -> user.uid }.toMutableList()
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/",
@@ -257,20 +292,24 @@ class NewGroupViewModel @Inject constructor(
             hashMapOf(currentUserUid to true)
         )
 
-        repo.createNewGroup(group, currentUserUid, members, username){ task, uid ->
-            groupPhoto.let {pic->
-                when(pic){
+        repo.createNewGroup(group, currentUserUid, members, username) { task, uid ->
+            groupPhoto.let { pic ->
+                when (pic) {
                     is Uri -> {
-                        storageRepository.saveImageFromUri(pic, uid).addOnCompleteListener{
+                        storageRepository.saveImageFromUri(pic, uid).addOnCompleteListener {
                             onCompleteListener(task)
                         }
                     }
+
                     is Bitmap -> {
-                        storageRepository.saveImageFromBitmap(pic, uid).addOnCompleteListener{
+                        storageRepository.saveImageFromBitmap(pic, uid).addOnCompleteListener {
                             onCompleteListener(task)
                         }
                     }
-                    else -> { onCompleteListener(task)}
+
+                    else -> {
+                        onCompleteListener(task)
+                    }
                 }
             }
         }

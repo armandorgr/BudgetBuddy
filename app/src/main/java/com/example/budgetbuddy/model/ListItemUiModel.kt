@@ -9,7 +9,9 @@ sealed class ListItemUiModel {
     data class User(
         val uid:String,
         val userUiModel: com.example.budgetbuddy.model.User,
-        var selected: Boolean = false
+        var selected: Boolean = false,
+        val role:Boolean? = null,
+        var editable:Boolean?= null
     ) : ListItemUiModel()
 
     data class Group(
