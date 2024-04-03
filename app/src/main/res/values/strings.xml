@@ -118,4 +118,6 @@
     <string name="delete_photo_btn_text">Delete photo</string>
     <string name="delete_photo_success">Photo deleted successfully</string>
     <string name="delete_photo_fail">Photo delete failed</string>
+    <string name="friend_invitation_text">%s wants to be your friend</string>
+    <string name="group_invitation_text">%s wants you join this group</string>
 </resources>

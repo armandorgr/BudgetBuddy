@@ -32,6 +32,7 @@ class InvitationsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _invitationsList = MutableStateFlow<List<ListItemUiModel>>(emptyList())
     val invitationsList: StateFlow<List<ListItemUiModel>> = _invitationsList
+    private var childEventsAdded = false
 
     private lateinit var adapter: InvitationAdapter
 
@@ -65,6 +66,8 @@ class InvitationsViewModel @Inject constructor(
             if (invitation.senderUid != null) {
                 if (invitation.type == INVITATION_TYPE.FRIEND_REQUEST) {
                     repo.confirmFriendRequestInvitation(currentUser.uid, invitation.senderUid)
+                }else{
+                    repo.confirmGroupInvitation(currentUser.uid, invitation.senderUid)
                 }
             }
         }
@@ -117,25 +120,10 @@ class InvitationsViewModel @Inject constructor(
 
     }
 
-    private val valueEventListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val newInvitations = mutableListOf<ListItemUiModel>()
-            for (invitation in snapshot.children) {
-                val invi = invitation.getValue(InvitationUiModel::class.java)
-                invi?.let { newInvitations.add(ListItemUiModel.Invitation(it)) }
-            }
-            updateList(newInvitations)
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            Log.d("prueba", "loadPost:onCancelled ${error.toException()}")
-        }
-    }
-
     fun loadInvitations(uid: String) {
+        if(childEventsAdded) return
         val reference = repo.getInvitationsReference(uid)
-        reference.addValueEventListener(valueEventListener)
-        reference.removeEventListener(valueEventListener)
-        //reference.addChildEventListener(childEventListener)
+        reference.addChildEventListener(childEventListener)
+        childEventsAdded = true
     }
 }

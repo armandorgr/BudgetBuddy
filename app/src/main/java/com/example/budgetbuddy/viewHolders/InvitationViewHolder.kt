@@ -1,11 +1,15 @@
 package com.example.budgetbuddy.viewHolders
 
+import android.content.Context
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,9 +19,15 @@ import java.time.temporal.ChronoUnit
 
 class InvitationViewHolder(
     private val containerView: View,
+    private val imageLoader: ListItemImageLoader,
+    private val context: Context,
     private val onAcceptListener: OnClickListener,
     private val onDeclineListener: OnClickListener
 ) : ListItemViewHolder(containerView) {
+
+    private val imgView: ImageView by lazy{
+        containerView.findViewById(R.id.item_img_view)
+    }
 
     private val textView: TextView by lazy {
         containerView.findViewById(R.id.item_text_view)
@@ -38,6 +48,8 @@ class InvitationViewHolder(
         }
         val invitationData = listItem.invitationUiModel
 
+        invitationData.pic?.let { imageLoader.loadImage(it, imgView) }
+
         acceptBtn.setOnClickListener {
             onAcceptListener.onClick(invitationData, adapterPosition)
         }
@@ -45,8 +57,7 @@ class InvitationViewHolder(
             onDeclineListener.onClick(invitationData, adapterPosition)
         }
 
-        textView.text =
-            invitationData.text?.let { String.format(it, invitationData.senderUsername) }
+        textView.text = if(invitationData.type == INVITATION_TYPE.FRIEND_REQUEST) context.getString(R.string.friend_invitation_text, invitationData.senderName) else context.getString(R.string.group_invitation_text, invitationData.senderName)
         agoView.text = invitationData.dateSent?.let { getTimeAgo((LocalDateTime.parse(it))) }
     }
 

@@ -1,7 +1,10 @@
 package com.example.budgetbuddy.repositories
 
 import android.util.Log
+import com.example.budgetbuddy.model.DateSent
 import com.example.budgetbuddy.model.Group
+import com.example.budgetbuddy.model.INVITATION_TYPE
+import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.Utilities
 import com.google.android.gms.tasks.Task
@@ -10,23 +13,37 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.time.LocalDateTime
 
 class GroupRepository {
     private val usersRef: String = "users"
     private val groupsRef: String = "groups"
+    private val invitationsRef: String = "invitations"
     private val database: DatabaseReference = Firebase.database.reference
 
-    fun createNewGroup(group: Group, currentUserUid: String, onComplete:(task:Task<Void>, uid:String)->Unit){
+    fun createNewGroup(group: Group, currentUserUid: String, members:List<String>, username:String ,onComplete:(task:Task<Void>, uid:String)->Unit){
         val key = database.child(groupsRef).push().key
         if (key == null) {
             Log.w("prueba", "Couldn't get push key for posts")
             return
         }
         group.pic += key
+
+        val invitation = InvitationUiModel(
+            group.pic,
+            key,
+            username,
+            INVITATION_TYPE.GROUP_REQUEST,
+            LocalDateTime.now().toString()
+            )
+
         val childUpdates = hashMapOf<String, Any>(
             "$groupsRef/$key" to group,
             "$usersRef/$currentUserUid/$groupsRef/$key" to true
         )
+        for(member in members){
+            childUpdates["$usersRef/$member/$invitationsRef/$key"] = invitation
+        }
         database.updateChildren(childUpdates).addOnCompleteListener {
             onComplete(it, key)
         }

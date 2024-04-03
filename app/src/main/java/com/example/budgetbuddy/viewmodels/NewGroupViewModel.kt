@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.model.Group
+import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.GroupRepository
@@ -244,12 +245,8 @@ class NewGroupViewModel @Inject constructor(
     private val _groupDescriptionError = MutableLiveData<String?>()
     val groupDescriptionError: LiveData<String?> = _groupDescriptionError
 
-    fun createNewGroup(currentUserUid: String, onCompleteListener: (task: Task<Void>) -> Unit) {
-        val members: HashMap<String, Boolean> =
-            selectedUsers.map { it.uid }
-                .associateWith { true } as HashMap<String, Boolean>
-        members[currentUserUid] = true
-
+    fun createNewGroup(currentUserUid: String, username:String ,onCompleteListener: (task: Task<Void>) -> Unit) {
+        val members: MutableList<String> = selectedUsers.map { user -> user.uid }.toMutableList()
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/",
             currentUserUid,
@@ -257,9 +254,10 @@ class NewGroupViewModel @Inject constructor(
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            members
+            hashMapOf(currentUserUid to true)
         )
-        repo.createNewGroup(group, currentUserUid){ task, uid ->
+
+        repo.createNewGroup(group, currentUserUid, members, username){ task, uid ->
             groupPhoto.let {pic->
                 when(pic){
                     is Uri -> {

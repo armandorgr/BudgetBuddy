@@ -151,7 +151,7 @@ class NewGroupFragment : Fragment() {
             if(viewModel.allGood){
                 if(homeViewModel.firebaseUser.value != null){
                     binding.determinateBar.visibility = View.VISIBLE
-                    viewModel.createNewGroup(homeViewModel.firebaseUser.value!!.uid){
+                    viewModel.createNewGroup(homeViewModel.firebaseUser.value!!.uid, homeViewModel.currentUser.value?.username!!){
                         binding.determinateBar.visibility = View.INVISIBLE
                         if(it.isSuccessful){
                             showSuccessDialog()
