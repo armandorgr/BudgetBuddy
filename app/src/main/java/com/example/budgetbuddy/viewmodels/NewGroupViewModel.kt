@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filter
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -97,10 +98,9 @@ class NewGroupViewModel @Inject constructor(
     }
 
     fun updateGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
-        val members: HashMap<String, Boolean> =
-            selectedUsers.map { it.uid }
-                .associateWith { true } as HashMap<String, Boolean>
-        members[currentUserUid] = true
+        val membersToDelete = _members.value.filter { i -> !selectedUsers.contains(i) }.map { it.uid }
+        val friendsToInvite = selectedUsers.filter { i -> !_members.value.contains(i) }.map { it.uid }
+
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/$groupUID",
             currentUserUid,
@@ -108,9 +108,10 @@ class NewGroupViewModel @Inject constructor(
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            members
+            null
         )
-        repo.updateGroup(group, groupUID).addOnCompleteListener {task->
+
+        repo.updateGroup(group, groupUID, membersToDelete, friendsToInvite).addOnCompleteListener {task->
             groupPhoto.let {pic->
                 when(pic){
                     is Uri -> {
@@ -226,7 +227,6 @@ class NewGroupViewModel @Inject constructor(
         get() {
             return groupNameError.value.equals("") &&
                     groupDescriptionError.value.equals("") &&
-                    selectedUsers.size >= 1 &&
                     startDate.value != null && _endDate.value != null
         }
 

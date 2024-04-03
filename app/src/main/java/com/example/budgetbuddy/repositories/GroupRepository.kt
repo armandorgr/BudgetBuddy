@@ -53,10 +53,31 @@ class GroupRepository {
         database.child(groupsRef).child(uid).child("pic").setValue(path)
     }
 
-    fun updateGroup(group: Group, groupUID: String): Task<Void> {
-        val childUpdates = hashMapOf<String, Any>(
-            "$groupsRef/$groupUID" to group
+    fun updateGroup(group: Group, groupUID: String, membersToDelete:List<String>, friendsToInvite:List<String>): Task<Void> {
+
+        val invitation = InvitationUiModel(
+            group.pic,
+            groupUID,
+            group.name,
+            INVITATION_TYPE.GROUP_REQUEST,
+            LocalDateTime.now().toString()
         )
+
+        val childUpdates = hashMapOf<String, Any?>(
+            "$groupsRef/$groupUID/description" to group.description.toString(),
+            "$groupsRef/$groupUID/name" to group.name.toString(),
+            "$groupsRef/$groupUID/endDate" to group.endDate.toString(),
+            "$groupsRef/$groupUID/startDate" to group.startDate.toString()
+        )
+        // Se borran los miembros no seleccionados
+        for (i in membersToDelete){
+            childUpdates["$groupsRef/$groupUID/members/$i"] = null
+            childUpdates["$usersRef/$i/groups/$groupUID"] = null
+        }
+        // Se invitan los amigos seleccionados
+        for(friend in friendsToInvite){
+            childUpdates["$usersRef/$friend/$invitationsRef/$groupUID"] = invitation
+        }
         return database.updateChildren(childUpdates)
     }
 
