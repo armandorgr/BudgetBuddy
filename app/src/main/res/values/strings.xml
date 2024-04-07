@@ -120,4 +120,8 @@
     <string name="delete_photo_fail">Photo delete failed</string>
     <string name="friend_invitation_text">%s wants to be your friend</string>
     <string name="group_invitation_text">%s wants you join this group</string>
+    <string name="leave_group_success">You leaved the group successfully</string>
+    <string name="leave_group_error">Error trying to leave the group</string>
+    <string name="warning">Warning</string>
+    <string name="leave_group_delete_text">You\'re the only member of this group, leaving it will delete it</string>
 </resources>

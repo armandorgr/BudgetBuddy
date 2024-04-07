@@ -59,6 +59,10 @@ class NewGroupViewModel @Inject constructor(
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
 
+    fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit){
+        repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
+    }
+
     fun setCurrentUserUID(uid: String) {
         this._currentUserUid = uid
     }

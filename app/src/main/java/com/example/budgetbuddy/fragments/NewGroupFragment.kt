@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
@@ -97,7 +98,7 @@ class NewGroupFragment : Fragment() {
             getString(R.string.ok)
         ){
             val activity = requireActivity() as HomeActivity
-            activity.goToGroups()
+            findNavController().popBackStack(R.id.nav_groups, false)
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }

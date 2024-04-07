@@ -21,6 +21,14 @@ class GroupRepository {
     private val invitationsRef: String = "invitations"
     private val database: DatabaseReference = Firebase.database.reference
 
+    fun leaveGroup(userUid:String, groupUid:String, onComplete: (task: Task<Void>) -> Unit){
+        val childUpdates = hashMapOf<String, Any?>(
+            "$groupsRef/$groupUid/members/$userUid" to null,
+            "$usersRef/$userUid/$groupsRef/$groupUid" to null
+        )
+        database.updateChildren(childUpdates).addOnCompleteListener(onComplete)
+    }
+
     fun createNewGroup(group: Group, currentUserUid: String, members:List<String>, username:String ,onComplete:(task:Task<Void>, uid:String)->Unit){
         val key = database.child(groupsRef).push().key
         if (key == null) {

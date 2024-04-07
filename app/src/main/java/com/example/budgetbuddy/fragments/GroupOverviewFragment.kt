@@ -26,6 +26,7 @@ import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
@@ -142,7 +143,7 @@ class GroupOverviewFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-            findNavController().navigate(R.id.nav_groups)
+            findNavController().popBackStack(R.id.nav_groups, false)
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
@@ -280,10 +281,11 @@ class GroupOverviewFragment : Fragment() {
             viewModel.setGroupDescription(text.toString())
             viewModel.validateGroupDescription(text.toString(), requireContext())
         })
+        binding.leaveGroup.setOnClickListener(this::onLeaveGroupClick)
 
         lifecycleScope.launch {
-            viewModel.currentUserRole.collect{
-                if(!it){
+            viewModel.currentUserRole.collect {
+                if (!it) {
                     friendsAdapter.setEditable(it)
                     binding.deleteGroupBtn.visibility = View.GONE
                     binding.groupNameEditText.isEnabled = it
@@ -291,26 +293,46 @@ class GroupOverviewFragment : Fragment() {
                     binding.startDate.isClickable = it
                     binding.endDate.isClickable = it
                     binding.groupPic.isClickable = it
-                }else{
+                } else {
 
                 }
             }
         }
     }
 
-    private fun onDeletePhoto(){
+    private fun onLeaveGroupClick(view: View?) {
+        viewModel.leaveGroup(selectedGroupUID) {
+            if (it.isSuccessful) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.leave_group_success),
+                    Toast.LENGTH_SHORT
+                ).show()
+                findNavController().popBackStack(R.id.nav_groups, false)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.leave_group_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun onDeletePhoto() {
         viewModel.setGroupPhoto(null)
         Glide.with(requireContext()).load(R.drawable.default_group_pic).into(binding.groupPic)
     }
 
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
-        val onDelete = if(viewModel.getGroupPhoto() != null) this::onDeletePhoto else null
+        val onDelete = if (viewModel.getGroupPhoto() != null) this::onDeletePhoto else null
         alertDialogFactory.createPhotoDialog(
             binding.root,
             { imageLoader.getPhotoFromGallery() },
             { imageLoader.getPhotoFromCamera() },
-            onDelete)
+            onDelete
+        )
     }
 
     override fun onDestroyView() {
