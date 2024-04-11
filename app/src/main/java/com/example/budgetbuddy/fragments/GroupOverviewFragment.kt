@@ -1,9 +1,6 @@
 package com.example.budgetbuddy.fragments
 
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
@@ -26,25 +22,22 @@ import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
-import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Clase del fragmento que sirve para cargar los datos de un grupo, asi como actualizar sus datos y eliminarlo
+ * Clase del fragmento que sirve para cargar los datos de un grupo,
+ * asi como actualizar sus datos y eliminarlo.
  * */
 @AndroidEntryPoint
 class GroupOverviewFragment : Fragment() {
     private var _binding: FragmentNewGroupBinding? = null
-
     /**
      * Argumentos pasados al fragmento al hacer click sobre un Grupo cargados del usuario
      * en el fragmento [GroupsFragment]
@@ -56,28 +49,14 @@ class GroupOverviewFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var selectedGroup: Group
     private lateinit var selectedGroupUID: String
+    //TODO CAMBIAR NOMBRES INVERTIDOS DE friends y members
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var membersAdapter: NewGroupFriendsAdapter
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    private val imageLoader =
-        ImageLoader(this, this::onSuccessGallery, this::onSuccessCamera, this::onPhotoLoadFail)
-
-    private fun onPhotoLoadFail() {
-        Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    private fun onSuccessCamera(img: Bitmap) {
-        viewModel.setGroupPhoto(img)
-        Glide.with(requireContext()).load(img).placeholder(R.drawable.default_group_pic)
-            .into(binding.groupPic)
-    }
-
-    private fun onSuccessGallery(uri: Uri) {
-        viewModel.setGroupPhoto(uri)
-        Glide.with(requireContext()).load(uri).placeholder(R.drawable.default_group_pic)
-            .into(binding.groupPic)
-    }
+    private val imageLoader = ImageLoader(this,
+        { uri -> viewModel.onSuccessGallery(uri, requireContext(), binding.groupPic) },
+        { bitmap -> viewModel.onSuccessCamera(bitmap, requireContext(), binding.groupPic) },
+        { viewModel.onPhotoLoadFail(requireContext()) })
 
 
     override fun onCreateView(
@@ -98,6 +77,7 @@ class GroupOverviewFragment : Fragment() {
         homeViewModel.firebaseUser.value?.uid?.let { viewModel.setCurrentUserUID(it) }
         //Se cargn los miembros del grupo cargado
         selectedGroupUID.let { viewModel.loadMembers(it) }
+
         friendsAdapter = NewGroupFriendsAdapter(
             inflater,
             viewModel.getSelectedList(),
@@ -159,9 +139,7 @@ class GroupOverviewFragment : Fragment() {
             getString(R.string.fail_title),
             message,
             getString(R.string.try_again)
-        ) {
-
-        }
+        ) {}
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
@@ -319,14 +297,14 @@ class GroupOverviewFragment : Fragment() {
         }
     }
 
-    private fun onDeletePhoto() {
-        viewModel.setGroupPhoto(null)
-        Glide.with(requireContext()).load(R.drawable.default_group_pic).into(binding.groupPic)
-    }
-
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
-        val onDelete = if (viewModel.getGroupPhoto() != null) this::onDeletePhoto else null
+        val onDelete = if (viewModel.getGroupPhoto() != null) { ->
+            viewModel.onDeletePhoto(
+                requireContext(),
+                binding.groupPic
+            )
+        } else null
         alertDialogFactory.createPhotoDialog(
             binding.root,
             { imageLoader.getPhotoFromGallery() },

@@ -1,13 +1,10 @@
 package com.example.budgetbuddy.fragments
 
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -17,19 +14,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
-import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
-import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import hilt_aggregated_deps._com_example_budgetbuddy_fragments_InvitationsFragment_GeneratedInjector
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
@@ -44,7 +38,10 @@ class NewGroupFragment : Fragment() {
     private lateinit var friendsViewModel: FriendsViewModel
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var homeViewModel: HomeViewModel
-    private val imageLoader = ImageLoader(this, this::onSuccessGallery, this::onSuccessCamera, this::onPhotoLoadFail)
+    private val imageLoader = ImageLoader(this,
+        { uri -> viewModel.onSuccessGallery(uri, requireContext(), binding.groupPic) },
+        { bitmap -> viewModel.onSuccessCamera(bitmap, requireContext(), binding.groupPic) },
+        { viewModel.onPhotoLoadFail(requireContext()) })
 
 
     override fun onCreateView(
@@ -54,16 +51,20 @@ class NewGroupFragment : Fragment() {
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         friendsViewModel = ViewModelProvider(requireActivity())[FriendsViewModel::class.java]
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_group,container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_group, container, false)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
         //Se carga el adapter con un lista de los amigos seleccionados
-        friendsAdapter = NewGroupFriendsAdapter(layoutInflater, viewModel.getSelectedList(), ListItemImageLoader(requireContext()))
+        friendsAdapter = NewGroupFriendsAdapter(
+            layoutInflater,
+            viewModel.getSelectedList(),
+            ListItemImageLoader(requireContext())
+        )
         prepareBinding(binding)
         //se cargan los amigos del usuario actual, con collect cada vez que se actualice la lista, el adapter tambien se
         //actulizara
         lifecycleScope.launch {
-            friendsViewModel.friendsUidList.collect{
+            friendsViewModel.friendsUidList.collect {
                 friendsAdapter.setData(it)
             }
         }
@@ -81,51 +82,41 @@ class NewGroupFragment : Fragment() {
             getString(R.string.fail_title),
             message,
             getString(R.string.try_again)
-        ) {
-
-        }
+        ) {}
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
     /**
-     * Metodo que sirve para mostrar una ventada emergente con un mensaje de exito
+     * Metodo que sirve para mostrar una ventana emergent con un mensaje de exito y un boton.
+     * Al hacer click sobre el boton de ok o simplemente fuera de la ventana, se ira al fragmento de [GroupsFragment]
+     * @param message Mensaje a mostrar sobre la ventana de exito
      * */
-    private fun showSuccessDialog(){
+    private fun showSuccessDialog(message: String) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val data = Result(
             getString(R.string.success_title),
-            getString(R.string.new_group_success_text),
+            message,
             getString(R.string.ok)
-        ){
-            val activity = requireActivity() as HomeActivity
+        ) {
             findNavController().popBackStack(R.id.nav_groups, false)
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
-    private fun onSuccessCamera(img: Bitmap) {
-        viewModel.setGroupPhoto(img)
-        Glide.with(requireContext()).load(img).placeholder(R.drawable.default_group_pic).into(binding.groupPic)
-    }
-
-    private fun onPhotoLoadFail() {
-        Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
-    }
-
-    private fun onSuccessGallery(uri: Uri) {
-        viewModel.setGroupPhoto(uri)
-        Glide.with(requireContext()).load(uri).placeholder(R.drawable.default_group_pic).into(binding.groupPic)
-    }
-
-    private fun onDeletePhoto(){
-        viewModel.setGroupPhoto(null)
-        Glide.with(requireContext()).load(R.drawable.default_group_pic).into(binding.groupPic)
-    }
-
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
-        val onDelete = if(viewModel.getGroupPhoto() != null) this::onDeletePhoto else null
-        alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() }, onDelete)
+        val onDelete = if (viewModel.getGroupPhoto() != null) { ->
+            viewModel.onDeletePhoto(
+                requireContext(),
+                binding.groupPic
+            )
+        } else null
+        alertDialogFactory.createPhotoDialog(
+            binding.root,
+            { imageLoader.getPhotoFromGallery() },
+            { imageLoader.getPhotoFromCamera() },
+            onDelete
+        )
     }
 
     /**
@@ -133,30 +124,37 @@ class NewGroupFragment : Fragment() {
      * definidos en [NewGroupViewModel]
      * @param binding Binding generado por el view binding contenedor de las referencias a las vistas
      * */
-    private fun prepareBinding(binding: FragmentNewGroupBinding){
-        binding.friendsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+    private fun prepareBinding(binding: FragmentNewGroupBinding) {
+        binding.friendsRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.adapter = friendsAdapter
         binding.searchView.setOnQueryTextListener(viewModel.getSearchViewFilter(friendsAdapter))
-        binding.startDate.setOnClickListener{
+        binding.startDate.setOnClickListener {
             viewModel.onStartDateClick(requireContext(), binding.root)
         }
-        binding.endDate.setOnClickListener{
+        binding.endDate.setOnClickListener {
             viewModel.onEndDateClick(requireContext(), binding.root)
         }
 
-        viewModel.getGroupPhoto()?.let { Glide.with(requireContext()).load(it).placeholder(R.drawable.default_group_pic).into(binding.groupPic) }
+        viewModel.getGroupPhoto()?.let {
+            Glide.with(requireContext()).load(it).placeholder(R.drawable.default_group_pic)
+                .into(binding.groupPic)
+        }
         //Se añade evento para añadir foto al grupo
         binding.groupPic.setOnClickListener(this::onAddPhotoClick)
 
-        binding.createGroupBtn.setOnClickListener{
-            if(viewModel.allGood){
-                if(homeViewModel.firebaseUser.value != null){
+        binding.createGroupBtn.setOnClickListener {
+            if (viewModel.allGood) {
+                if (homeViewModel.firebaseUser.value != null) {
                     binding.determinateBar.visibility = View.VISIBLE
-                    viewModel.createNewGroup(homeViewModel.firebaseUser.value!!.uid, homeViewModel.currentUser.value?.username!!){
+                    viewModel.createNewGroup(
+                        homeViewModel.firebaseUser.value!!.uid,
+                        homeViewModel.currentUser.value?.username!!
+                    ) {
                         binding.determinateBar.visibility = View.INVISIBLE
-                        if(it.isSuccessful){
-                            showSuccessDialog()
-                        }else{
+                        if (it.isSuccessful) {
+                            showSuccessDialog(getString(R.string.group_create_success))
+                        } else {
                             showFailDialog(getString(R.string.group_create_fail))
                         }
                     }
@@ -164,20 +162,22 @@ class NewGroupFragment : Fragment() {
             }
         }
         //Se añaden eventos a los editText para obtener el contenido y validadorlo
-        binding.groupNameEditText.addTextChangedListener(afterTextChanged = {text ->
+        binding.groupNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setGroupName(text.toString())
             viewModel.validateGroupName(text.toString(), requireContext())
         })
-        binding.groupDescriptionEditText.addTextChangedListener( afterTextChanged = {text ->
+        binding.groupDescriptionEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setGroupDescription(text.toString())
             viewModel.validateGroupDescription(text.toString(), requireContext())
         })
         //Se observan las propiedades de fecha del viewmodel, de modo que cada vez que cambien se formatean y se muestran por pantalla
-        viewModel.startDate.observe(viewLifecycleOwner){
-            binding.startDate.text = it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
+        viewModel.startDate.observe(viewLifecycleOwner) {
+            binding.startDate.text =
+                it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }
-        viewModel.endDate.observe(viewLifecycleOwner){
-            binding.endDate.text = it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
+        viewModel.endDate.observe(viewLifecycleOwner) {
+            binding.endDate.text =
+                it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }
     }
 }

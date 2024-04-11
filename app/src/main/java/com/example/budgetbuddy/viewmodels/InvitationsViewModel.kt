@@ -1,10 +1,7 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import com.example.budgetbuddy.adapters.recyclerView.InvitationAdapter
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
@@ -16,12 +13,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -30,11 +25,9 @@ class InvitationsViewModel @Inject constructor(
     private val repo: InvitationsRepository,
     private val userRepo: UsersRepository
 ) : ViewModel() {
-    private val _invitationsList = MutableStateFlow<List<ListItemUiModel>>(emptyList())
+    private val _invitationsList:MutableStateFlow<List<ListItemUiModel>> = MutableStateFlow(emptyList())
     val invitationsList: StateFlow<List<ListItemUiModel>> = _invitationsList
     private var childEventsAdded = false
-
-    private lateinit var adapter: InvitationAdapter
 
     suspend fun findUIDByUsername(username: String): User? {
         return withContext(Dispatchers.IO) {
@@ -44,10 +37,6 @@ class InvitationsViewModel @Inject constructor(
 
     fun writeNewInvitation(uid:String, currentUserUid: String, invitation: InvitationUiModel){
         repo.writeNewInvitation(uid, currentUserUid, invitation)
-    }
-
-    fun setAdapter(adapter: InvitationAdapter) {
-        this.adapter = adapter
     }
 
     fun updateList(newInvitations: List<ListItemUiModel>) {
@@ -87,7 +76,7 @@ class InvitationsViewModel @Inject constructor(
         }
     }
 
-    val childEventListener = object : ChildEventListener {
+    private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val invitation = snapshot.getValue(InvitationUiModel::class.java)
             invitation?.let { addInvitation(ListItemUiModel.Invitation(it)) }

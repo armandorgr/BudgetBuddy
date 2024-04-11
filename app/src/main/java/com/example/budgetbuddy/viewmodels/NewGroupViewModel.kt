@@ -6,15 +6,16 @@ import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.widget.DatePicker
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.model.Group
-import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.GroupRepository
@@ -32,7 +33,6 @@ import com.google.firebase.database.DatabaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -50,7 +50,7 @@ class NewGroupViewModel @Inject constructor(
     private val startDateLimit = LocalDateTime.of(2000, 1, 1, 0, 0)
     private val endDateLimit = LocalDateTime.of(2030, 1, 1, 0, 0)
     private val selectedUsers: MutableList<ListItemUiModel.User> = mutableListOf()
-    private val _members = MutableStateFlow<List<ListItemUiModel.User>>(emptyList())
+    private val _members:MutableStateFlow<List<ListItemUiModel.User>> = MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
 
     private val _currentUserRole:MutableStateFlow<Boolean> = MutableStateFlow(true)
@@ -58,6 +58,7 @@ class NewGroupViewModel @Inject constructor(
 
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
+
 
     fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit){
         repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
@@ -222,10 +223,10 @@ class NewGroupViewModel @Inject constructor(
                 userRepo.findUserByUIDNotSuspend(it).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = task.result.getValue(User::class.java)
-                        user?.let { u ->
+                        user?.let { foundUser ->
                             if (currentUserUid != it) {
-                                selectedUsers.add(ListItemUiModel.User(key, u, true, role))
-                                addMember(key, u, role)
+                                selectedUsers.add(ListItemUiModel.User(key, foundUser, true, role))
+                                addMember(key, foundUser, role)
                                 // se carga el rol de usuario actual para ver si puede o no realizar modificaciones
                             }else{
                                 if (role != null) {
@@ -268,7 +269,7 @@ class NewGroupViewModel @Inject constructor(
     private val _endDate = MutableLiveData<LocalDateTime?>()
     val endDate: LiveData<LocalDateTime?> = _endDate
 
-    private val _groupName = MutableLiveData<String>()
+    private val _groupName:MutableLiveData<String> = MutableLiveData<String>()
     val groupName: LiveData<String> = _groupName
 
     private val _groupDescription = MutableLiveData<String>()
@@ -365,7 +366,7 @@ class NewGroupViewModel @Inject constructor(
         }
     }
 
-    fun validateEndDate(date: LocalDateTime, context: Context): String? {
+    private fun validateEndDate(date: LocalDateTime, context: Context): String? {
         return if (_startDate.value != null) {
             if (date.isBefore(_startDate.value)) {
                 context.getString(R.string.end_date_error)
@@ -386,7 +387,7 @@ class NewGroupViewModel @Inject constructor(
         }
     }
 
-    fun validateStartDate(date: LocalDateTime, context: Context): String? {
+    private fun validateStartDate(date: LocalDateTime, context: Context): String? {
         return if (_endDate.value != null) {
             if (date.isAfter(_endDate.value)) {
                 context.getString(R.string.end_date_error)
@@ -422,5 +423,24 @@ class NewGroupViewModel @Inject constructor(
 
     fun setEndDate(date: LocalDateTime) {
         _endDate.postValue(date)
+    }
+
+    fun onPhotoLoadFail(context: Context) {
+        Toast.makeText(context, context.getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
+    }
+
+    fun onSuccessCamera(img: Bitmap, context: Context, view:ImageView) {
+        setGroupPhoto(img)
+        Glide.with(context).load(img).placeholder(R.drawable.default_group_pic).into(view)
+    }
+
+    fun onSuccessGallery(uri: Uri, context: Context, view:ImageView) {
+        setGroupPhoto(uri)
+        Glide.with(context).load(uri).placeholder(R.drawable.default_group_pic).into(view)
+    }
+
+    fun onDeletePhoto(context: Context, view:ImageView){
+        setGroupPhoto(null)
+        Glide.with(context).load(R.drawable.default_group_pic).into(view)
     }
 }

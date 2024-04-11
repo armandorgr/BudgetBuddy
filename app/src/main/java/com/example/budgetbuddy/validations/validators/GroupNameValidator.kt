@@ -2,12 +2,13 @@ package com.example.budgetbuddy.validations.validators
 
 import android.content.Context
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.validations.BaseValidator
 import com.example.budgetbuddy.validations.BlankValidationHandler
 import com.example.budgetbuddy.validations.ExpValidations
 import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
 
-class GroupNameValidator(private val context: Context){
+class GroupNameValidator(private val context: Context):BaseValidator(){
     private val validator = BlankValidationHandler(
         context.getString(
             R.string.blank_validation_error,
@@ -31,7 +32,7 @@ class GroupNameValidator(private val context: Context){
      * @param input [String] valor a validar
      * @return resultado [String]? de validar, es nulo si no hay error.
      * */
-    fun validate(input: String): String? {
+    override fun validate(input: Any): String? {
         return validator.validate(input)
     }
 

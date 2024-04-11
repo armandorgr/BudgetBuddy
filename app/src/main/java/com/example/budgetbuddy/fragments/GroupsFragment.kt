@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.adapters.recyclerView.GroupsAdapter
 import com.example.budgetbuddy.databinding.FragmentGroupsBinding
 import com.example.budgetbuddy.model.ListItemUiModel

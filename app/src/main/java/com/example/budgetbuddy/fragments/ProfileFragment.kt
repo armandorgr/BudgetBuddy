@@ -1,18 +1,15 @@
 package com.example.budgetbuddy.fragments
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +19,6 @@ import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
-import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
@@ -187,15 +183,15 @@ class ProfileFragment : Fragment() {
             { dialog ->
                 Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE
+
                 val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
                 var response: String? = registerViewModel.validateUserName(txt, requireContext())
-                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
-                    response ?: ""
+
+                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
                 lifecycleScope.launch {
                     if (viewModel.findUserByUsername(txt) != null) {
                         response = getString(R.string.username_already_exits)
-                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
-                            response
+                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response
                     } else {
                         if (response == null) {
                             viewModel.updateUsername(homeViewModel.firebaseUser.value!!.uid, txt)

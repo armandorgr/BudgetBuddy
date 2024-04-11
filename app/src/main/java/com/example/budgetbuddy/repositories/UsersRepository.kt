@@ -21,6 +21,7 @@ class UsersRepository {
         return database.child(uid).setValue(user)
     }
 
+    //TODO borrar esto
      fun writeNewUser(user: User, uid:String):Task<Void>{
         return database.child(uid).setValue(user)
     }

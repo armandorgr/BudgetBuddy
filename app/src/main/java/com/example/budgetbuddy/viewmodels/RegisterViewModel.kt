@@ -1,13 +1,10 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.content.Context
-import android.provider.ContactsContract.CommonDataKinds.Email
 import android.view.View
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.User
@@ -18,13 +15,10 @@ import com.example.budgetbuddy.validations.validators.PasswordValidator
 import com.example.budgetbuddy.validations.validators.UsernameValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.cbrt
 
 /**
  * ViewModel encargado del comportamiento del proceso de registro de nuevos usuarios.
@@ -196,23 +190,6 @@ class RegisterViewModel @Inject constructor(
         _lastNameError.postValue( response ?: "")
         return response
     }
-
-    /**
-     * Metodo que sirve para moverse desde la pantalla de registro a la de login
-     * @return [View.OnClickListener] funcion usada para realizar el cambio de pantalla
-     * */
-    fun moveToLogin(): View.OnClickListener {
-        return Navigation.createNavigateOnClickListener(R.id.nav_register_to_login, null)
-    }
-
-    /**
-     * Metodo que sirve para moverse desde la pantalla de login a la de registro
-     * @return [View.OnClickListener] funcion usada para realizar el cambio de pantalla
-     * */
-    fun moveToRegister(): View.OnClickListener {
-        return Navigation.createNavigateOnClickListener(R.id.nav_login_to_register, null)
-    }
-
     suspend fun findUser(username: String): User? {
         return withContext(Dispatchers.IO){
             repo.findUserByUserName(username)

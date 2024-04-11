@@ -22,13 +22,13 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel(){
     val auth: FirebaseAuth = Firebase.auth
 
-    private val _currentUser = MutableLiveData<User>()
+    private val _currentUser:MutableLiveData<User> = MutableLiveData<User>()
     var currentUser: LiveData<User> = _currentUser
 
-    private val _provider = MutableLiveData<String>()
+    private val _provider:MutableLiveData<String> = MutableLiveData<String>()
     var provider: LiveData<String> = _provider
 
-    private val _firebaseUser = MutableLiveData<FirebaseUser>()
+    private val _firebaseUser:MutableLiveData<FirebaseUser> = MutableLiveData<FirebaseUser>()
     var firebaseUser:LiveData<FirebaseUser> = _firebaseUser
 
     fun updateUser(user: User){

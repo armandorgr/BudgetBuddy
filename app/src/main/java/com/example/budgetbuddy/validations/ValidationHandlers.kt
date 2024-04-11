@@ -6,6 +6,8 @@ import java.time.format.DateTimeParseException
 /**
  * Clase que implementa la clase abstracta [BaseValidationHandler] viendose obligada a dar implementacion al metodo
  * [validate] el cual en este caso validara la longitud de una cadena pasada como parametro.
+ * @param maxLength Longitud maxima que debe cumplir antes de dar error
+ * @param message Mensaje a mostrar en caso de error
  * */
 class LengthValidationHandler(private val maxLength: Int, private val message: String) :
     BaseValidationHandler() {
@@ -24,6 +26,7 @@ class LengthValidationHandler(private val maxLength: Int, private val message: S
 /**
  * Clase que implementa la clase abstracta [BaseValidationHandler] viendose obligada a dar implementacion al metodo
  * [validate] el cual en este caso validara que la cadena pasada como parametro no este vacia
+ * @param message Mensaje a mostrar en caso de error
  * */
 class BlankValidationHandler(private val message: String) : BaseValidationHandler() {
     override fun validate(input: Any): String? {
@@ -41,6 +44,7 @@ class BlankValidationHandler(private val message: String) : BaseValidationHandle
 /**
  * Clase que implementa la clase abstracta [BaseValidationHandler] viendose obligada a dar implementacion al metodo
  * [validate] el cual en este caso validara que la cadena pasada como parametro no contiene espacios
+ * @param message Mensaje a mostrar en caso de error
  * */
 class SpaceValidationHandler(private val message: String) : BaseValidationHandler() {
     override fun validate(input: Any): String? {
@@ -80,6 +84,8 @@ class DateLimitValidationHandler(private val limitDate: LocalDateTime, private v
  * Clase que implementa la clase abstracta [BaseValidationHandler] viendose obligada a dar implementacion al metodo
  * [validate] el cual en este caso validara el formato de una cadena basado en una de las expresiones regulares definidas en la clase
  * [ExpValidations]
+ * @param exp Expresion a usar para validar el formato
+ * @param message Mensaje a mostrar en caso de error
  * */
 class RegexValidationHandler(private val exp: ExpValidations, private val message: String) :
     BaseValidationHandler() {
@@ -99,6 +105,7 @@ class RegexValidationHandler(private val exp: ExpValidations, private val messag
 /**
  * Enumeraciono la cual define una serie de expresiones regulares las cuales seran usaddas para validar el formato
  * de ciertos datos mediante la clase [RegexValidationHandler]
+ * @param exp Expresión regular usada para validar en la clase [RegexValidationHandler]
  * */
 enum class ExpValidations(val exp: String) {
     // Es posible tener maximo tres nombres como David Joaquin Juan

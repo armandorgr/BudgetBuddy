@@ -47,8 +47,6 @@ class InvitationsFragment : Fragment() {
         )
         binding.invitationsRecyclerView.adapter = invitationsAdapter
 
-
-        viewModel.setAdapter(invitationsAdapter)
         //Se cargan las invitaciones del usuario logeado con collect, para que cada vez que el valor de esta lista
         //cambia el adapter tambien se actaliza
         lifecycleScope.launch {

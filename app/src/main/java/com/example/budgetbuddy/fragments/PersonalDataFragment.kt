@@ -19,6 +19,7 @@ import com.example.budgetbuddy.databinding.FragmentPersonalDataBinding
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -49,16 +50,6 @@ class PersonalDataFragment : Fragment(), OnClickListener {
             if(user!=null){
                 updateUi()
             }
-        }
-    }
-
-    /**
-     * Metodo que sirve para esconder el teclado
-     * */
-    private fun hideKeyboard() {
-        requireActivity().currentFocus?.let { view ->
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
@@ -116,7 +107,7 @@ class PersonalDataFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         lifecycleScope.launch {
             if (viewModel.personalDataGood) { //Si esta correcto se intenta crear un usuario en la base de datos
-                hideKeyboard()
+                Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE;
                 binding.personalDataFrame.alpha = 0.4f
                 val user = User(

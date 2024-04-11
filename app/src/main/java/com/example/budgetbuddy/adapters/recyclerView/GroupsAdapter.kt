@@ -12,6 +12,9 @@ import com.example.budgetbuddy.viewHolders.GroupViewHolder
 /**
  * Clase la cual sirve para cargar la lista de los grupos a los que pertenece el usuario a un [RecyclerView]
  * y añadirle a cada elemento un evento el cual se ejecutara cuando se haga click sobre el layout del grupo
+ * La manera empleada para el uso del [RecyclerView.Adapter] fue obtenida de la fuente:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capitulo 6 'Adding and Interacting with RecyclerView'
  * */
 class GroupsAdapter(
     private val layoutInflater: LayoutInflater,

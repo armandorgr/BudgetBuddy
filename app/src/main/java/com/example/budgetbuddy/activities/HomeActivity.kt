@@ -2,13 +2,9 @@ package com.example.budgetbuddy.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.widget.Toolbar
-import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -20,7 +16,6 @@ import com.example.budgetbuddy.databinding.ActivityHomeBinding
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.InvitationsViewModel
-import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +38,13 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        /*
+        * La configuración tanto del action bar como del Bottom navigation fueron obtenidos de esta fuente:
+        * https://www.youtube.com/watch?v=0x5kmLY16qE&t=486s
+        * El modo de cargar los viewModel para que su funcionamiento dure tanto como dure el Activity se obtuvo de este fuente:
+        * https://stackoverflow.com/questions/46268768/viewmodel-for-fragment-instead-accessing-activity-viewmodel
+        * */
         setSupportActionBar(findViewById(R.id.toolbar))
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         invitationsViewModel = ViewModelProvider(this)[InvitationsViewModel::class.java]
@@ -76,21 +78,6 @@ class HomeActivity : AppCompatActivity() {
             navController.navigate(R.id.nav_to_newGroup)
         }
     }
-
-    /**
-     * Metodo que sirve para navegar al fragmento de grupos
-     * */
-    fun goToGroups() {
-        navController.navigate(R.id.nav_groups)
-    }
-
-    /**
-     * Metodo que sirve para navegar al fragmento de group overview
-     * */
-    fun goToGroupOverview() {
-        navController.navigate(R.id.nav_groups_to_overview)
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.home_nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
