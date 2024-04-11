@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Group(
+    var pic:String? = null,
     val creatorUid:String? = null,
     val name:String?=null,
     val description:String? = null,

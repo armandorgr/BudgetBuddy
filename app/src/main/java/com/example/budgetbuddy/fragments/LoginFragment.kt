@@ -1,14 +1,12 @@
 package com.example.budgetbuddy.fragments
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -22,12 +20,15 @@ import com.example.budgetbuddy.databinding.FragmentLoginBinding
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -96,47 +97,49 @@ class LoginFragment : Fragment() {
         intent.launch(signInIntent)
     }
 
+    private fun onSignInWithEmailPasswordComplete(task: Task<AuthResult>){
+        val dialogFactory = AlertDialogFactory(requireContext())
+        val dialogLayout: Int
+        val data: Result?
+        if (task.isSuccessful) {
+            val user = auth.currentUser
+            dialogLayout = R.layout.success_dialog
+            data = Result(
+                getString(R.string.success_title),
+                getString(R.string.loggedin_success),
+                getString(R.string.go_to_home)
+            ) {
+                binding.frame.alpha = 1f
+                goToHome()
+            }
+        } else {
+            dialogLayout = R.layout.error_dialog
+            data = Result(
+                getString(R.string.fail_title),
+                getString(R.string.account_doesnt_exist),
+                getString(R.string.try_again)
+            ) {
+                binding.frame.alpha = 1f
+            }
+        }
+        data.let { it1 ->
+            dialogFactory.createDialog(
+                dialogLayout, binding.root,
+                it1
+            )
+        }
+        binding.determinateBar.visibility = View.INVISIBLE
+    }
+
     /**
      * Metodo que sirve para iniciar sesion mediante correo y contraseña
      * @param email Direccion de correo con la cual se intentara iniciar sesion
      * @param password Contraseña con la cual se intentara iniciar sesion
      * */
     private fun signInWithEmailPassword(email: String, password: String) {
-        val dialogFactory = AlertDialogFactory(requireContext())
-        var dialogLayout: Int = 0
-        var data: Result? = null
         binding.frame.alpha = 0.4f
         binding.determinateBar.visibility = View.VISIBLE
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) {
-            if (it.isSuccessful) {
-                val user = auth.currentUser
-                dialogLayout = R.layout.success_dialog
-                data = Result(
-                    getString(R.string.success_title),
-                    getString(R.string.loggedin_success),
-                    getString(R.string.go_to_home)
-                ) {
-                    binding.frame.alpha = 1f
-                    goToHome()
-                }
-            } else {
-                dialogLayout = R.layout.error_dialog
-                data = Result(
-                    getString(R.string.fail_title),
-                    getString(R.string.account_doesnt_exist),
-                    getString(R.string.try_again)
-                ) {
-                    binding.frame.alpha = 1f
-                }
-            }
-            data?.let { it1 ->
-                dialogFactory.createDialog(
-                    dialogLayout, binding.root,
-                    it1
-                )
-            }
-            binding.determinateBar.visibility = View.INVISIBLE
-        }
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this::onSignInWithEmailPasswordComplete)
     }
 
     /**
@@ -145,44 +148,39 @@ class LoginFragment : Fragment() {
      * @param idToken token usado para obtener las credenciales de Google
      * */
     private fun firebaseAuthWithGoogle(idToken: String) {
-        val dialogFactory = AlertDialogFactory(requireContext())
-        var dialogLayout: Int = 0
-        var data: Result? = null
         binding.frame.alpha = 0.4f
         binding.determinateBar.visibility = View.VISIBLE
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    dialogLayout = R.layout.success_dialog
-                    data = Result(
-                        getString(R.string.success_title),
-                        getString(R.string.loggedin_success),
-                        getString(R.string.go_to_home)
-                    ) {
-                        binding.frame.alpha = 1f
-                        binding.determinateBar.visibility = View.INVISIBLE
-                        updateUI(user)
-                    }
-                } else {
-                    dialogLayout = R.layout.error_dialog
-                    data = Result(
-                        getString(R.string.fail_title),
-                        getString(R.string.fail_login),
-                        getString(R.string.try_again)
-                    ) {
-                        binding.frame.alpha = 1f
-                        binding.determinateBar.visibility = View.INVISIBLE
-                    }
-                }
-                data?.let { it1 ->
-                    dialogFactory.createDialog(
-                        dialogLayout, binding.root,
-                        it1
-                    )
-                }
+        auth.signInWithCredential(credential).addOnCompleteListener(this::onSignInWithGoogleComplete)
+    }
+
+    private fun onSignInWithGoogleComplete(task: Task<AuthResult>) {
+        val dialogFactory = AlertDialogFactory(requireContext())
+        val dialogLayout: Int
+        val data: Result?
+        if (task.isSuccessful) {
+            val user = auth.currentUser
+            dialogLayout = R.layout.success_dialog
+            data = Result(getString(R.string.success_title), getString(R.string.loggedin_success), getString(R.string.go_to_home)
+            ) {
+                binding.frame.alpha = 1f
+                binding.determinateBar.visibility = View.INVISIBLE
+                updateUI(user)
             }
+        } else {
+            dialogLayout = R.layout.error_dialog
+            data = Result(getString(R.string.fail_title), getString(R.string.fail_login), getString(R.string.try_again)
+            ) {
+                binding.frame.alpha = 1f
+                binding.determinateBar.visibility = View.INVISIBLE
+            }
+        }
+        data.let { it1 ->
+            dialogFactory.createDialog(
+                dialogLayout, binding.root,
+                it1
+            )
+        }
     }
 
 
@@ -208,24 +206,13 @@ class LoginFragment : Fragment() {
             val password = binding.passwordEditText.text.toString()
             if (email != "" && password != "") {
                 signInWithEmailPassword(email, password)
-                hideKeyboard()
+                Utilities.hideKeyboard(requireActivity(), requireContext())
             }
         }
         binding.google.setOnClickListener {
             signIn()
         }
         return view
-    }
-
-
-    /**
-     * Metodo que sirve para esconder el teclado
-     * */
-    private fun hideKeyboard() {
-        requireActivity().currentFocus?.let { view ->
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
-        }
     }
 
     /**

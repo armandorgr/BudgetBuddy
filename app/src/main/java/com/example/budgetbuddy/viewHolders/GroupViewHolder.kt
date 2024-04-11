@@ -5,9 +5,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.util.ListItemImageLoader
 
 class GroupViewHolder(
     private val containerView: View,
+    private val imageLoader: ListItemImageLoader,
     private val onClickListener: OnClickListener
 ) : ListItemViewHolder(containerView) {
 
@@ -17,13 +19,19 @@ class GroupViewHolder(
     private val textView: TextView by lazy {
         containerView.findViewById(R.id.item_text_view)
     }
+    private val descriptionView: TextView by lazy {
+        containerView.findViewById(R.id.item_description_view)
+    }
 
     override fun bindData(listItem: ListItemUiModel) {
         require(listItem is ListItemUiModel.Group) {
             "Expected ListItemUiModel.Group $listItem"
         }
+
         val groupData = listItem.groupUiModel
+        groupData.pic?.let { imageLoader.loadImage(it, imgView) }
         textView.text = groupData.name
+        descriptionView.text = groupData.description
         containerView.setOnClickListener {
             onClickListener.onClick(listItem, adapterPosition)
         }

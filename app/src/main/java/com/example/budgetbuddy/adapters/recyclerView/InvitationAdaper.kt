@@ -1,21 +1,29 @@
 package com.example.budgetbuddy.adapters.recyclerView
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewHolders.InvitationViewHolder
 import com.example.budgetbuddy.viewHolders.ListItemViewHolder
 import com.google.firebase.auth.FirebaseUser
 
 /**
  * Clase la cual sirve para cargar las invitaciones cargadas del usuario en un [RecyclerView]
+ * La manera empleada para el uso del [RecyclerView.Adapter] fue obtenida de la fuente:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capitulo 6 'Adding and Interacting with RecyclerView'
  * */
+
 class InvitationAdapter(
     private val layoutInflater: LayoutInflater,
+    private val imageLoader: ListItemImageLoader,
+    private val context: Context,
     private val onAcceptListener: OnClickListener,
     private val onDeclineListener: OnClickListener,
     private val currentUser: FirebaseUser
@@ -24,7 +32,7 @@ class InvitationAdapter(
     /**
      * Lista que contiene los datos cargados en el [RecyclerView]
      * */
-    private val listData = mutableListOf<ListItemUiModel>()
+    private val listData:MutableList<ListItemUiModel> = mutableListOf()
 
 
     /**
@@ -54,7 +62,7 @@ class InvitationAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
         val view = layoutInflater.inflate(R.layout.invitation_layout, parent, false)
-        return InvitationViewHolder(view,
+        return InvitationViewHolder(view, imageLoader, context,
             object : InvitationViewHolder.OnClickListener {
                 override fun onClick(invitation: InvitationUiModel, position: Int) {
                     onAcceptListener.onItemClick(invitation, currentUser)
@@ -64,16 +72,6 @@ class InvitationAdapter(
                     onDeclineListener.onItemClick(invitation, currentUser)
                 }
             })
-    }
-
-    /**
-     * Metodo que sirve para eliminar un elemento de la lista de invitaciones
-     * y por tanto tambein del [RecyclerView]
-     * @param position Posicion que ocupa el elemento a eliminar en el Adapter
-     * */
-    fun removeItem(position: Int) {
-        listData.removeAt(position)
-        notifyItemRemoved(position)
     }
 
     override fun getItemCount(): Int {

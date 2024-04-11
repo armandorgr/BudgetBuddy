@@ -16,6 +16,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <LinearLayout
+                app:layout_constraintStart_toEndOf="@id/verticalGuideStart"
+                app:layout_constraintEnd_toEndOf="@id/verticalGuideEnd"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/horizontalGuideTop"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    style="@style/Title"
+                    android:text="@string/new_group_title"/>
+            </LinearLayout>
             <ProgressBar
                 android:id="@+id/determinateBar"
                 style="@android:style/Widget.Material.Light.ProgressBar.Large"
@@ -29,8 +48,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5" />
-
-
             <ScrollView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -45,6 +62,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/imgConstraintLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/group_pic"
+                            style="@style/circularImg"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/default_group_pic"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.5" />
+                        <ImageView
+                            android:id="@+id/addPhotoIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/baseline_add_a_photo_24"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/groupNameLayout"
@@ -96,22 +140,81 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/startDate"
-                            style="@style/dateView"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/date_placeholder" />
+                            android:layout_weight="0.5"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/endDate"
-                            style="@style/dateView"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/start_date_text" />
+
+                            <TextView
+                                android:id="@+id/startDate"
+                                style="@style/dateView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/date_placeholder" />
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/date_placeholder" />
+                            android:layout_weight="0.5"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/end_date_text" />
+
+                            <TextView
+                                android:id="@+id/endDate"
+                                style="@style/dateView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/date_placeholder" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/membersTitle"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/friends"
+                        android:layout_marginVertical="@dimen/margin_small"/>
+                    <LinearLayout
+                        android:id="@+id/membersLinearLayout"
+                        android:visibility="gone"
+                        android:background="@drawable/recycler_view_bkg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.SearchView
+                            android:id="@+id/searchViewMembers"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/search_friends_hint"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/membersRecyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
+                    <TextView
+                        android:id="@+id/friendsTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/friends"
+                        android:layout_marginVertical="@dimen/margin_small"/>
                     <LinearLayout
+                        android:background="@drawable/recycler_view_bkg"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -119,18 +222,20 @@
                         <androidx.appcompat.widget.SearchView
                             android:id="@+id/searchView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            android:hint="@string/search_friends_hint"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/friendsRecyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="match_parent" />
+
                     </LinearLayout>
                     <LinearLayout
                         android:id="@+id/buttonsLinearLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
+                        android:orientation="horizontal"
                         android:layout_marginBottom="@dimen/group_friends_recyclerView_margin">
                         <Button
                             android:id="@+id/createGroupBtn"
@@ -139,6 +244,7 @@
                             android:layout_gravity="center"
                             android:text="@string/new_group_btn_text" />
                         <Button
+                            android:layout_weight="0.33"
                             android:id="@+id/updateGroupBtn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -146,6 +252,7 @@
                             android:visibility="gone"
                             android:text="@string/update_group_btn_text" />
                         <Button
+                            android:layout_weight="0.33"
                             android:id="@+id/deleteGroupBtn"
                             android:backgroundTint="@color/md_theme_light_red"
                             android:layout_width="wrap_content"
@@ -153,6 +260,15 @@
                             android:layout_gravity="center"
                             android:visibility="gone"
                             android:text="@string/delete_groupo_btn_text" />
+                        <Button
+                            android:layout_weight="0.33"
+                            android:id="@+id/leaveGroup"
+                            android:backgroundTint="@color/action_icon_orange_bkg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:text="@string/leave_group_btn_text" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
@@ -162,14 +278,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.15" />
+                app:layout_constraintGuide_percent="0.05" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/verticalGuideEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.85" />
+                app:layout_constraintGuide_percent="0.95" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/horizontalGuideTop"
@@ -178,14 +294,12 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.15" />
 
-
-
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/horizontalDescriptionGuide"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.9" />
+                app:layout_constraintGuide_percent="0.95" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>

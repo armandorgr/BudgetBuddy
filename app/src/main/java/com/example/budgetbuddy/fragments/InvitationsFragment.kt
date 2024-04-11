@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.budgetbuddy.adapters.recyclerView.InvitationAdapter
 import com.example.budgetbuddy.databinding.FragmentInvitationsBinding
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.InvitationsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,14 +39,14 @@ class InvitationsFragment : Fragment() {
         )
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
 
+        val imageLoader = ListItemImageLoader(requireContext())
+
         invitationsAdapter = InvitationAdapter(
-            layoutInflater, viewModel.onAccept, viewModel.onDecline,
+            layoutInflater, imageLoader, requireContext(), viewModel.onAccept, viewModel.onDecline,
             homeViewModel.firebaseUser.value!!
         )
         binding.invitationsRecyclerView.adapter = invitationsAdapter
 
-
-        viewModel.setAdapter(invitationsAdapter)
         //Se cargan las invitaciones del usuario logeado con collect, para que cada vez que el valor de esta lista
         //cambia el adapter tambien se actaliza
         lifecycleScope.launch {

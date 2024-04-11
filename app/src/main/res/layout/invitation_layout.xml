@@ -26,13 +26,13 @@
         app:layout_constraintStart_toStartOf="@id/guidelineEndImg"
         app:layout_constraintEnd_toEndOf="@id/guidelineEndText"
         android:id="@+id/textLinearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
-        android:gravity="end">
+        android:gravity="center_vertical">
         <TextView
             android:id="@+id/item_text_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Pepe quiere conectar contigo"/>
         <TextView

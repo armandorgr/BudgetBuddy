@@ -1,31 +1,29 @@
 package com.example.budgetbuddy.validations.validators
 
+import android.content.Context
+import com.example.budgetbuddy.R
+import com.example.budgetbuddy.validations.BaseValidator
 import com.example.budgetbuddy.validations.BlankValidationHandler
 import com.example.budgetbuddy.validations.ExpValidations
 import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
 
 /**
- * Objeto que sirve para validar los nombres de usuarios
+ * Clase que implementa la clase abstrcta [BaseValidator], viendose obligada a implementar el metodo [validate]
+ * en este caso se usara para aplicar una series de validaciones al nombre de usuario.
  * */
-object UsernameValidator {
-    private val validator = BlankValidationHandler("El nombre de usuario no puede estar vacío")
+class UsernameValidator (private val context: Context) : BaseValidator(){
+    private val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, "The username"))
         .setNext(
-            LengthValidationHandler(22, "El nombre de usuario no puede tener más de 22 letras")
+            LengthValidationHandler(22, context.getString(R.string.length_validation_error, "The username", 22))
                 .setNext(
                     RegexValidationHandler(
                         ExpValidations.USERNAME,
-                        "El nombre de usuario no esta bien formado"
+                        context.getString(R.string.regex_validation_error, "The username")
                     )
                 )
         )
-
-    /**
-     * Metodo que funciona que para validar la entrada de texto
-     * @param input [String] valor a validar
-     * @return resultado [String]? de validar, es nulo si no hay error.
-     * */
-    fun validate(input: String): String? {
+    override fun validate(input: Any): String? {
         return validator.validate(input)
     }
 }

@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.budgetbuddy.R
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textfield.TextInputLayout.EndIconMode
@@ -55,7 +56,7 @@ class AlertDialogFactory(private val context: Context) {
 
 
     @SuppressLint("MissingInflatedId")
-    fun createDatePickerDialog(view: View, result:DateResult):View {
+    fun createDatePickerDialog(view: View, result: DateResult): View {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.dateDialogConstraintLayout)
         val dialogView = LayoutInflater.from(context)
             .inflate(R.layout.custom_date_prompt_dialog, constraintLayout)
@@ -202,6 +203,46 @@ class AlertDialogFactory(private val context: Context) {
             alertDialog.dismiss()
         }
 
+        return dialogView
+    }
+
+    @SuppressLint("MissingInflatedId")
+    fun createPhotoDialog(
+        view: View,
+        onGallery: () -> Unit,
+        onCamera: () -> Unit,
+        onDelete: (() -> Unit)? = null
+    ): View {
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.photoConstraintLayout)
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.custom_photo_dialog, constraintLayout)
+        val btnGallery = dialogView.findViewById<MaterialButton>(R.id.dialog_button_galley)
+        val btnCamera = dialogView.findViewById<MaterialButton>(R.id.dialog_button_camera)
+        val btnDelete = dialogView.findViewById<MaterialButton>(R.id.dialog_button_delete)
+
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        if (alertDialog.window != null) {
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        btnGallery.setOnClickListener {
+            onGallery()
+            alertDialog.dismiss()
+        }
+        btnCamera.setOnClickListener {
+            onCamera()
+            alertDialog.dismiss()
+        }
+        onDelete?.let {
+            btnDelete.visibility = View.VISIBLE
+            btnDelete.setOnClickListener{
+                onDelete()
+                alertDialog.dismiss()
+            }
+        }
+        alertDialog.show()
         return dialogView
     }
 }

@@ -19,6 +19,7 @@ import com.example.budgetbuddy.databinding.FragmentPersonalDataBinding
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -52,16 +53,6 @@ class PersonalDataFragment : Fragment(), OnClickListener {
         }
     }
 
-    /**
-     * Metodo que sirve para esconder el teclado
-     * */
-    private fun hideKeyboard() {
-        requireActivity().currentFocus?.let { view ->
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,15 +76,15 @@ class PersonalDataFragment : Fragment(), OnClickListener {
 
         binding.usernameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setUserName(text.toString())
-            viewModel.validateUserName(text.toString())
+            viewModel.validateUserName(text.toString(), requireContext())
         })
         binding.firstNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setFirstName(text.toString())
-            viewModel.validateFirstName(text.toString())
+            viewModel.validateFirstName(text.toString(), requireContext())
         })
         binding.lastNameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setLastName(text.toString())
-            viewModel.validateLastName(text.toString())
+            viewModel.validateLastName(text.toString(), requireContext())
         })
     }
 
@@ -116,7 +107,7 @@ class PersonalDataFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         lifecycleScope.launch {
             if (viewModel.personalDataGood) { //Si esta correcto se intenta crear un usuario en la base de datos
-                hideKeyboard()
+                Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE;
                 binding.personalDataFrame.alpha = 0.4f
                 val user = User(

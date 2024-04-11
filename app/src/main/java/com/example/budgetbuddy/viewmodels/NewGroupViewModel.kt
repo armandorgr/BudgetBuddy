@@ -1,29 +1,31 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.DatePicker
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
-import com.example.budgetbuddy.model.DateSent
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.GroupRepository
+import com.example.budgetbuddy.repositories.StorageRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.DateResult
-import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.validations.validators.GroupDescriptionValidator
 import com.example.budgetbuddy.validations.validators.GroupNameValidator
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -38,22 +40,40 @@ import javax.inject.Inject
 @HiltViewModel
 class NewGroupViewModel @Inject constructor(
     private val repo: GroupRepository,
-    private val userRepo: UsersRepository
+    private val userRepo: UsersRepository,
+    private val storageRepository: StorageRepository
 ) : ViewModel() {
     private var childEventsAdded = false
     private var _currentUserUid: String? = null
     private val currentUserUid get() = _currentUserUid!!
+    private var groupPhoto: Any? = null
     private val startDateLimit = LocalDateTime.of(2000, 1, 1, 0, 0)
     private val endDateLimit = LocalDateTime.of(2030, 1, 1, 0, 0)
     private val selectedUsers: MutableList<ListItemUiModel.User> = mutableListOf()
-    private val _members = MutableStateFlow<List<ListItemUiModel.User>>(emptyList())
+    private val _members:MutableStateFlow<List<ListItemUiModel.User>> = MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
+
+    private val _currentUserRole:MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val currentUserRole:StateFlow<Boolean> = _currentUserRole
 
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
 
+
+    fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit){
+        repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
+    }
+
     fun setCurrentUserUID(uid: String) {
         this._currentUserUid = uid
+    }
+
+    fun setGroupPhoto(photo: Any?) {
+        this.groupPhoto = photo
+    }
+
+    fun getGroupPhoto(): Any? {
+        return this.groupPhoto
     }
 
     private fun getDate(datePicker: DatePicker): LocalDateTime {
@@ -86,26 +106,69 @@ class NewGroupViewModel @Inject constructor(
     }
 
     fun updateGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
-        val members: HashMap<String, Boolean> =
-            selectedUsers.map { it.uid }
-                .associateWith { true } as HashMap<String, Boolean>
-        members[currentUserUid] = true
+        val membersToDelete = mutableListOf<String>()
+        val friendsToInvite = mutableListOf<String>()
+
+        for(member in _members.value){
+            if(!selectedUsers.any { selectedUser -> selectedUser.uid==member.uid }){
+                membersToDelete.add(member.uid)
+            }
+        }
+        for(user in selectedUsers){
+            if(!_members.value.any { member -> member.uid==user.uid }){
+                friendsToInvite.add(user.uid)
+            }
+        }
+
+        Log.d("prueba","selected users $selectedUsers")
+        Log.d("prueba","membersToDelete $membersToDelete")
+        Log.d("prueba","friendsToInvite $friendsToInvite")
+
         val group = Group(
+            "${Utilities.PROFILE_PIC_ST}images/$groupUID",
             currentUserUid,
             _groupName.value,
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            members
+            null
         )
-        repo.updateGroup(group, groupUID).addOnCompleteListener {
-            onCompleteListener(it)
-        }
+
+        repo.updateGroup(group, groupUID, membersToDelete, friendsToInvite)
+            .addOnCompleteListener { task ->
+                groupPhoto.let { pic ->
+                    when (pic) {
+                        is Uri -> {
+                            storageRepository.saveImageFromUri(pic, groupUID)
+                                .addOnCompleteListener {
+                                    onCompleteListener(task)
+                                }
+                        }
+
+                        is Bitmap -> {
+                            storageRepository.saveImageFromBitmap(pic, groupUID)
+                                .addOnCompleteListener {
+                                    onCompleteListener(task)
+                                }
+                        }
+
+                        else -> {
+                            storageRepository.deletePhoto("images/$groupUID")
+                                .addOnCompleteListener {
+                                    onCompleteListener(task)
+                                }
+                        }
+                    }
+                }
+            }
     }
 
     fun deleteGroup(groupUID: String, completeListener: (task: Task<Void>) -> Unit) {
-        addMember(currentUserUid, User())
-        repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener(completeListener)
+        addMember(currentUserUid, User(), null)
+        repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener {
+            storageRepository.deletePhoto("images/$groupUID")
+            completeListener(it)
+        }
     }
 
     fun onStartDateClick(context: Context, view: View) {
@@ -137,9 +200,9 @@ class NewGroupViewModel @Inject constructor(
         _members.value = newMembers
     }
 
-    private fun addMember(uid: String, member: User) {
+    private fun addMember(uid: String, member: User, role: Boolean?) {
         val updatedList = _members.value.toMutableList().apply {
-            add(ListItemUiModel.User(uid, member, true))
+            add(ListItemUiModel.User(uid, member, true, role))
         }
         updateList(updatedList)
     }
@@ -154,14 +217,21 @@ class NewGroupViewModel @Inject constructor(
     private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val key = snapshot.key
+            val role = snapshot.getValue(Boolean::class.java)
+            Log.d("prueba", "role: $role")
             key?.let {
                 userRepo.findUserByUIDNotSuspend(it).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = task.result.getValue(User::class.java)
-                        user?.let { u ->
+                        user?.let { foundUser ->
                             if (currentUserUid != it) {
-                                selectedUsers.add(ListItemUiModel.User(key, u, true))
-                                addMember(key, u)
+                                selectedUsers.add(ListItemUiModel.User(key, foundUser, true, role))
+                                addMember(key, foundUser, role)
+                                // se carga el rol de usuario actual para ver si puede o no realizar modificaciones
+                            }else{
+                                if (role != null) {
+                                    _currentUserRole.value = role
+                                }
                             }
                         }
                     } else {
@@ -193,14 +263,13 @@ class NewGroupViewModel @Inject constructor(
         get() {
             return groupNameError.value.equals("") &&
                     groupDescriptionError.value.equals("") &&
-                    selectedUsers.size >= 1 &&
                     startDate.value != null && _endDate.value != null
         }
 
     private val _endDate = MutableLiveData<LocalDateTime?>()
     val endDate: LiveData<LocalDateTime?> = _endDate
 
-    private val _groupName = MutableLiveData<String>()
+    private val _groupName:MutableLiveData<String> = MutableLiveData<String>()
     val groupName: LiveData<String> = _groupName
 
     private val _groupDescription = MutableLiveData<String>()
@@ -212,21 +281,42 @@ class NewGroupViewModel @Inject constructor(
     private val _groupDescriptionError = MutableLiveData<String?>()
     val groupDescriptionError: LiveData<String?> = _groupDescriptionError
 
-    fun createNewGroup(currentUserUid: String, onCompleteListener: (task: Task<Void>) -> Unit) {
-        val members: HashMap<String, Boolean> =
-            selectedUsers.map { it.uid }
-                .associateWith { true } as HashMap<String, Boolean>
-        members[currentUserUid] = true
+    fun createNewGroup(
+        currentUserUid: String,
+        username: String,
+        onCompleteListener: (task: Task<Void>) -> Unit
+    ) {
+        val members: MutableList<String> = selectedUsers.map { user -> user.uid }.toMutableList()
         val group = Group(
+            "${Utilities.PROFILE_PIC_ST}images/",
             currentUserUid,
             _groupName.value,
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            members
+            hashMapOf(currentUserUid to true)
         )
-        repo.createNewGroup(group, currentUserUid)?.addOnCompleteListener {
-            onCompleteListener(it)
+
+        repo.createNewGroup(group, currentUserUid, members, username) { task, uid ->
+            groupPhoto.let { pic ->
+                when (pic) {
+                    is Uri -> {
+                        storageRepository.saveImageFromUri(pic, uid).addOnCompleteListener {
+                            onCompleteListener(task)
+                        }
+                    }
+
+                    is Bitmap -> {
+                        storageRepository.saveImageFromBitmap(pic, uid).addOnCompleteListener {
+                            onCompleteListener(task)
+                        }
+                    }
+
+                    else -> {
+                        onCompleteListener(task)
+                    }
+                }
+            }
         }
     }
 
@@ -276,7 +366,7 @@ class NewGroupViewModel @Inject constructor(
         }
     }
 
-    fun validateEndDate(date: LocalDateTime, context: Context): String? {
+    private fun validateEndDate(date: LocalDateTime, context: Context): String? {
         return if (_startDate.value != null) {
             if (date.isBefore(_startDate.value)) {
                 context.getString(R.string.end_date_error)
@@ -297,7 +387,7 @@ class NewGroupViewModel @Inject constructor(
         }
     }
 
-    fun validateStartDate(date: LocalDateTime, context: Context): String? {
+    private fun validateStartDate(date: LocalDateTime, context: Context): String? {
         return if (_endDate.value != null) {
             if (date.isAfter(_endDate.value)) {
                 context.getString(R.string.end_date_error)
@@ -333,5 +423,24 @@ class NewGroupViewModel @Inject constructor(
 
     fun setEndDate(date: LocalDateTime) {
         _endDate.postValue(date)
+    }
+
+    fun onPhotoLoadFail(context: Context) {
+        Toast.makeText(context, context.getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
+    }
+
+    fun onSuccessCamera(img: Bitmap, context: Context, view:ImageView) {
+        setGroupPhoto(img)
+        Glide.with(context).load(img).placeholder(R.drawable.default_group_pic).into(view)
+    }
+
+    fun onSuccessGallery(uri: Uri, context: Context, view:ImageView) {
+        setGroupPhoto(uri)
+        Glide.with(context).load(uri).placeholder(R.drawable.default_group_pic).into(view)
+    }
+
+    fun onDeletePhoto(context: Context, view:ImageView){
+        setGroupPhoto(null)
+        Glide.with(context).load(R.drawable.default_group_pic).into(view)
     }
 }

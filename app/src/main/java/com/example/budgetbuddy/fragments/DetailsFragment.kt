@@ -16,6 +16,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 
 class DetailsFragment : Fragment() {
+    /*
+    *
+    * */
     private lateinit var binding: FragmentDetailsBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

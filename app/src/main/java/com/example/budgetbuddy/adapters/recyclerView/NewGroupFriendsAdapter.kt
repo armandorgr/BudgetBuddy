@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.adapters.recyclerView
 
 import android.annotation.SuppressLint
+import android.text.BoringLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,26 +9,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewHolders.NewGroupFriendViewHolder
 
 /**
  * Clase la cual sirve para cargar la lista de los amigos del usuario a un [RecyclerView]
  * y añadirle a cada elemento un evento el cual se ejecutara cuando se haga click sobre el checkBox del amigos
+ * La manera empleada para el uso del [RecyclerView.Adapter] fue obtenida de la fuente:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capitulo 6 'Adding and Interacting with RecyclerView'
  * */
 class NewGroupFriendsAdapter(
     private val layoutInflater: LayoutInflater,
     private val selectedList : MutableList<ListItemUiModel.User>,
+    private val imageLoader: ListItemImageLoader,
     private val onCheckClickListener: OnCheckClickListener? = null,
     private val onUnCheckClickListener: OnCheckClickListener? = null,
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
+
+    private var editable:Boolean = true
     /**
      * Lista la cual contendra todos los amigos cargados del usuario
      * */
-    private val listData = mutableListOf<ListItemUiModel>()
+    private val listData:MutableList<ListItemUiModel> = mutableListOf()
     /**
      * Lista que solo contendra los amigos que se necesiten mostrar
      * */
-    private val shownData = mutableListOf<ListItemUiModel>()
+    private val shownData:MutableList<ListItemUiModel> = mutableListOf()
 
     /**
      * Metodo que sirve para establecer la lista de los amigos cargados y actualizar el [RecyclerView]
@@ -36,9 +44,19 @@ class NewGroupFriendsAdapter(
     @SuppressLint("NotifyDataSetChanged")
     fun setData(newItems: List<ListItemUiModel>) {
         listData.clear()
-        listData.addAll(newItems)
+        newItems.forEach { (it as ListItemUiModel.User).editable = editable }
+        val filteredData = newItems.toMutableList().apply { filter { item -> !selectedList.any { item2 -> item2.uid == (item as ListItemUiModel.User).uid }}}
+        Log.d("prueba", "filtered data: $filteredData")
+        listData.addAll(filteredData)
         shownData.clear()
-        shownData.addAll(newItems)
+        shownData.addAll(filteredData)
+        notifyDataSetChanged()
+    }
+
+    fun setEditable(editable:Boolean){
+        this.editable = editable
+        listData.forEach { (it as ListItemUiModel.User).editable = editable }
+        shownData.forEach { (it as ListItemUiModel.User).editable = editable }
         notifyDataSetChanged()
     }
 
@@ -94,7 +112,7 @@ class NewGroupFriendsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewGroupFriendViewHolder {
         val view = layoutInflater.inflate(R.layout.new_group_friend_layout, parent, false)
-        return NewGroupFriendViewHolder(view, onCheckClickEvent, onUnCheckEvent)
+        return NewGroupFriendViewHolder(view, imageLoader ,onCheckClickEvent, onUnCheckEvent)
     }
 
     override fun getItemCount(): Int {

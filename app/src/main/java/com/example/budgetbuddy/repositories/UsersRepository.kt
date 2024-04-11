@@ -21,8 +21,13 @@ class UsersRepository {
         return database.child(uid).setValue(user)
     }
 
+    //TODO borrar esto
      fun writeNewUser(user: User, uid:String):Task<Void>{
         return database.child(uid).setValue(user)
+    }
+
+    fun deleteProfilePic(uid:String):Task<Void>{
+        return database.child(uid).child("profilePic").setValue(null)
     }
 
     suspend fun findUserUIDByUsername(username:String):String?{
@@ -86,5 +91,9 @@ class UsersRepository {
 
     fun findUserByUIDNotSuspend(uid:String): Task<DataSnapshot>{
         return database.child(uid).get()
+    }
+
+    fun setProfilePic(path:String, currentUserUid:String):Task<Void>{
+        return database.child(currentUserUid).child("profilePic").setValue(path)
     }
 }

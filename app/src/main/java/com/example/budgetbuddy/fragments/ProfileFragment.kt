@@ -1,25 +1,32 @@
 package com.example.budgetbuddy.fragments
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.MainActivity
 import com.example.budgetbuddy.databinding.FragmentProfileBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
+import com.example.budgetbuddy.viewmodels.RegisterViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputEditText
@@ -38,11 +45,16 @@ import kotlinx.coroutines.launch
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+    private val registerViewModel: RegisterViewModel by viewModels()
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var dialogFactory: AlertDialogFactory
     private val GOOGLE_PROVIDER = "google.com"
     private val PASSWORD_PROVIDER = "password"
+    private val imageLoader = ImageLoader(this,this::onSuccessGallery,this::onSuccessCamera,this::onPhotoLoadFail)
 
+    private fun onPhotoLoadFail() {
+        Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +73,18 @@ class ProfileFragment : Fragment() {
      * @param binding Binding contenedor de las referencias a todos los widgets del fragmento
      * */
     private fun prepareBinding(binding: FragmentProfileBinding) {
+        if(homeViewModel.provider.value?.equals(PASSWORD_PROVIDER) == true){
+            binding.addPhotoIcon.visibility = View.VISIBLE
+            binding.proflePic.setOnClickListener(this::onAddPhotoClick)
+        }
+        
         binding.usernameTextView.text = homeViewModel.currentUser.value?.username
+
+        val profilePic = homeViewModel.currentUser.value?.profilePic
+
+        if(profilePic != null){
+            viewModel.loadProfilePic(requireContext(), profilePic, binding.proflePic)
+        }
         // si se inicio sesion con Google se ocultan las opciones de cambio de correo y contraseña
         if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
             binding.newEmailConstraintLayout.visibility = View.GONE
@@ -96,6 +119,55 @@ class ProfileFragment : Fragment() {
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
 
+    private fun onDeleteProfilePic(){
+        val path = homeViewModel.currentUser.value?.profilePic?.substring(2)
+        path?.let {
+            homeViewModel.firebaseUser.value?.uid?.let { it1 ->
+                viewModel.deleteProfilePic(it, it1){ task ->
+                    if(task.isSuccessful){
+                        Toast.makeText(requireContext(), getString(R.string.delete_photo_success),Toast.LENGTH_SHORT).show()
+                        homeViewModel.currentUser.value?.profilePic = null
+                        Glide.with(requireContext()).load(R.drawable.default_profile_pic).into(binding.proflePic)
+                    }else{
+                        Toast.makeText(requireContext(), path,Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onAddPhotoClick(view: View?) {
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        val onDelete = if(homeViewModel.currentUser.value?.profilePic != null) this::onDeleteProfilePic else null
+        alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() }, onDelete)
+    }
+
+    private fun onSuccessCamera(img: Bitmap) {
+        homeViewModel.firebaseUser.value?.uid?.let {uid->
+            viewModel.uploadProfilePicByBitmap(Utilities.PROFILE_PIC_ST ,img, uid){it, path->
+                if(it.isSuccessful){
+                    Glide.with(requireContext()).load(img).into(binding.proflePic)
+                    homeViewModel.currentUser.value?.profilePic = path
+                }else{
+                    Toast.makeText(requireContext(), it.exception?.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun onSuccessGallery(uri: Uri) {
+        homeViewModel.firebaseUser.value?.uid?.let {uid->
+            viewModel.uploadProfilePicByUri(Utilities.PROFILE_PIC_ST, uri, uid){it, path ->
+                if(it.isSuccessful){
+                    Glide.with(requireContext()).load(uri).into(binding.proflePic)
+                    homeViewModel.currentUser.value?.profilePic = path
+                }else{
+                    Toast.makeText(requireContext(), it.exception?.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     /**
      * Metodo que se ejecuta cuando se hace click sobre el boton para cambiar nombre de usuario
      * Se muestra un alertDialog para introducir el nuevo nombre y valida que no exista ya.
@@ -109,16 +181,17 @@ class ProfileFragment : Fragment() {
             getString(R.string.change_username_title),
             getString(R.string.change_username_hint),
             { dialog ->
+                Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE
+
                 val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
-                var response: String? = viewModel.validateUsername(txt)
-                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
-                    response ?: ""
+                var response: String? = registerViewModel.validateUserName(txt, requireContext())
+
+                dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response ?: ""
                 lifecycleScope.launch {
                     if (viewModel.findUserByUsername(txt) != null) {
                         response = getString(R.string.username_already_exits)
-                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
-                            response
+                        dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText = response
                     } else {
                         if (response == null) {
                             viewModel.updateUsername(homeViewModel.firebaseUser.value!!.uid, txt)
@@ -169,6 +242,7 @@ class ProfileFragment : Fragment() {
             getString(R.string.email),
             getString(R.string.password),
             { dialog ->
+                Utilities.hideKeyboard(requireActivity(), requireContext())
                 binding.determinateBar.visibility = View.VISIBLE
                 val email =
                     dialog.findViewById<TextInputEditText>(R.id.EmailEditText).text.toString()
@@ -206,8 +280,9 @@ class ProfileFragment : Fragment() {
                 getString(R.string.new_email_title),
                 getString(R.string.new_email),
                 { dialog ->
+                    Utilities.hideKeyboard(requireActivity(), requireContext())
                     val txt = dialog.findViewById<EditText>(R.id.newEditText).text.toString()
-                    val response: String? = viewModel.validateEmail(txt)
+                    val response: String? = registerViewModel.validateEmail(txt, requireContext())
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {
@@ -249,10 +324,11 @@ class ProfileFragment : Fragment() {
                 getString(R.string.change_password_hint),
                 //Este es la funcion que se ejecutara cuando se presione el boton del dialog
                 { dialog ->
+                    Utilities.hideKeyboard(requireActivity(), requireContext())
                     binding.determinateBar.visibility = View.INVISIBLE
                     val txt =
                         dialog.findViewById<TextInputEditText>(R.id.newEditText).text.toString()
-                    val response: String? = viewModel.validatePassword(txt)
+                    val response: String? = registerViewModel.validatePassword(txt, txt, requireContext())
                     dialog.findViewById<TextInputLayout>(R.id.promptTextLayout).helperText =
                         response ?: ""
                     if (response == null) {
@@ -288,20 +364,27 @@ class ProfileFragment : Fragment() {
         binding.profileFrame.alpha = 0.3f
         binding.determinateBar.visibility = View.INVISIBLE
         if (task.isSuccessful) {
+            Utilities.hideKeyboard(requireActivity(), requireContext())
             val data = ResultOkCancel(
                 getString(R.string.delete_account),
                 getString(R.string.delete_account_message),
                 {
                     // este es la funcion que se ejecutara cuando se haga click sobre el boton ok del dialog
                     binding.determinateBar.visibility = View.VISIBLE
-                    homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {
-                        lifecycleScope.launch {
-                            if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
-                                onDeleteAccountComplete(it)
-                                binding.determinateBar.visibility = View.INVISIBLE
-                            } else {
-                                failedChange(getString(R.string.delete_account_fail))
+                    lifecycleScope.launch {
+                        if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
+                            val path = homeViewModel.currentUser.value?.profilePic?.substring(2)
+                            path?.let {
+                                homeViewModel.firebaseUser.value?.uid?.let { it1 ->
+                                    viewModel.deleteProfilePic(it, it1){}
+                                }
                             }
+                            homeViewModel.firebaseUser.value?.delete()?.addOnCompleteListener {t->
+                                onDeleteAccountComplete(t)
+                                binding.determinateBar.visibility = View.INVISIBLE
+                            }
+                        } else {
+                            failedChange(getString(R.string.delete_account_fail))
                         }
                     }
                     it.dismiss()
