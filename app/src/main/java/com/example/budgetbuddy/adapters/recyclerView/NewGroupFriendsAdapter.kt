@@ -23,6 +23,7 @@ class NewGroupFriendsAdapter(
     private val layoutInflater: LayoutInflater,
     private val selectedList: MutableList<ListItemUiModel.User>,
     private val imageLoader: ListItemImageLoader,
+    private val onChangeRoleListener: OnChangeRoleListener? = null,
     private val onCheckClickListener: OnCheckClickListener? = null,
     private val onUnCheckClickListener: OnCheckClickListener? = null,
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
@@ -115,6 +116,16 @@ class NewGroupFriendsAdapter(
         }
     }
 
+    private val onChangeRoleEvent = if (onChangeRoleListener != null) {
+        object : NewGroupFriendViewHolder.OnChangeRoleListener {
+            override fun onClick(user: ListItemUiModel.User, position: Int) {
+                onChangeRoleListener?.onChangeRole(user, position)
+            }
+        }
+    } else {
+        null
+    }
+
     fun removeItem(item: ListItemUiModel.User) {
         listData.removeIf {
             require(it is ListItemUiModel.User)
@@ -130,7 +141,13 @@ class NewGroupFriendsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewGroupFriendViewHolder {
         val view = layoutInflater.inflate(R.layout.new_group_friend_layout, parent, false)
-        return NewGroupFriendViewHolder(view, imageLoader, onCheckClickEvent, onUnCheckEvent)
+        return NewGroupFriendViewHolder(
+            view,
+            imageLoader,
+            onCheckClickEvent,
+            onUnCheckEvent,
+            onChangeRoleEvent,
+        )
     }
 
     override fun getItemCount(): Int {
@@ -152,5 +169,9 @@ class NewGroupFriendsAdapter(
          * @param position Posicion que ocupa el amigo en el Adapter
          * */
         fun onCheckClick(user: User, position: Int)
+    }
+
+    interface OnChangeRoleListener {
+        fun onChangeRole(user: ListItemUiModel.User, position: Int)
     }
 }

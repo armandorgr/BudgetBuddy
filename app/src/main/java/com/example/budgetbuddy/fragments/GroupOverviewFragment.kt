@@ -1,10 +1,10 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -23,17 +23,19 @@ import com.example.budgetbuddy.model.ROLE
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
+import com.example.budgetbuddy.util.PickerData
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
+private const val OSCURE = 0.3f
+private const val NORMAL = 1f
 
 /**
  * Clase del fragmento que sirve para cargar los datos de un grupo,
@@ -42,6 +44,7 @@ import java.time.format.DateTimeFormatter
 @AndroidEntryPoint
 class GroupOverviewFragment : Fragment() {
     private var _binding: FragmentNewGroupBinding? = null
+
     /**
      * Argumentos pasados al fragmento al hacer click sobre un Grupo cargados del usuario
      * en el fragmento [GroupsFragment]
@@ -53,6 +56,7 @@ class GroupOverviewFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var selectedGroup: Group
     private lateinit var selectedGroupUID: String
+
     //TODO CAMBIAR NOMBRES INVERTIDOS DE friends y members
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var membersAdapter: NewGroupFriendsAdapter
@@ -85,7 +89,8 @@ class GroupOverviewFragment : Fragment() {
         friendsAdapter = NewGroupFriendsAdapter(
             inflater,
             viewModel.getSelectedList(),
-            ListItemImageLoader(requireContext())
+            ListItemImageLoader(requireContext()),
+            onChangeRoleListener
         )
         membersAdapter = NewGroupFriendsAdapter(
             inflater,
@@ -108,7 +113,7 @@ class GroupOverviewFragment : Fragment() {
                     val filteredList = it.toMutableList().apply {
                         removeIf { item ->
                             require(item is ListItemUiModel.User)
-                            viewModel.members.value.any{ member -> member.uid==item.uid}
+                            viewModel.members.value.any { member -> member.uid == item.uid }
                         }
                         map { item -> (item as ListItemUiModel.User).selected = false }
                     }
@@ -119,11 +124,42 @@ class GroupOverviewFragment : Fragment() {
         return binding.root
     }
 
-    private fun deleteMembersInFriends(members: List<ListItemUiModel>){
-        for(i in members){
+    private fun deleteMembersInFriends(members: List<ListItemUiModel>) {
+        for (i in members) {
             require(i is ListItemUiModel.User)
             membersAdapter.removeItem(i)
         }
+    }
+
+    //TODO POER ABAJO DEL TODO
+    private val onChangeRoleListener = object : NewGroupFriendsAdapter.OnChangeRoleListener {
+        override fun onChangeRole(user: ListItemUiModel.User, position: Int) {
+            showRoleSpinnerDialog(user)
+        }
+    }
+
+    private fun showRoleSpinnerDialog(user: ListItemUiModel.User) {
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.roles_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+
+        val data = PickerData(
+            getString(R.string.change_role_title, user.userUiModel.username),
+            adapter,
+            { dialog, valueSelected ->
+                val role = if (valueSelected == resources.getStringArray(R.array.roles_array)[0]) ROLE.ADMIN else ROLE.MEMBER
+                viewModel.changeMemberRole(selectedGroupUID, user.uid, role, requireContext())
+                dialog.dismiss()
+                binding.frame.alpha = NORMAL
+            }
+        ) { }
+        binding.frame.alpha = OSCURE
+        alertDialogFactory.createPickerDialog(binding.root, data)
     }
 
     /**
@@ -138,7 +174,7 @@ class GroupOverviewFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-            findNavController().popBackStack(R.id.nav_groups, false)
+            findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups())
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
@@ -277,7 +313,7 @@ class GroupOverviewFragment : Fragment() {
         binding.leaveGroup.setOnClickListener(this::onLeaveGroupClick)
 
         lifecycleScope.launch {
-            viewModel.currentUserRole.collect {role->
+            viewModel.currentUserRole.collect { role ->
                 if (role != ROLE.ADMIN) {
                     friendsAdapter.setEditable(false)
                     binding.deleteGroupBtn.visibility = View.GONE

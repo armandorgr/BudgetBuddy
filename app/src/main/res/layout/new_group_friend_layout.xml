@@ -20,11 +20,12 @@
         />
 
     <LinearLayout
+        android:id="@+id/linearLayoutUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEndText"
+        app:layout_constraintEnd_toStartOf="@id/guidelineNameIcon"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/guidelineEndImg"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,6 +45,24 @@
             android:text="@string/place_holder_username_profile" />
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineNameIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <ImageView
+        android:id="@+id/editRoleIcon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/guidelineNameIcon"
+        app:layout_constraintEnd_toStartOf="@id/guidelineEndText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible"
+        android:padding="@dimen/margin_small"
+        android:src="@drawable/baseline_edit_24"/>
 
 
     <androidx.constraintlayout.widget.Guideline

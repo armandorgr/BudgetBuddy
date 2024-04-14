@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
@@ -13,7 +14,8 @@ class NewGroupFriendViewHolder(
     private val containerView: View,
     private val imageLoader: ListItemImageLoader,
     private val onCheckClickListener: OnCheckClickListener,
-    private val onUnCheckClickListener: OnCheckClickListener
+    private val onUnCheckClickListener: OnCheckClickListener,
+    private val onChangeRoleListener: OnChangeRoleListener?,
 ) : ListItemViewHolder(containerView) {
 
     private val userNameView: TextView by lazy {
@@ -28,6 +30,9 @@ class NewGroupFriendViewHolder(
     private val profilePic: ImageView by lazy {
         containerView.findViewById(R.id.item_img_view)
     }
+    private val editRoleIcon: ImageView by lazy{
+        containerView.findViewById(R.id.editRoleIcon)
+    }
 
     override fun bindData(listItem: ListItemUiModel) {
         require(listItem is ListItemUiModel.User) {
@@ -39,7 +44,7 @@ class NewGroupFriendViewHolder(
         userData.profilePic?.let { path -> imageLoader.loadImage(path, profilePic) }
         listItem.role?.let {
             roleView.visibility = View.VISIBLE
-            roleView.text = listItem.role.name
+            roleView.text = listItem.role!!.name
         }
         Log.d("prueba", "Elemento ${listItem.userUiModel.username} selected: ${listItem.selected}")
 
@@ -47,6 +52,12 @@ class NewGroupFriendViewHolder(
             checkBox.isClickable = false
             Log.d("prueba", " editable: ${listItem.editable}")
         }else{
+            if(onChangeRoleListener!=null){
+                editRoleIcon.visibility = View.VISIBLE
+                editRoleIcon.setOnClickListener {
+                    onChangeRoleListener.onClick(listItem, adapterPosition)
+                }
+            }
             checkBox.setOnClickListener {
                 if (checkBox.isChecked) {
                     onCheckClickListener.onCheckClicked(listItem, adapterPosition)
@@ -56,6 +67,10 @@ class NewGroupFriendViewHolder(
             }
         }
         userNameView.text = userData.username
+    }
+
+    interface OnChangeRoleListener{
+        fun onClick(user: ListItemUiModel.User, position: Int)
     }
 
     interface OnCheckClickListener {
