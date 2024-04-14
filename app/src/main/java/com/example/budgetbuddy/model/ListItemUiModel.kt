@@ -10,7 +10,7 @@ sealed class ListItemUiModel {
         val uid:String,
         val userUiModel: com.example.budgetbuddy.model.User,
         var selected: Boolean = false,
-        val role:Boolean? = null,
+        val role:ROLE? = null,
         var editable:Boolean?= null
     ) : ListItemUiModel()
     //TODO Refactorizar nombres

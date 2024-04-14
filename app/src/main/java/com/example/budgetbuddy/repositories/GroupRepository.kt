@@ -97,9 +97,13 @@ class GroupRepository {
         return database.updateChildren(childUpdates)
     }
 
-    fun setGroupChildEvents(currentUserUid: String, childEventListener: ChildEventListener) {
-        database.child(usersRef).child(currentUserUid).child(groupsRef)
+    fun setGroupChildEvents(currentUserUid: String, childEventListener: ChildEventListener):ChildEventListener {
+        return database.child(usersRef).child(currentUserUid).child(groupsRef)
             .addChildEventListener(childEventListener)
+    }
+
+    fun removeChildEvents(currentUserUid: String, childEventListener: ChildEventListener){
+        database.child(usersRef).child(currentUserUid).child(groupsRef).removeEventListener(childEventListener)
     }
 
     fun setGroupMembersChildEvents(groupUID: String, childEventListener: ChildEventListener) {

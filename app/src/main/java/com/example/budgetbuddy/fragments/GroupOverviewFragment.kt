@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.model.ROLE
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
@@ -27,6 +29,8 @@ import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -93,22 +97,33 @@ class GroupOverviewFragment : Fragment() {
         //Al hacer collect cada vez que se cambie la lista, se ejecuta el codigo
         // que lo pasa al Adapter y la lista de actualiza
         lifecycleScope.launch {
-            viewModel.members.collect {
-                friendsAdapter.setData(it)
-            }
-        }
-        lifecycleScope.launch {
-            friendsViewModel.friendsUidList.collect {
-                val filteredList = it.toMutableList().apply {
-                    removeIf { item ->
-                        selectedGroup.members?.contains((item as ListItemUiModel.User).uid) ?: false
-                    }
-                    map { item -> (item as ListItemUiModel.User).selected = false }
+            launch {
+                viewModel.members.collect {
+                    deleteMembersInFriends(it)
+                    friendsAdapter.setData(it)
                 }
-                membersAdapter.setData(filteredList)
+            }
+            launch {
+                friendsViewModel.friendsUidList.collect {
+                    val filteredList = it.toMutableList().apply {
+                        removeIf { item ->
+                            require(item is ListItemUiModel.User)
+                            viewModel.members.value.any{ member -> member.uid==item.uid}
+                        }
+                        map { item -> (item as ListItemUiModel.User).selected = false }
+                    }
+                    membersAdapter.setData(filteredList)
+                }
             }
         }
         return binding.root
+    }
+
+    private fun deleteMembersInFriends(members: List<ListItemUiModel>){
+        for(i in members){
+            require(i is ListItemUiModel.User)
+            membersAdapter.removeItem(i)
+        }
     }
 
     /**
@@ -262,17 +277,15 @@ class GroupOverviewFragment : Fragment() {
         binding.leaveGroup.setOnClickListener(this::onLeaveGroupClick)
 
         lifecycleScope.launch {
-            viewModel.currentUserRole.collect {
-                if (!it) {
-                    friendsAdapter.setEditable(it)
+            viewModel.currentUserRole.collect {role->
+                if (role != ROLE.ADMIN) {
+                    friendsAdapter.setEditable(false)
                     binding.deleteGroupBtn.visibility = View.GONE
-                    binding.groupNameEditText.isEnabled = it
-                    binding.groupDescriptionEditText.isEnabled = it
-                    binding.startDate.isClickable = it
-                    binding.endDate.isClickable = it
-                    binding.groupPic.isClickable = it
-                } else {
-
+                    binding.groupNameEditText.isEnabled = false
+                    binding.groupDescriptionEditText.isEnabled = false
+                    binding.startDate.isClickable = false
+                    binding.endDate.isClickable = false
+                    binding.groupPic.isClickable = false
                 }
             }
         }

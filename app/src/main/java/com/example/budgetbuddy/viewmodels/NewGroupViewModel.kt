@@ -17,6 +17,7 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.model.ROLE
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.GroupRepository
 import com.example.budgetbuddy.repositories.StorageRepository
@@ -53,8 +54,8 @@ class NewGroupViewModel @Inject constructor(
     private val _members:MutableStateFlow<List<ListItemUiModel.User>> = MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
 
-    private val _currentUserRole:MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val currentUserRole:StateFlow<Boolean> = _currentUserRole
+    private val _currentUserRole:MutableStateFlow<ROLE> = MutableStateFlow(ROLE.ADMIN)
+    val currentUserRole:StateFlow<ROLE> = _currentUserRole
 
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
@@ -200,7 +201,7 @@ class NewGroupViewModel @Inject constructor(
         _members.value = newMembers
     }
 
-    private fun addMember(uid: String, member: User, role: Boolean?) {
+    private fun addMember(uid: String, member: User, role: ROLE?) {
         val updatedList = _members.value.toMutableList().apply {
             add(ListItemUiModel.User(uid, member, true, role))
         }
@@ -217,7 +218,7 @@ class NewGroupViewModel @Inject constructor(
     private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val key = snapshot.key
-            val role = snapshot.getValue(Boolean::class.java)
+            val role = snapshot.getValue(ROLE::class.java)
             Log.d("prueba", "role: $role")
             key?.let {
                 userRepo.findUserByUIDNotSuspend(it).addOnCompleteListener { task ->
@@ -294,7 +295,7 @@ class NewGroupViewModel @Inject constructor(
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            hashMapOf(currentUserUid to true)
+            hashMapOf(currentUserUid to ROLE.ADMIN)
         )
 
         repo.createNewGroup(group, currentUserUid, members, username) { task, uid ->

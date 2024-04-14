@@ -39,7 +39,7 @@ class NewGroupFriendViewHolder(
         userData.profilePic?.let { path -> imageLoader.loadImage(path, profilePic) }
         listItem.role?.let {
             roleView.visibility = View.VISIBLE
-            roleView.text = if(it) "Admin" else "Member"
+            roleView.text = listItem.role.name
         }
         Log.d("prueba", "Elemento ${listItem.userUiModel.username} selected: ${listItem.selected}")
 

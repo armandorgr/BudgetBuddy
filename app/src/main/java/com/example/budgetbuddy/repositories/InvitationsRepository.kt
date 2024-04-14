@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.repositories
 
 import com.example.budgetbuddy.model.InvitationUiModel
+import com.example.budgetbuddy.model.ROLE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -39,7 +40,7 @@ class InvitationsRepository {
     fun confirmGroupInvitation(currentUserUid: String, invitationSenderUid: String){
         val childUpdate = hashMapOf<String, Any?>(
             "$usersRef/$currentUserUid/groups/$invitationSenderUid" to true,
-            "$groupsRef/$invitationSenderUid/members/$currentUserUid" to false,
+            "$groupsRef/$invitationSenderUid/members/$currentUserUid" to ROLE.MEMBER,
             "$usersRef/$currentUserUid/invitations/$invitationSenderUid" to null
         )
         database.updateChildren(childUpdate)
