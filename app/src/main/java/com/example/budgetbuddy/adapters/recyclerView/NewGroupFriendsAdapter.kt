@@ -21,21 +21,24 @@ import com.example.budgetbuddy.viewHolders.NewGroupFriendViewHolder
  * */
 class NewGroupFriendsAdapter(
     private val layoutInflater: LayoutInflater,
-    private val selectedList : MutableList<ListItemUiModel.User>,
+    private val selectedList: MutableList<ListItemUiModel.User>,
     private val imageLoader: ListItemImageLoader,
+    private val onChangeRoleListener: OnChangeRoleListener? = null,
     private val onCheckClickListener: OnCheckClickListener? = null,
     private val onUnCheckClickListener: OnCheckClickListener? = null,
 ) : RecyclerView.Adapter<NewGroupFriendViewHolder>() {
 
-    private var editable:Boolean = true
+    private var editable: Boolean = true
+
     /**
      * Lista la cual contendra todos los amigos cargados del usuario
      * */
-    private val listData:MutableList<ListItemUiModel> = mutableListOf()
+    private val listData: MutableList<ListItemUiModel> = mutableListOf()
+
     /**
      * Lista que solo contendra los amigos que se necesiten mostrar
      * */
-    private val shownData:MutableList<ListItemUiModel> = mutableListOf()
+    private val shownData: MutableList<ListItemUiModel> = mutableListOf()
 
     /**
      * Metodo que sirve para establecer la lista de los amigos cargados y actualizar el [RecyclerView]
@@ -45,7 +48,8 @@ class NewGroupFriendsAdapter(
     fun setData(newItems: List<ListItemUiModel>) {
         listData.clear()
         newItems.forEach { (it as ListItemUiModel.User).editable = editable }
-        val filteredData = newItems.toMutableList().apply { filter { item -> !selectedList.any { item2 -> item2.uid == (item as ListItemUiModel.User).uid }}}
+        val filteredData = newItems.toMutableList()
+            .apply { filter { item -> !selectedList.any { item2 -> item2.uid == (item as ListItemUiModel.User).uid } } }
         Log.d("prueba", "filtered data: $filteredData")
         listData.addAll(filteredData)
         shownData.clear()
@@ -53,7 +57,7 @@ class NewGroupFriendsAdapter(
         notifyDataSetChanged()
     }
 
-    fun setEditable(editable:Boolean){
+    fun setEditable(editable: Boolean) {
         this.editable = editable
         listData.forEach { (it as ListItemUiModel.User).editable = editable }
         shownData.forEach { (it as ListItemUiModel.User).editable = editable }
@@ -102,17 +106,48 @@ class NewGroupFriendsAdapter(
     }
     private val onUnCheckEvent = object : NewGroupFriendViewHolder.OnCheckClickListener {
         override fun onCheckClicked(user: ListItemUiModel.User, position: Int) {
-            Log.d("prueba", "Elemento eleminado: ${selectedList.remove(user)}")
+            Log.d(
+                "prueba",
+                "Elemento eleminado: ${selectedList.removeIf { i -> i.uid == user.uid }}"
+            )
             Log.d("prueba", "selected users: ${selectedList}")
             onUnCheckClickListener?.onCheckClick(user.userUiModel, position)
             user.selected = false
         }
     }
 
+    private val onChangeRoleEvent = if (onChangeRoleListener != null) {
+        object : NewGroupFriendViewHolder.OnChangeRoleListener {
+            override fun onClick(user: ListItemUiModel.User, position: Int) {
+                onChangeRoleListener?.onChangeRole(user, position)
+            }
+        }
+    } else {
+        null
+    }
+
+    fun removeItem(item: ListItemUiModel.User) {
+        listData.removeIf {
+            require(it is ListItemUiModel.User)
+            it.uid == item.uid
+        }
+        shownData.removeIf {
+            require(it is ListItemUiModel.User)
+            it.uid == item.uid
+        }
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewGroupFriendViewHolder {
         val view = layoutInflater.inflate(R.layout.new_group_friend_layout, parent, false)
-        return NewGroupFriendViewHolder(view, imageLoader ,onCheckClickEvent, onUnCheckEvent)
+        return NewGroupFriendViewHolder(
+            view,
+            imageLoader,
+            onCheckClickEvent,
+            onUnCheckEvent,
+            onChangeRoleEvent,
+        )
     }
 
     override fun getItemCount(): Int {
@@ -134,5 +169,9 @@ class NewGroupFriendsAdapter(
          * @param position Posicion que ocupa el amigo en el Adapter
          * */
         fun onCheckClick(user: User, position: Int)
+    }
+
+    interface OnChangeRoleListener {
+        fun onChangeRole(user: ListItemUiModel.User, position: Int)
     }
 }

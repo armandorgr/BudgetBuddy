@@ -5,6 +5,7 @@ import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.model.ROLE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -97,9 +98,13 @@ class GroupRepository {
         return database.updateChildren(childUpdates)
     }
 
-    fun setGroupChildEvents(currentUserUid: String, childEventListener: ChildEventListener) {
-        database.child(usersRef).child(currentUserUid).child(groupsRef)
+    fun setGroupChildEvents(currentUserUid: String, childEventListener: ChildEventListener):ChildEventListener {
+        return database.child(usersRef).child(currentUserUid).child(groupsRef)
             .addChildEventListener(childEventListener)
+    }
+
+    fun removeChildEvents(currentUserUid: String, childEventListener: ChildEventListener){
+        database.child(usersRef).child(currentUserUid).child(groupsRef).removeEventListener(childEventListener)
     }
 
     fun setGroupMembersChildEvents(groupUID: String, childEventListener: ChildEventListener) {
@@ -109,5 +114,9 @@ class GroupRepository {
 
     fun findGroupByUID(groupUID: String): Task<DataSnapshot> {
         return database.child(groupsRef).child(groupUID).get()
+    }
+
+    fun changeMemberRole(groupUID: String, userUid: String, newRole:ROLE, onComplete: (task: Task<Void>) -> Unit){
+        database.child(groupsRef).child(groupUID).child("members").child(userUid).setValue(newRole).addOnCompleteListener(onComplete)
     }
 }

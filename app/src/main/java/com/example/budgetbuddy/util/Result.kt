@@ -1,9 +1,7 @@
 package com.example.budgetbuddy.util
 
 import android.app.AlertDialog
-import android.view.View
-import com.google.android.material.textfield.TextInputLayout
-import org.junit.matchers.JUnitMatchers
+import android.widget.ArrayAdapter
 
 data class Result(
     val title: String,
@@ -37,5 +35,12 @@ data class TwoPromptResult(
     val hint1:String,
     val hint2:String,
     val onOk:(dialog:AlertDialog) -> Unit,
+    val onDismiss: () -> Unit
+)
+
+data class PickerData(
+    val title:String,
+    val adapter: ArrayAdapter<CharSequence>,
+    val onOk: (dialog: AlertDialog, selection: String)->Unit,
     val onDismiss: () -> Unit
 )

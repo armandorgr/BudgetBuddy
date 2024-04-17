@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -74,6 +75,7 @@ class GroupsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         //Se borra el binding al destruir la vista, para evitar fugas de informacion y liberar recursos
+        homeViewModel.firebaseUser.value?.uid?.let { viewModel.resetLoad(it) }
         _binding = null
     }
 }

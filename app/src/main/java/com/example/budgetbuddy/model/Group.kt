@@ -12,5 +12,5 @@ data class Group(
     val description:String? = null,
     val startDate:String? = null,
     val endDate:String? = null,
-    val members:Map<String, Boolean>? = null
+    val members:Map<String, ROLE>? = null
 ) : Parcelable

@@ -11,10 +11,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -237,12 +239,47 @@ class AlertDialogFactory(private val context: Context) {
         }
         onDelete?.let {
             btnDelete.visibility = View.VISIBLE
-            btnDelete.setOnClickListener{
+            btnDelete.setOnClickListener {
                 onDelete()
                 alertDialog.dismiss()
             }
         }
         alertDialog.show()
+        return dialogView
+    }
+
+    fun createPickerDialog(view: View, data: PickerData): View {
+        val constraintLayout =
+            view.findViewById<ConstraintLayout>(R.id.spinner_dialog_constraintLayout)
+        val dialogView =
+            LayoutInflater.from(context).inflate(R.layout.custom_spinner_dialog, constraintLayout)
+
+        val btnOk = dialogView.findViewById<Button>(R.id.dialog_button_ok)
+        val btnCancel = dialogView.findViewById<Button>(R.id.dialog_button_cancel)
+        val spinner = dialogView.findViewById<Spinner>(R.id.spinner)
+
+        spinner.adapter = data.adapter
+        dialogView.findViewById<TextView>(R.id.alertDialogTitle).text = data.title
+
+        val builder = AlertDialog.Builder(context)
+
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        if (alertDialog.window != null) {
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        alertDialog.show()
+
+
+        alertDialog.setOnDismissListener {
+            data.onDismiss()
+        }
+        btnOk.setOnClickListener {
+            data.onOk(alertDialog, spinner.selectedItem as String)
+        }
+        btnCancel.setOnClickListener {
+            alertDialog.dismiss()
+        }
         return dialogView
     }
 }

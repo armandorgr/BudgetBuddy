@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -98,7 +99,7 @@ class NewGroupFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-            findNavController().popBackStack(R.id.nav_groups, false)
+            findNavController().navigate(NewGroupFragmentDirections.navNewGroupToGroups())
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }

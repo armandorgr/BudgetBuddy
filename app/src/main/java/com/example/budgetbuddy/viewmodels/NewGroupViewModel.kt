@@ -17,6 +17,7 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
+import com.example.budgetbuddy.model.ROLE
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.GroupRepository
 import com.example.budgetbuddy.repositories.StorageRepository
@@ -33,6 +34,7 @@ import com.google.firebase.database.DatabaseError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -50,17 +52,18 @@ class NewGroupViewModel @Inject constructor(
     private val startDateLimit = LocalDateTime.of(2000, 1, 1, 0, 0)
     private val endDateLimit = LocalDateTime.of(2030, 1, 1, 0, 0)
     private val selectedUsers: MutableList<ListItemUiModel.User> = mutableListOf()
-    private val _members:MutableStateFlow<List<ListItemUiModel.User>> = MutableStateFlow(emptyList())
+    private val _members: MutableStateFlow<List<ListItemUiModel.User>> =
+        MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
 
-    private val _currentUserRole:MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val currentUserRole:StateFlow<Boolean> = _currentUserRole
+    private val _currentUserRole: MutableStateFlow<ROLE> = MutableStateFlow(ROLE.ADMIN)
+    val currentUserRole: StateFlow<ROLE> = _currentUserRole
 
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
 
 
-    fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit){
+    fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
         repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
     }
 
@@ -109,20 +112,20 @@ class NewGroupViewModel @Inject constructor(
         val membersToDelete = mutableListOf<String>()
         val friendsToInvite = mutableListOf<String>()
 
-        for(member in _members.value){
-            if(!selectedUsers.any { selectedUser -> selectedUser.uid==member.uid }){
+        for (member in _members.value) {
+            if (!selectedUsers.any { selectedUser -> selectedUser.uid == member.uid }) {
                 membersToDelete.add(member.uid)
             }
         }
-        for(user in selectedUsers){
-            if(!_members.value.any { member -> member.uid==user.uid }){
+        for (user in selectedUsers) {
+            if (!_members.value.any { member -> member.uid == user.uid }) {
                 friendsToInvite.add(user.uid)
             }
         }
 
-        Log.d("prueba","selected users $selectedUsers")
-        Log.d("prueba","membersToDelete $membersToDelete")
-        Log.d("prueba","friendsToInvite $friendsToInvite")
+        Log.d("prueba", "selected users $selectedUsers")
+        Log.d("prueba", "membersToDelete $membersToDelete")
+        Log.d("prueba", "friendsToInvite $friendsToInvite")
 
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/$groupUID",
@@ -200,7 +203,7 @@ class NewGroupViewModel @Inject constructor(
         _members.value = newMembers
     }
 
-    private fun addMember(uid: String, member: User, role: Boolean?) {
+    private fun addMember(uid: String, member: User, role: ROLE?) {
         val updatedList = _members.value.toMutableList().apply {
             add(ListItemUiModel.User(uid, member, true, role))
         }
@@ -217,7 +220,7 @@ class NewGroupViewModel @Inject constructor(
     private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val key = snapshot.key
-            val role = snapshot.getValue(Boolean::class.java)
+            val role = snapshot.getValue(ROLE::class.java)
             Log.d("prueba", "role: $role")
             key?.let {
                 userRepo.findUserByUIDNotSuspend(it).addOnCompleteListener { task ->
@@ -228,7 +231,7 @@ class NewGroupViewModel @Inject constructor(
                                 selectedUsers.add(ListItemUiModel.User(key, foundUser, true, role))
                                 addMember(key, foundUser, role)
                                 // se carga el rol de usuario actual para ver si puede o no realizar modificaciones
-                            }else{
+                            } else {
                                 if (role != null) {
                                     _currentUserRole.value = role
                                 }
@@ -242,7 +245,17 @@ class NewGroupViewModel @Inject constructor(
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            Log.d("prueba", "OnGroupChaged, previousChildName: $previousChildName")
+            val key = snapshot.key
+            val role = snapshot.getValue(ROLE::class.java)
+            val updatedList = _members.value.toMutableList()
+            try{
+                updatedList.first { member -> member.uid==key }.role = role
+            }catch (e: NoSuchElementException){
+                Log.d("prueba","NoSuchElementException NewGroupViewModel OnChildChanged")
+            }
+            updateList(emptyList())
+            updateList(updatedList)
+            Log.d("prueba","updated list $updatedList")
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -269,7 +282,7 @@ class NewGroupViewModel @Inject constructor(
     private val _endDate = MutableLiveData<LocalDateTime?>()
     val endDate: LiveData<LocalDateTime?> = _endDate
 
-    private val _groupName:MutableLiveData<String> = MutableLiveData<String>()
+    private val _groupName: MutableLiveData<String> = MutableLiveData<String>()
     val groupName: LiveData<String> = _groupName
 
     private val _groupDescription = MutableLiveData<String>()
@@ -294,7 +307,7 @@ class NewGroupViewModel @Inject constructor(
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            hashMapOf(currentUserUid to true)
+            hashMapOf(currentUserUid to ROLE.ADMIN)
         )
 
         repo.createNewGroup(group, currentUserUid, members, username) { task, uid ->
@@ -426,21 +439,35 @@ class NewGroupViewModel @Inject constructor(
     }
 
     fun onPhotoLoadFail(context: Context) {
-        Toast.makeText(context, context.getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.select_photo_error), Toast.LENGTH_SHORT)
+            .show()
     }
 
-    fun onSuccessCamera(img: Bitmap, context: Context, view:ImageView) {
+    fun onSuccessCamera(img: Bitmap, context: Context, view: ImageView) {
         setGroupPhoto(img)
         Glide.with(context).load(img).placeholder(R.drawable.default_group_pic).into(view)
     }
 
-    fun onSuccessGallery(uri: Uri, context: Context, view:ImageView) {
+    fun onSuccessGallery(uri: Uri, context: Context, view: ImageView) {
         setGroupPhoto(uri)
         Glide.with(context).load(uri).placeholder(R.drawable.default_group_pic).into(view)
     }
 
-    fun onDeletePhoto(context: Context, view:ImageView){
+    fun onDeletePhoto(context: Context, view: ImageView) {
         setGroupPhoto(null)
         Glide.with(context).load(R.drawable.default_group_pic).into(view)
+    }
+
+    fun changeMemberRole(groupUID: String, userUID: String, newRole: ROLE, context: Context) {
+        val isMember = _members.value.any { member -> member.uid == userUID }
+        if(isMember){
+            repo.changeMemberRole(groupUID, userUID, newRole){
+                if(it.isSuccessful){
+                    Toast.makeText(context, context.getString(R.string.change_username_success), Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(context, context.getString(R.string.change_username_fail), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }

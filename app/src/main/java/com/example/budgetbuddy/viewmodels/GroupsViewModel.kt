@@ -20,6 +20,7 @@ class GroupsViewModel @Inject constructor(
     private val _groupsList: MutableStateFlow<List<ListItemUiModel>> =
         MutableStateFlow(emptyList())
     val groupList: StateFlow<List<ListItemUiModel>> = _groupsList
+    private var listenerReference:ChildEventListener? = null
     private var childEventsAdded: Boolean =
         false // Se usa esta variable para que no se carguen los grupos mas de una vez
 
@@ -76,12 +77,17 @@ class GroupsViewModel @Inject constructor(
         override fun onCancelled(error: DatabaseError) {
             Log.d("prueba", "OnGroupCancelled, previousChildName: ${error.message}")
         }
+    }
 
+    fun resetLoad(currentUserUID: String){
+        childEventsAdded = false
+        listenerReference?.let { repo.removeChildEvents(currentUserUID, it) }
+        _groupsList.value = emptyList()
     }
 
     fun loadGroups(currentUserUID: String) {
         if (childEventsAdded) return
-        repo.setGroupChildEvents(currentUserUID, childEventListener)
+        listenerReference = repo.setGroupChildEvents(currentUserUID, childEventListener)
         childEventsAdded = true
     }
 

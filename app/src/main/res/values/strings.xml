@@ -125,4 +125,11 @@
     <string name="leave_group_error">Error trying to leave the group</string>
     <string name="warning">Warning</string>
     <string name="leave_group_delete_text">You\'re the only member of this group, leaving it will delete it</string>
+    <string-array name="roles_array">
+        <item>Admin</item>
+        <item>Member</item>
+    </string-array>
+    <string name="change_role_title">Change role of user %s</string>
+    <string name="change_role_success">Role changed successfully</string>
+    <string name="change_role_fail">Role change failed</string>
 </resources>
