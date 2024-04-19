@@ -75,7 +75,6 @@ class GroupsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         //Se borra el binding al destruir la vista, para evitar fugas de informacion y liberar recursos
-        homeViewModel.firebaseUser.value?.uid?.let { viewModel.resetLoad(it) }
         _binding = null
     }
 }

@@ -17,15 +17,15 @@ import javax.inject.Inject
 class GroupsViewModel @Inject constructor(
     private val repo: GroupRepository
 ) : ViewModel() {
-    private val _groupsList: MutableStateFlow<List<ListItemUiModel>> =
+    private val _groupsList: MutableStateFlow<List<ListItemUiModel.Group>> =
         MutableStateFlow(emptyList())
-    val groupList: StateFlow<List<ListItemUiModel>> = _groupsList
+    val groupList: StateFlow<List<ListItemUiModel.Group>> = _groupsList
     private var listenerReference:ChildEventListener? = null
     private var childEventsAdded: Boolean =
         false // Se usa esta variable para que no se carguen los grupos mas de una vez
 
 
-    private fun updateList(newGroups: List<ListItemUiModel>) {
+    private fun updateList(newGroups: List<ListItemUiModel.Group>) {
         _groupsList.value = newGroups
     }
 
@@ -38,7 +38,7 @@ class GroupsViewModel @Inject constructor(
 
     private fun removeGroup(groupUID: String) {
         val updatedList = _groupsList.value.toMutableList().apply {
-            removeIf { group -> (group as ListItemUiModel.Group).uid == groupUID }
+            removeIf { group -> group.uid == groupUID }
         }
         updateList(updatedList)
     }
@@ -77,12 +77,6 @@ class GroupsViewModel @Inject constructor(
         override fun onCancelled(error: DatabaseError) {
             Log.d("prueba", "OnGroupCancelled, previousChildName: ${error.message}")
         }
-    }
-
-    fun resetLoad(currentUserUID: String){
-        childEventsAdded = false
-        listenerReference?.let { repo.removeChildEvents(currentUserUID, it) }
-        _groupsList.value = emptyList()
     }
 
     fun loadGroups(currentUserUID: String) {

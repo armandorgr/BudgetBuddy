@@ -11,7 +11,7 @@ sealed class ListItemUiModel {
         val userUiModel: com.example.budgetbuddy.model.User,
         var selected: Boolean = false,
         var role:ROLE? = null,
-        var editable:Boolean?= null
+        var editable:Boolean?= false
     ) : ListItemUiModel()
     //TODO Refactorizar nombres
     data class Group(

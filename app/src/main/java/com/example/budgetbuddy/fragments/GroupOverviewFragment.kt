@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -155,10 +156,12 @@ class GroupOverviewFragment : Fragment() {
                 val role = if (valueSelected == resources.getStringArray(R.array.roles_array)[0]) ROLE.ADMIN else ROLE.MEMBER
                 viewModel.changeMemberRole(selectedGroupUID, user.uid, role, requireContext())
                 dialog.dismiss()
-                binding.frame.alpha = NORMAL
+                binding.frame.alpha = NORMAL //Hacer que la pantalla vuelva a la normalidad al cerrar la ventana.
             }
-        ) { }
-        binding.frame.alpha = OSCURE
+        ) {
+            binding.frame.alpha = NORMAL
+        }
+        binding.frame.alpha = OSCURE // Oscurecer la imagen al mostrar la ventana.
         alertDialogFactory.createPickerDialog(binding.root, data)
     }
 
@@ -314,7 +317,16 @@ class GroupOverviewFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.currentUserRole.collect { role ->
-                if (role != ROLE.ADMIN) {
+                if (role == ROLE.ADMIN) {
+                    friendsAdapter.setEditable(true)
+                    binding.deleteGroupBtn.visibility = View.VISIBLE
+                    binding.groupNameEditText.isEnabled = true
+                    binding.groupDescriptionEditText.isEnabled = true
+                    binding.startDate.isClickable = true
+                    binding.endDate.isClickable = true
+                    binding.groupPic.isClickable = true
+                }else{
+                    Log.d("prueba","Rol cambiado a Member")
                     friendsAdapter.setEditable(false)
                     binding.deleteGroupBtn.visibility = View.GONE
                     binding.groupNameEditText.isEnabled = false

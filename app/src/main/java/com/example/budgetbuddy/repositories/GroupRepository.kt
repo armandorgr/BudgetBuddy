@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ServerValue
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
@@ -41,7 +43,7 @@ class GroupRepository {
             key,
             username,
             INVITATION_TYPE.GROUP_REQUEST,
-            LocalDateTime.now().toString()
+            ServerValue.TIMESTAMP
             )
 
         val childUpdates = hashMapOf<String, Any>(
@@ -67,7 +69,7 @@ class GroupRepository {
             groupUID,
             group.name,
             INVITATION_TYPE.GROUP_REQUEST,
-            LocalDateTime.now().toString()
+            ServerValue.TIMESTAMP
         )
 
         val childUpdates = hashMapOf<String, Any?>(
@@ -105,6 +107,10 @@ class GroupRepository {
 
     fun removeChildEvents(currentUserUid: String, childEventListener: ChildEventListener){
         database.child(usersRef).child(currentUserUid).child(groupsRef).removeEventListener(childEventListener)
+    }
+
+    fun setValueEventListener(groupUID: String, valueEventListener: ValueEventListener){
+        database.child(groupsRef).child(groupUID).addValueEventListener(valueEventListener);
     }
 
     fun setGroupMembersChildEvents(groupUID: String, childEventListener: ChildEventListener) {

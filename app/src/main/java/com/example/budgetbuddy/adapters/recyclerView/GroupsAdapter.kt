@@ -21,7 +21,7 @@ class GroupsAdapter(
     private val imageLoader: ListItemImageLoader,
     private val onClickListener: OnClickListener
 ) : RecyclerView.Adapter<GroupViewHolder>() {
-    private val listData = mutableListOf<ListItemUiModel>()
+    private val listData = mutableListOf<ListItemUiModel.Group>()
     //TODO HACER UNA LISTA FILTRADA COMO CON LOS AMIGOS
 
     /**
@@ -29,7 +29,7 @@ class GroupsAdapter(
      * @param newItems Lista con los nuevos grupos a establecer en el [RecyclerView]
      * */
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(newItems: List<ListItemUiModel>) {
+    fun setData(newItems: List<ListItemUiModel.Group>) {
         listData.clear()
         listData.addAll(newItems)
         notifyDataSetChanged()

@@ -14,7 +14,9 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class InvitationViewHolder(
@@ -25,7 +27,7 @@ class InvitationViewHolder(
     private val onDeclineListener: OnClickListener
 ) : ListItemViewHolder(containerView) {
 
-    private val imgView: ImageView by lazy{
+    private val imgView: ImageView by lazy {
         containerView.findViewById(R.id.item_img_view)
     }
 
@@ -57,8 +59,12 @@ class InvitationViewHolder(
             onDeclineListener.onClick(invitationData, adapterPosition)
         }
 
-        textView.text = if(invitationData.type == INVITATION_TYPE.FRIEND_REQUEST) context.getString(R.string.friend_invitation_text, invitationData.senderName) else context.getString(R.string.group_invitation_text, invitationData.senderName)
-        agoView.text = invitationData.dateSent?.let { getTimeAgo((LocalDateTime.parse(it))) }
+        textView.text =
+            if (invitationData.type == INVITATION_TYPE.FRIEND_REQUEST) context.getString(
+                R.string.friend_invitation_text,
+                invitationData.senderName
+            ) else context.getString(R.string.group_invitation_text, invitationData.senderName)
+        agoView.text = getTimeAgo(getDateSent(invitationData.dateSent))
     }
 
     fun getTimeAgo(date: LocalDateTime): String {
@@ -77,11 +83,20 @@ class InvitationViewHolder(
         } else if (minutesDifference > 0) {
             "$minutesDifference minutes ago"
         } else {
-            "${secondsDifference}seconds ago"
+            "$secondsDifference seconds ago"
         }
     }
 
     interface OnClickListener {
         fun onClick(invitation: InvitationUiModel, position: Int)
+    }
+
+    private fun getDateSent(dateSent: Any?): LocalDateTime {
+        var dateResult: LocalDateTime = LocalDateTime.now()
+        dateSent?.let {
+            require(it is Long)
+            dateResult = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime()
+        }
+        return dateResult
     }
 }

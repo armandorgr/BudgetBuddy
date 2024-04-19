@@ -52,7 +52,8 @@ class NewGroupFriendViewHolder(
             checkBox.isClickable = false
             Log.d("prueba", " editable: ${listItem.editable}")
         }else{
-            if(onChangeRoleListener!=null){
+            if(listItem.editable!! && onChangeRoleListener!=null){
+                Log.d("prueba", " editable ----: ${listItem.editable}")
                 editRoleIcon.visibility = View.VISIBLE
                 editRoleIcon.setOnClickListener {
                     onChangeRoleListener.onClick(listItem, adapterPosition)

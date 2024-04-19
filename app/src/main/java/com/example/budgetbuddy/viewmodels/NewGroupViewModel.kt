@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,11 +57,26 @@ class NewGroupViewModel @Inject constructor(
         MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
 
-    private val _currentUserRole: MutableStateFlow<ROLE> = MutableStateFlow(ROLE.ADMIN)
+    private val _currentUserRole: MutableStateFlow<ROLE> = MutableStateFlow(ROLE.MEMBER)
     val currentUserRole: StateFlow<ROLE> = _currentUserRole
 
     private val _startDate = MutableLiveData<LocalDateTime?>()
     val startDate: LiveData<LocalDateTime?> = _startDate
+
+    private val _endDate = MutableLiveData<LocalDateTime?>()
+    val endDate: LiveData<LocalDateTime?> = _endDate
+
+    private val _groupName: MutableLiveData<String> = MutableLiveData<String>()
+    val groupName: LiveData<String> = _groupName
+
+    private val _groupDescription = MutableLiveData<String>()
+    val groupDescription: LiveData<String> = _groupDescription
+
+    private val _groupNameError = MutableLiveData<String?>()
+    val groupNameError: LiveData<String?> = _groupNameError
+
+    private val _groupDescriptionError = MutableLiveData<String?>()
+    val groupDescriptionError: LiveData<String?> = _groupDescriptionError
 
 
     fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
@@ -278,21 +294,6 @@ class NewGroupViewModel @Inject constructor(
                     groupDescriptionError.value.equals("") &&
                     startDate.value != null && _endDate.value != null
         }
-
-    private val _endDate = MutableLiveData<LocalDateTime?>()
-    val endDate: LiveData<LocalDateTime?> = _endDate
-
-    private val _groupName: MutableLiveData<String> = MutableLiveData<String>()
-    val groupName: LiveData<String> = _groupName
-
-    private val _groupDescription = MutableLiveData<String>()
-    val groupDescription: LiveData<String> = _groupDescription
-
-    private val _groupNameError = MutableLiveData<String?>()
-    val groupNameError: LiveData<String?> = _groupNameError
-
-    private val _groupDescriptionError = MutableLiveData<String?>()
-    val groupDescriptionError: LiveData<String?> = _groupDescriptionError
 
     fun createNewGroup(
         currentUserUid: String,
