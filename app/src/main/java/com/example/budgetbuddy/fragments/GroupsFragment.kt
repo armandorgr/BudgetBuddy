@@ -68,7 +68,9 @@ class GroupsFragment : Fragment() {
         //se cargan en el Adapter, por lo cual siempre estara actualizado
         lifecycleScope.launch {
             viewModel.groupList.collect {
-                groupsAdapter.setData(it)
+                val orderedList = it.sortedWith{ g1,g2 ->
+                    (g2.groupUiModel.lastUpdated!! - g1.groupUiModel.lastUpdated!!).toInt() }
+                groupsAdapter.setData(orderedList)
             }
         }
     }

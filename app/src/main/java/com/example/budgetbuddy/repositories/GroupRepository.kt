@@ -46,8 +46,13 @@ class GroupRepository {
             ServerValue.TIMESTAMP
             )
 
-        val childUpdates = hashMapOf<String, Any>(
-            "$groupsRef/$key" to group,
+        val childUpdates = hashMapOf<String, Any?>(
+            "$groupsRef/$key/description" to group.description.toString(),
+            "$groupsRef/$key/name" to group.name.toString(),
+            "$groupsRef/$key/endDate" to group.endDate.toString(),
+            "$groupsRef/$key/startDate" to group.startDate.toString(),
+            "$groupsRef/$key/lastUpdated" to ServerValue.TIMESTAMP,
+            "$groupsRef/$key/members" to group.members,
             "$usersRef/$currentUserUid/$groupsRef/$key" to true
         )
         for(member in members){
@@ -76,7 +81,8 @@ class GroupRepository {
             "$groupsRef/$groupUID/description" to group.description.toString(),
             "$groupsRef/$groupUID/name" to group.name.toString(),
             "$groupsRef/$groupUID/endDate" to group.endDate.toString(),
-            "$groupsRef/$groupUID/startDate" to group.startDate.toString()
+            "$groupsRef/$groupUID/startDate" to group.startDate.toString(),
+            "$groupsRef/$groupUID/lastUpdated" to ServerValue.TIMESTAMP
         )
         // Se borran los miembros no seleccionados
         for (i in membersToDelete){

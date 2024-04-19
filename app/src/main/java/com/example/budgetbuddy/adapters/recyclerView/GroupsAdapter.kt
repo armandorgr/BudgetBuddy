@@ -46,9 +46,10 @@ class GroupsAdapter(
      * */
     @SuppressLint("NotifyDataSetChanged")
     fun filterData(groupQuery: String) {
-        shownData.removeAll(listData.filter { group ->
-            !group.groupUiModel.name?.contains(groupQuery)!!
-                    && !group.groupUiModel.description?.contains(groupQuery)!!
+        shownData.clear()
+        shownData.addAll(listData.filter { group ->
+            group.groupUiModel.name?.contains(groupQuery)!!
+                    || group.groupUiModel.description?.contains(groupQuery)!!
         })
         notifyDataSetChanged()
     }

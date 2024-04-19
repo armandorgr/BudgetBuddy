@@ -133,4 +133,5 @@
     <string name="change_role_success">Role changed successfully</string>
     <string name="change_role_fail">Role change failed</string>
     <string name="search_group_hint">Search Group</string>
+    <string name="invitations_title">Invitations</string>
 </resources>
