@@ -1,7 +1,10 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.util.Log
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
+import com.example.budgetbuddy.adapters.recyclerView.GroupsAdapter
+import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.repositories.GroupRepository
@@ -83,6 +86,28 @@ class GroupsViewModel @Inject constructor(
         if (childEventsAdded) return
         listenerReference = repo.setGroupChildEvents(currentUserUID, childEventListener)
         childEventsAdded = true
+    }
+
+    fun getSearchViewFilter(adapter: GroupsAdapter): SearchView.OnQueryTextListener {
+        return object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    adapter.filterData(query)
+                } else {
+                    adapter.resetData()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    adapter.filterData(newText)
+                } else {
+                    adapter.resetData()
+                }
+                return true
+            }
+        }
     }
 
 }

@@ -50,6 +50,7 @@ class NewGroupFriendViewHolder(
 
         if(listItem.editable != true){
             checkBox.isClickable = false
+            editRoleIcon.visibility = View.GONE
             Log.d("prueba", " editable: ${listItem.editable}")
         }else{
             if(listItem.editable!! && onChangeRoleListener!=null){

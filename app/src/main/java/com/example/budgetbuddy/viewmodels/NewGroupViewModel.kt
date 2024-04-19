@@ -78,6 +78,8 @@ class NewGroupViewModel @Inject constructor(
     private val _groupDescriptionError = MutableLiveData<String?>()
     val groupDescriptionError: LiveData<String?> = _groupDescriptionError
 
+    private var onCurrentUserBanned: (() -> Unit)? = null
+
 
     fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
         repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
@@ -230,6 +232,8 @@ class NewGroupViewModel @Inject constructor(
         val updatedList = _members.value.toMutableList().apply {
             removeIf { u -> u.uid == memberUID }
         }
+        selectedUsers.removeIf { u -> u.uid == memberUID }
+        Log.d("integridad", "selectedUsers: $selectedUsers")
         updateList(updatedList)
     }
 
@@ -264,18 +268,26 @@ class NewGroupViewModel @Inject constructor(
             val key = snapshot.key
             val role = snapshot.getValue(ROLE::class.java)
             val updatedList = _members.value.toMutableList()
-            try{
-                updatedList.first { member -> member.uid==key }.role = role
-            }catch (e: NoSuchElementException){
-                Log.d("prueba","NoSuchElementException NewGroupViewModel OnChildChanged")
+            try {
+                updatedList.first { member -> member.uid == key }.role = role
+            } catch (e: NoSuchElementException) {
+                if (key == currentUserUid) {
+                    role?.let { _currentUserRole.value = it }
+                }
+                Log.d("prueba", "NoSuchElementException NewGroupViewModel OnChildChanged")
             }
             updateList(emptyList())
             updateList(updatedList)
-            Log.d("prueba","updated list $updatedList")
+            Log.d("prueba", "updated list $updatedList")
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
-            snapshot.key?.let { removeMember(it) }
+            snapshot.key?.let {
+                if (it == currentUserUid) {
+                    onCurrentUserBanned?.let { it() }
+                }
+                removeMember(it)
+            }
         }
 
         override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -301,6 +313,7 @@ class NewGroupViewModel @Inject constructor(
         onCompleteListener: (task: Task<Void>) -> Unit
     ) {
         val members: MutableList<String> = selectedUsers.map { user -> user.uid }.toMutableList()
+        Log.d("integridad", "miembros a invitar: $members")
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/",
             currentUserUid,
@@ -366,7 +379,7 @@ class NewGroupViewModel @Inject constructor(
         return selectedUsers
     }
 
-    fun showDatePickerDialog(context: Context, result: DateResult, view: View) {
+    private fun showDatePickerDialog(context: Context, result: DateResult, view: View) {
         val dialogFactory = AlertDialogFactory(context)
         dialogFactory.createDatePickerDialog(view, result)
     }
@@ -461,14 +474,35 @@ class NewGroupViewModel @Inject constructor(
 
     fun changeMemberRole(groupUID: String, userUID: String, newRole: ROLE, context: Context) {
         val isMember = _members.value.any { member -> member.uid == userUID }
-        if(isMember){
-            repo.changeMemberRole(groupUID, userUID, newRole){
-                if(it.isSuccessful){
-                    Toast.makeText(context, context.getString(R.string.change_username_success), Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(context, context.getString(R.string.change_username_fail), Toast.LENGTH_SHORT).show()
+        if (isMember) {
+            repo.changeMemberRole(groupUID, userUID, newRole) {
+                if (it.isSuccessful) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.change_username_success),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.change_username_fail),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
+    }
+
+    fun cleanSelectedList(users: List<ListItemUiModel>) {
+        selectedUsers.removeIf { selectedUser ->
+            !users.any { u ->
+                require(u is ListItemUiModel.User)
+                u.uid == selectedUser.uid
+            }
+        }
+    }
+
+    fun setOnCurrentUserBanned(onCurrentUserBanned: () -> Unit) {
+        this.onCurrentUserBanned = onCurrentUserBanned
     }
 }

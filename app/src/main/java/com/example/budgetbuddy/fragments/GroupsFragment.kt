@@ -63,6 +63,7 @@ class GroupsFragment : Fragment() {
         binding.GroupsRecyclerView.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL, false
         )
+        binding.searchView.setOnQueryTextListener(viewModel.getSearchViewFilter(groupsAdapter))
         //Se recogen los datos cargados en el viewmodel y al usar collect, cada vez que se actualizen
         //se cargan en el Adapter, por lo cual siempre estara actualizado
         lifecycleScope.launch {

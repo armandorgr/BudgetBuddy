@@ -24,6 +24,8 @@ import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.TwoPromptResult
 import com.example.budgetbuddy.util.Utilities
+import com.example.budgetbuddy.viewmodels.FriendsViewModel
+import com.example.budgetbuddy.viewmodels.GroupsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.ProfileViewModel
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
@@ -45,6 +47,8 @@ import kotlinx.coroutines.launch
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
     private val viewModel: ProfileViewModel by viewModels()
+    private val friendsViewModel: FriendsViewModel by viewModels()
+    private val groupsViewModel: GroupsViewModel by viewModels()
     private val registerViewModel: RegisterViewModel by viewModels()
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var dialogFactory: AlertDialogFactory
@@ -109,6 +113,10 @@ class ProfileFragment : Fragment() {
             reauthenticate(this::onPasswordChange)
         }
         binding.deleteAccountConstraintLayout.setOnClickListener {
+            homeViewModel.firebaseUser.value?.uid?.let { it1 ->
+                friendsViewModel.loadFriends(it1)
+                groupsViewModel.loadGroups(it1)
+            }
             if (homeViewModel.provider.value == GOOGLE_PROVIDER) {
                 reauthenticateWithGoogle(this::onDeleteAccount)
             } else {
@@ -372,7 +380,7 @@ class ProfileFragment : Fragment() {
                     // este es la funcion que se ejecutara cuando se haga click sobre el boton ok del dialog
                     binding.determinateBar.visibility = View.VISIBLE
                     lifecycleScope.launch {
-                        if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid)) {
+                        if (viewModel.deleteUser(homeViewModel.firebaseUser.value!!.uid, friendsViewModel.friendsUidList.value, groupsViewModel.groupList.value)) {
                             val path = homeViewModel.currentUser.value?.profilePic?.substring(2)
                             path?.let {
                                 homeViewModel.firebaseUser.value?.uid?.let { it1 ->

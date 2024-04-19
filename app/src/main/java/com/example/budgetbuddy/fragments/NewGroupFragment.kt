@@ -67,6 +67,7 @@ class NewGroupFragment : Fragment() {
         lifecycleScope.launch {
             friendsViewModel.friendsUidList.collect {
                 friendsAdapter.setData(it)
+                viewModel.cleanSelectedList(it)
             }
         }
         return binding.root
@@ -126,6 +127,13 @@ class NewGroupFragment : Fragment() {
      * @param binding Binding generado por el view binding contenedor de las referencias a las vistas
      * */
     private fun prepareBinding(binding: FragmentNewGroupBinding) {
+        //HABILITAR TODOS LOS WIDGET
+        binding.groupNameEditText.isEnabled = true
+        binding.groupDescriptionEditText.isEnabled = true
+        binding.startDate.isClickable = true
+        binding.endDate.isClickable = true
+        binding.groupPic.isClickable = true
+
         binding.friendsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.friendsRecyclerView.adapter = friendsAdapter

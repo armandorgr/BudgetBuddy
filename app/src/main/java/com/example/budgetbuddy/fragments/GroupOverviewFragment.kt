@@ -57,6 +57,8 @@ class GroupOverviewFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var selectedGroup: Group
     private lateinit var selectedGroupUID: String
+    private var deletingGroup = false
+    private var leavingGroup = false
 
     //TODO CAMBIAR NOMBRES INVERTIDOS DE friends y members
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
@@ -107,6 +109,7 @@ class GroupOverviewFragment : Fragment() {
                 viewModel.members.collect {
                     deleteMembersInFriends(it)
                     friendsAdapter.setData(it)
+                    addFriendsAreNoMembers(it)
                 }
             }
             launch {
@@ -119,10 +122,31 @@ class GroupOverviewFragment : Fragment() {
                         map { item -> (item as ListItemUiModel.User).selected = false }
                     }
                     membersAdapter.setData(filteredList)
+                    viewModel.cleanSelectedList(filteredList)
                 }
             }
         }
+        viewModel.setOnCurrentUserBanned {
+            try{
+                if(!deletingGroup && !leavingGroup){
+                    findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups())
+                }
+            }catch (e: IllegalStateException){
+                Log.d("prueba", "illegal state exception")
+            }
+        }
         return binding.root
+    }
+
+    private fun addFriendsAreNoMembers(members: List<ListItemUiModel.User>) {
+        val filteredList = friendsViewModel.friendsUidList.value.toMutableList().apply {
+            removeIf { item ->
+                require(item is ListItemUiModel.User)
+                members.any { member -> member.uid == item.uid }
+            }
+            map { item -> (item as ListItemUiModel.User).selected = false }
+        }
+        membersAdapter.setData(filteredList)
     }
 
     private fun deleteMembersInFriends(members: List<ListItemUiModel>) {
@@ -220,6 +244,7 @@ class GroupOverviewFragment : Fragment() {
         if (task.isSuccessful) {
             showSuccessDialog(getString(R.string.group_delete_success))
         } else {
+            deletingGroup = false
             showFailDialog(getString(R.string.group_delete_fail))
         }
     }
@@ -255,6 +280,7 @@ class GroupOverviewFragment : Fragment() {
             visibility = View.VISIBLE
             //Se añade evento en caso de click para intentar borrar el grupo
             setOnClickListener {
+                deletingGroup = true
                 viewModel.deleteGroup(selectedGroupUID) {
                     onGroupDeleteComplete(it)
                 }
@@ -340,6 +366,7 @@ class GroupOverviewFragment : Fragment() {
     }
 
     private fun onLeaveGroupClick(view: View?) {
+        leavingGroup = true
         viewModel.leaveGroup(selectedGroupUID) {
             if (it.isSuccessful) {
                 Toast.makeText(
@@ -349,6 +376,7 @@ class GroupOverviewFragment : Fragment() {
                 ).show()
                 findNavController().popBackStack(R.id.nav_groups, false)
             } else {
+                leavingGroup = false
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.leave_group_error),
