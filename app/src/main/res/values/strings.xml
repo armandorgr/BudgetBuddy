@@ -134,4 +134,14 @@
     <string name="change_role_fail">Role change failed</string>
     <string name="search_group_hint">Search Group</string>
     <string name="invitations_title">Invitations</string>
+    <!--Calendar values-->
+    <string name="calendar_prev">Prev</string>
+    <string name="calendar_next">Next</string>
+    <string name="sun">SUN</string>
+    <string name="mon">MON</string>
+    <string name="tue">TUE</string>
+    <string name="wed">WED</string>
+    <string name="thur">THUR</string>
+    <string name="fri">FRI</string>
+    <string name="sat">SAT</string>
 </resources>

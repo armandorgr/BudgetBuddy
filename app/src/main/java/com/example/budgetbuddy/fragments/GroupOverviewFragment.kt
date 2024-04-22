@@ -129,7 +129,7 @@ class GroupOverviewFragment : Fragment() {
         viewModel.setOnCurrentUserBanned {
             try{
                 if(!deletingGroup && !leavingGroup){
-                    findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups())
+                    findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups(null))
                 }
             }catch (e: IllegalStateException){
                 Log.d("prueba", "illegal state exception")
@@ -201,7 +201,7 @@ class GroupOverviewFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-            findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups())
+            findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups(null))
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }

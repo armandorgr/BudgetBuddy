@@ -18,4 +18,8 @@ sealed class ListItemUiModel {
         val uid:String,
         val groupUiModel: com.example.budgetbuddy.model.Group
     ) : ListItemUiModel()
+    data class CalendarDayUiModel(
+        val day: String,
+        val hasEvent:Boolean
+    ):ListItemUiModel()
 }

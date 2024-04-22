@@ -11,9 +11,12 @@
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/nav_home_to_invitations"
-            app:destination="@+id/nav_invitations"
-            app:popUpTo="@id/nav_home" />
+            android:id="@+id/nav_home_to_groups"
+            app:destination="@id/nav_groups"
+            app:popUpTo="@id/home_navigation"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true">
+        </action>
     </fragment>
     <action
         android:id="@+id/nav_to_newGroup"
@@ -50,19 +53,29 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/home_navigation"
             app:popUpToInclusive="true"
-            />
+            >
+        </action>
     </fragment>
+
+
+
+
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.budgetbuddy.fragments.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/nav_groups"
         android:name="com.example.budgetbuddy.fragments.GroupsFragment"
         android:label="Groups"
         tools:layout="@layout/fragment_groups">
+        <argument
+            android:name="filterDate"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/nav_groups_to_overview"
             app:destination="@id/nav_group_overview"

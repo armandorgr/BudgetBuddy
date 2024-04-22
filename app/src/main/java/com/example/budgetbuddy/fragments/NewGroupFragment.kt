@@ -100,7 +100,7 @@ class NewGroupFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-            findNavController().navigate(NewGroupFragmentDirections.navNewGroupToGroups())
+            findNavController().navigate(NewGroupFragmentDirections.navNewGroupToGroups(null))
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
