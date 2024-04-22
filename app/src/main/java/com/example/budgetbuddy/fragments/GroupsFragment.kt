@@ -57,9 +57,9 @@ class GroupsFragment : Fragment() {
     ): View {
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         _binding = FragmentGroupsBinding.inflate(layoutInflater, container, false)
-        filterDate = try{
+        filterDate = try {
             args.filterDate?.let { LocalDateTime.parse(it) }
-        }catch (e: InvocationTargetException){
+        } catch (e: InvocationTargetException) {
             null
         }
         //Se cargan los grupos a los que pertenece el usuario actual
@@ -80,14 +80,18 @@ class GroupsFragment : Fragment() {
         //se cargan en el Adapter, por lo cual siempre estara actualizado
         lifecycleScope.launch {
             viewModel.groupList.collect {
+                binding.determinateBar.visibility = View.VISIBLE // se hace visible el progess bar
+                binding.notFoundTextView.visibility= if (it.isEmpty()) View.VISIBLE else View.GONE // Si no hay grupos se muestra un mensaje de que no hay
                 var orderedList = it.sortedWith { g1, g2 ->
                     (g2.groupUiModel.lastUpdated!! - g1.groupUiModel.lastUpdated!!).toInt()
                 }
                 filterDate?.let { date ->
-                    orderedList = orderedList.filter { group ->  filterGroupByDate(group.groupUiModel, date) }
+                    orderedList =
+                        orderedList.filter { group -> filterGroupByDate(group.groupUiModel, date) }
                     Log.d("prueba", "lista filtrada: $orderedList")
                 }
                 groupsAdapter.setData(orderedList)
+                binding.determinateBar.visibility = View.INVISIBLE // se hace invisible el progess bar
             }
         }
     }

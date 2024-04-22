@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.adapters.calendar
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.example.budgetbuddy.viewHolders.CalendarViewHolder
 
 class CalendarAdapter(
     private val daysOfMonth:List<ListItemUiModel.CalendarDayUiModel>,
+    private val context: Context,
     private val onItemListener: OnItemListener
 ) : RecyclerView.Adapter<CalendarViewHolder>() {
 
@@ -18,7 +20,7 @@ class CalendarAdapter(
         val view: View = inflater.inflate(R.layout.calendar_cell, parent, false)
         val layoutParams:ViewGroup.LayoutParams = view.layoutParams
         layoutParams.height = (parent.height * 0.1666666666).toInt()
-        return CalendarViewHolder(view, onItemListener)
+        return CalendarViewHolder(view, context ,onItemListener)
     }
 
     override fun getItemCount(): Int = daysOfMonth.size

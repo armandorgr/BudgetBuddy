@@ -51,7 +51,7 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
 
         lifecycleScope.launch {
             groupsViewModel.groupList.collect { groups ->
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     launch {
                         setMonthView(groups)
                     }
@@ -62,7 +62,7 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
         binding.prevBtn.setOnClickListener {
             selectedDate = selectedDate.minusMonths(1)
             lifecycleScope.launch {
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     launch {
                         setMonthView(groupsViewModel.groupList.value)
                     }
@@ -72,7 +72,7 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
         binding.nextBtn.setOnClickListener {
             selectedDate = selectedDate.plusMonths(1)
             lifecycleScope.launch {
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     launch {
                         setMonthView(groupsViewModel.groupList.value)
                     }
@@ -88,7 +88,7 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
         binding.monthYearTV.text = monthYearFromDate(this.selectedDate)
         val daysInMonth: List<ListItemUiModel.CalendarDayUiModel> =
             daysInMonth(this.selectedDate, groups)
-        val calendarAdapter = CalendarAdapter(daysInMonth, this)
+        val calendarAdapter = CalendarAdapter(daysInMonth, requireContext(), this)
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(requireContext(), 7)
         binding.calendarRecyclerView.layoutManager = layoutManager
         binding.calendarRecyclerView.adapter = calendarAdapter
@@ -107,11 +107,12 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
             if (i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
                 daysInMonthArray.add(ListItemUiModel.CalendarDayUiModel("", false))
             } else {
-                val localDateTime = LocalDateTime.of(date.year, date.monthValue, (i - dayOfWeek), 0, 0)
+                val localDateTime =
+                    LocalDateTime.of(date.year, date.monthValue, (i - dayOfWeek), 0, 0)
                 var hasEvent = false
-                for(group in groups){
-                    if(dateBetweenRange(group.groupUiModel, localDateTime)){
-                        hasEvent=true
+                for (group in groups) {
+                    if (dateBetweenRange(group.groupUiModel, localDateTime)) {
+                        hasEvent = true
                         break
                     }
                 }
@@ -122,7 +123,7 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
         return daysInMonthArray
     }
 
-    private fun dateBetweenRange(group: Group, date:LocalDateTime):Boolean{
+    private fun dateBetweenRange(group: Group, date: LocalDateTime): Boolean {
         val startDate = LocalDateTime.parse(group.startDate)
         val endDate = LocalDateTime.parse(group.endDate)
         Log.d("prueba", "startDate: $startDate")
@@ -139,7 +140,8 @@ class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
     }
 
     override fun onItemClick(position: Int, dayText: String) {
-        val selectedDate = LocalDateTime.of(selectedDate.year, selectedDate.monthValue, dayText.toInt(), 0, 0)
+        val selectedDate =
+            LocalDateTime.of(selectedDate.year, selectedDate.monthValue, dayText.toInt(), 0, 0)
         val action = HomeFragmentDirections.navHomeToGroups(selectedDate.toString())
         findNavController().navigate(action)
     }
