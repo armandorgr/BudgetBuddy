@@ -7,6 +7,7 @@ import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.repositories.GroupRepository
 import com.example.budgetbuddy.repositories.InvitationsRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.google.firebase.auth.FirebaseUser
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class InvitationsViewModel @Inject constructor(
     private val repo: InvitationsRepository,
-    private val userRepo: UsersRepository
+    private val userRepo: UsersRepository,
+    private val groupsRepo: GroupRepository
 ) : ViewModel() {
     private val _invitationsList:MutableStateFlow<List<ListItemUiModel>> = MutableStateFlow(emptyList())
     val invitationsList: StateFlow<List<ListItemUiModel>> = _invitationsList
@@ -54,9 +56,21 @@ class InvitationsViewModel @Inject constructor(
         override fun onItemClick(invitation: InvitationUiModel, currentUser: FirebaseUser) {
             if (invitation.senderUid != null) {
                 if (invitation.type == INVITATION_TYPE.FRIEND_REQUEST) {
-                    repo.confirmFriendRequestInvitation(currentUser.uid, invitation.senderUid)
+                    userRepo.findUserByUIDNotSuspend(invitation.senderUid).addOnCompleteListener {
+                        if(it.result.exists()){
+                            repo.confirmFriendRequestInvitation(currentUser.uid, invitation.senderUid)
+                        }else{
+                            repo.deleteInvitation(currentUser.uid, invitation.senderUid)
+                        }
+                    }
                 }else{
-                    repo.confirmGroupInvitation(currentUser.uid, invitation.senderUid)
+                    groupsRepo.findGroupByUID(invitation.senderUid).addOnCompleteListener {
+                        if(it.result.exists()){
+                            repo.confirmGroupInvitation(currentUser.uid, invitation.senderUid)
+                        }else{
+                            repo.deleteInvitation(currentUser.uid, invitation.senderUid)
+                        }
+                    }
                 }
             }
         }

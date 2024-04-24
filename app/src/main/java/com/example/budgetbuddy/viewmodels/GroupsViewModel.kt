@@ -1,7 +1,10 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.util.Log
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModel
+import com.example.budgetbuddy.adapters.recyclerView.GroupsAdapter
+import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.repositories.GroupRepository
@@ -17,15 +20,15 @@ import javax.inject.Inject
 class GroupsViewModel @Inject constructor(
     private val repo: GroupRepository
 ) : ViewModel() {
-    private val _groupsList: MutableStateFlow<List<ListItemUiModel>> =
+    private val _groupsList: MutableStateFlow<List<ListItemUiModel.Group>> =
         MutableStateFlow(emptyList())
-    val groupList: StateFlow<List<ListItemUiModel>> = _groupsList
+    val groupList: StateFlow<List<ListItemUiModel.Group>> = _groupsList
     private var listenerReference:ChildEventListener? = null
     private var childEventsAdded: Boolean =
         false // Se usa esta variable para que no se carguen los grupos mas de una vez
 
 
-    private fun updateList(newGroups: List<ListItemUiModel>) {
+    private fun updateList(newGroups: List<ListItemUiModel.Group>) {
         _groupsList.value = newGroups
     }
 
@@ -38,7 +41,7 @@ class GroupsViewModel @Inject constructor(
 
     private fun removeGroup(groupUID: String) {
         val updatedList = _groupsList.value.toMutableList().apply {
-            removeIf { group -> (group as ListItemUiModel.Group).uid == groupUID }
+            removeIf { group -> group.uid == groupUID }
         }
         updateList(updatedList)
     }
@@ -79,16 +82,32 @@ class GroupsViewModel @Inject constructor(
         }
     }
 
-    fun resetLoad(currentUserUID: String){
-        childEventsAdded = false
-        listenerReference?.let { repo.removeChildEvents(currentUserUID, it) }
-        _groupsList.value = emptyList()
-    }
-
     fun loadGroups(currentUserUID: String) {
         if (childEventsAdded) return
         listenerReference = repo.setGroupChildEvents(currentUserUID, childEventListener)
         childEventsAdded = true
+    }
+
+    fun getSearchViewFilter(adapter: GroupsAdapter): SearchView.OnQueryTextListener {
+        return object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    adapter.filterData(query)
+                } else {
+                    adapter.resetData()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    adapter.filterData(newText)
+                } else {
+                    adapter.resetData()
+                }
+                return true
+            }
+        }
     }
 
 }

@@ -51,6 +51,7 @@ class InvitationsFragment : Fragment() {
         //cambia el adapter tambien se actaliza
         lifecycleScope.launch {
             viewModel.invitationsList.collect {
+                binding.notFoundTextView.visibility= if (it.isEmpty()) View.VISIBLE else View.GONE // Si no tiene invitaciones se muestra un mensaje de que no hay
                 invitationsAdapter.setData(it)
             }
         }

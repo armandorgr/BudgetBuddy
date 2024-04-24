@@ -58,7 +58,7 @@ class FriendsFragment : Fragment() {
                                     homeViewModel.currentUser.value?.username,
                                     "%s quiere conectar contigo",
                                     INVITATION_TYPE.FRIEND_REQUEST,
-                                    LocalDateTime.now().toString()
+                                    null
                                 )
                                 viewModel.writeNewInvitation(txt, it, invitation)
                                 dialog.dismiss()

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_navigation"
-    app:startDestination="@+id/nav_login">
+    app:startDestination="@+id/nav_splash">
 
 
     <fragment
@@ -21,7 +21,31 @@
             android:id="@+id/nav_login_to_personal_data"
             app:destination="@+id/nav_personal_data"
             app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"/>
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false"
+            app:popUpTo="@+id/login_navigation"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_splash"
+        android:name="com.example.budgetbuddy.fragments.SplashScreenFragment">
+        <action
+            android:id="@+id/nav_splash_to_login"
+            app:destination="@+id/nav_login"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false"
+            app:popUpTo="@+id/login_navigation" />
+        <action
+            android:id="@+id/nav_splash_to_personal_data"
+            app:destination="@+id/nav_personal_data"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false"
+            app:popUpTo="@+id/login_navigation" />
     </fragment>
 
     <fragment

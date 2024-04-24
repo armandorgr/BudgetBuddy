@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Obtenido de aquí: https://www.youtube.com/watch?v=de3kFn4DzGg-->
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <alpha android:fromAlpha="0" android:toAlpha="1" android:duration="300"/>
+    <scale android:fromXScale="0" android:toXScale="1" android:fromYScale="0" android:toYScale="1" android:duration="300"/>
+</set>

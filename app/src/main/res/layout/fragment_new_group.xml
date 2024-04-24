@@ -81,7 +81,8 @@
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.5" />
+                            app:layout_constraintVertical_bias="0.5"
+                            android:clickable="false"/>
                         <ImageView
                             android:id="@+id/addPhotoIcon"
                             android:layout_width="wrap_content"
@@ -110,7 +111,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="text"
-                            android:text="@{viewmodel.groupName}" />
+                            android:text="@{viewmodel.groupName}"
+                            android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -130,7 +132,8 @@
                             android:layout_height="match_parent"
                             android:gravity="start"
                             android:inputType="textMultiLine"
-                            android:text="@{viewmodel.groupDescription}" />
+                            android:text="@{viewmodel.groupDescription}"
+                            android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
@@ -158,7 +161,8 @@
                                 style="@style/dateView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/date_placeholder" />
+                                android:text="@string/date_placeholder"
+                                android:clickable="false"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -178,7 +182,8 @@
                                 style="@style/dateView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/date_placeholder" />
+                                android:text="@string/date_placeholder"
+                                android:clickable="false"/>
                         </LinearLayout>
                     </LinearLayout>
                     <TextView

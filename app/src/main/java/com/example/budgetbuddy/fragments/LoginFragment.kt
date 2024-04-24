@@ -45,23 +45,6 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private val viewModel: RegisterViewModel by viewModels()
 
-    override fun onStart() {
-        super.onStart()
-        var usr: User?
-        //se valida si hay un usuario logeado, TODO al implementar el splash screen esta logica se debera hacer alli
-        val currentUser = auth.currentUser
-        lifecycleScope.launch {
-            if (currentUser != null) {
-                usr = viewModel.findUserByUID(currentUser.uid)
-                if (usr != null) {
-                    goToHome()
-                } else {
-                    updateUI(currentUser)
-                }
-            }
-        }
-    }
-
     /**
      * Metodo que sirve para hacer un intent e ir al activity HOME
      * */
@@ -165,7 +148,9 @@ class LoginFragment : Fragment() {
             ) {
                 binding.frame.alpha = 1f
                 binding.determinateBar.visibility = View.INVISIBLE
-                updateUI(user)
+                lifecycleScope.launch {
+                    updateUI(user!!)
+                }
             }
         } else {
             dialogLayout = R.layout.error_dialog
@@ -219,7 +204,13 @@ class LoginFragment : Fragment() {
      * Método que sirve para actualizar la interfaz una vez se haya iniciado sesión correctamente.
      * @param user Usuario con el cual se ha iniciado sesión
      * */
-    private fun updateUI(user: FirebaseUser?) {
-        findNavController().navigate(R.id.nav_login_to_personal_data)
+    private suspend fun updateUI(user: FirebaseUser) {
+        val userData = viewModel.findUserByUID(user.uid)
+        if(userData!=null){
+            goToHome()
+        }else{
+            val action = LoginFragmentDirections.navLoginToPersonalData()
+            findNavController().navigate(action)
+        }
     }
 }

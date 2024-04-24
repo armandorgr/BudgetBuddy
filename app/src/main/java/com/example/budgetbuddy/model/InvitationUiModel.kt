@@ -5,5 +5,5 @@ data class InvitationUiModel(
     val senderUid: String? = null,
     val senderName: String? = null,
     val type: INVITATION_TYPE? = null,
-    var dateSent: String? = null
+    var dateSent: Any? = null
 )

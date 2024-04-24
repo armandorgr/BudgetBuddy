@@ -2,6 +2,7 @@ package com.example.budgetbuddy.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 
 @Parcelize
@@ -12,5 +13,6 @@ data class Group(
     val description:String? = null,
     val startDate:String? = null,
     val endDate:String? = null,
-    val members:Map<String, ROLE>? = null
+    val members:Map<String, ROLE>? = null,
+    val lastUpdated:Long?=null,
 ) : Parcelable
