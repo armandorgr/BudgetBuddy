@@ -60,7 +60,7 @@
     <string name="success_email_change">An email to verify the new email has been sent to the address provided</string>
     <string name="fail_email_change">An error occurred trying to change the email</string>
     <string name="reathenticate">Reauthenticate</string>
-    <string name="fail_reauthentication">Failed to reauthenticate</string>
+    <string name="fail_reauthentication">Failed to reauthenticate, you must have recently logged in to authenticate if you have logged in with Google</string>
     <string name="change_password">Change password</string>
     <string name="change_password_title">Password change</string>
     <string name="change_password_hint">New password</string>
@@ -146,4 +146,5 @@
     <string name="sat">SAT</string>
     <string name="no_groups_message">No groups to show</string>
     <string name="no_invitations_message">You have no invitations</string>
+    <string name="budget_buddy_title">Budget Buddy</string>
 </resources>

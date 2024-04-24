@@ -312,7 +312,7 @@ class ProfileFragment : Fragment() {
             dialogFactory.createPromptDialog(binding.root, data)
         } else {
             failReauthentication(
-                task.exception?.message ?: getString(R.string.fail_reauthentication)
+                 getString(R.string.fail_reauthentication)
             )
         }
     }
@@ -357,7 +357,7 @@ class ProfileFragment : Fragment() {
             dialogFactory.createPromptDialog(binding.root, data, true)
         } else {
             failReauthentication(
-                task.exception?.message ?: getString(R.string.fail_reauthentication)
+                getString(R.string.fail_reauthentication)
             )
         }
     }
@@ -405,9 +405,7 @@ class ProfileFragment : Fragment() {
             )
             dialogFactory.createOkCancelDialog(binding.root, data)
         } else {
-            failReauthentication(
-                task.exception?.message ?: getString(R.string.fail_reauthentication)
-            )
+            failReauthentication(getString(R.string.fail_reauthentication))
         }
     }
 
