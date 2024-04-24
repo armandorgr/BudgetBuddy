@@ -46,7 +46,7 @@ class GroupsFragment : Fragment() {
     private val onClick = object : GroupsAdapter.OnClickListener {
         override fun onItemClick(group: ListItemUiModel.Group, position: Int) {
             //Se crea una accion con los parametros a pasar al fragmento de GroupOverview
-            val action = GroupsFragmentDirections.navGroupsToOverview(group.groupUiModel, group.uid)
+            val action = GroupsFragmentDirections.navGroupsToDetails(group.uid)
             findNavController().navigate(action)
         }
     }

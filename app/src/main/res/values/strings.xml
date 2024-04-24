@@ -147,4 +147,6 @@
     <string name="no_groups_message">No groups to show</string>
     <string name="no_invitations_message">You have no invitations</string>
     <string name="budget_buddy_title">Budget Buddy</string>
+    <string name="members_num_text">Members: %s</string>
+    <string name="kicked_out_of_group_message">You are no longer member of the group  %s</string>
 </resources>

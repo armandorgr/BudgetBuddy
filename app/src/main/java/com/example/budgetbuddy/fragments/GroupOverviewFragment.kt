@@ -374,7 +374,8 @@ class GroupOverviewFragment : Fragment() {
                     getString(R.string.leave_group_success),
                     Toast.LENGTH_SHORT
                 ).show()
-                findNavController().popBackStack(R.id.nav_groups, false)
+                val action = GroupOverviewFragmentDirections.navGroupOverviewToGroups(null)
+                findNavController().navigate(action)
             } else {
                 leavingGroup = false
                 Toast.makeText(

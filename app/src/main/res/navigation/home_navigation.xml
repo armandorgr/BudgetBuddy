@@ -17,7 +17,7 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:launchSingleTop="true"
             app:popUpTo="@id/home_navigation"
-            app:popUpToInclusive="true"></action>
+            app:popUpToInclusive="true"/>
     </fragment>
     <action
         android:id="@+id/nav_to_newGroup"
@@ -36,6 +36,27 @@
             />
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_details"
+        android:label=""
+        android:name="com.example.budgetbuddy.fragments.DetailsFragment"
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="selectedGroupUID"
+            app:argType="string"/>
+        <action
+            android:id="@+id/nav_details_to_groupOverview"
+            app:destination="@id/nav_group_overview"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"/>
+        <action
+            android:id="@+id/nav_details_to_groups"
+            app:destination="@id/nav_groups"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/home_navigation"
+            app:popUpToInclusive="true">
+        </action>
+    </fragment>
 
 
     <fragment android:id="@+id/nav_group_overview"
@@ -43,18 +64,17 @@
         android:label=""
         tools:layout="@layout/fragment_new_group">
         <argument
-            android:name="selectedGroup"
-            app:argType="com.example.budgetbuddy.model.Group"/>
-        <argument
             android:name="selectedGroupUID"
             app:argType="string"/>
+        <argument
+            android:name="selectedGroup"
+            app:argType="com.example.budgetbuddy.model.Group"/>
         <action
             android:id="@+id/nav_GroupOverview_to_groups"
             app:destination="@id/nav_groups"
             app:launchSingleTop="true"
             app:popUpTo="@id/home_navigation"
-            app:popUpToInclusive="true"
-            >
+            app:popUpToInclusive="true">
         </action>
     </fragment>
 
@@ -78,12 +98,12 @@
             app:argType="string"
             app:nullable="true" />
         <action
-            android:id="@+id/nav_groups_to_overview"
-            app:destination="@id/nav_group_overview"
+            android:id="@+id/nav_groups_to_details"
+            app:destination="@id/nav_details"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/nav_groups"></action>
+            app:popUpTo="@id/nav_groups"/>
     </fragment>
     <fragment
         android:id="@+id/nav_friends"
