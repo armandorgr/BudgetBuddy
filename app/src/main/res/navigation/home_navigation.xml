@@ -37,6 +37,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_chat"
+        android:name="com.example.budgetbuddy.fragments.ChatFragment"
+        android:label="Chat"
+        tools:layout="@layout/fragment_chat">
+        <argument
+            android:name="selectedGroupUID"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_details"
         android:label=""
         android:name="com.example.budgetbuddy.fragments.DetailsFragment"
@@ -56,6 +66,10 @@
             app:popUpTo="@id/home_navigation"
             app:popUpToInclusive="true">
         </action>
+        <action
+            android:id="@+id/nav_details_to_nav_chat"
+            app:destination="@id/nav_chat"
+            app:launchSingleTop="true"/>
     </fragment>
 
 

@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-     android:background="@color/md_theme_light_background"
+        android:background="@color/md_theme_light_background"
         app:fabCradleMargin="10dp"
         app:fabCradleRoundedCornerRadius="50dp">
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -62,7 +62,4 @@
         app:layout_anchorGravity="center"
         app:maxImageSize="40dp"
         app:tint="@color/md_theme_light_primary" />
-
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

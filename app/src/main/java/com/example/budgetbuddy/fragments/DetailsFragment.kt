@@ -102,6 +102,12 @@ class DetailsFragment : Fragment() {
                 findNavController().navigate(action)
             }
         }
+        binding.chatIcon.setOnClickListener{
+            viewModel.groupData.value?.let { group ->
+                val action = DetailsFragmentDirections.navDetailsToNavChat(group.uid)
+                findNavController().navigate(action)
+            }
+        }
     }
 
     override fun onCreateView(
