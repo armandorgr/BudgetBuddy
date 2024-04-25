@@ -44,6 +44,13 @@
         <argument
             android:name="selectedGroupUID"
             app:argType="string"/>
+        <action
+            android:id="@+id/nav_chat_to_groups"
+            app:destination="@id/nav_groups"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/home_navigation"
+            app:popUpToInclusive="true">
+        </action>
     </fragment>
 
     <fragment
