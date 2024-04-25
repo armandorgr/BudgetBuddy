@@ -49,7 +49,14 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+        prepareBinding()
         return binding.root
     }
 
+    private fun prepareBinding(){
+        binding.sendButton.setOnClickListener{
+            viewModel.setMessageText(binding.inputEditText.text.toString().trim())
+            Toast.makeText(requireContext(), viewModel.validateMessage(requireContext()).toString(), Toast.LENGTH_SHORT).show()
+        }
+    }
 }
