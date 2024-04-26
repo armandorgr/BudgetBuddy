@@ -16,8 +16,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.databinding.FragmentChatBinding
+import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.viewmodels.ChatViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,11 +30,14 @@ import kotlinx.coroutines.launch
 class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-    private val args:ChatFragmentArgs by navArgs()
+    private val args: ChatFragmentArgs by navArgs()
     private lateinit var selectedGroupUID: String
-    private val viewModel:ChatViewModel by viewModels()
+    private val viewModel: ChatViewModel by viewModels()
     private lateinit var homeViewModel: HomeViewModel
-
+    private val imageLoader = ImageLoader(this,
+        { uri -> viewModel.onSuccessGallery(uri, selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!, this::onPhotoMessageComplete) },
+        { bitmap -> viewModel.onSuccessCamera(bitmap, selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!, this::onPhotoMessageComplete) },
+        { viewModel.onPhotoLoadFail(requireContext()) })
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,11 +47,15 @@ class ChatFragment : Fragment() {
         selectedGroupUID = args.selectedGroupUID
         viewModel.addMemberShipListener(selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!)
         lifecycleScope.launch {
-            viewModel.isMember.collect{
-                if(!it){
+            viewModel.isMember.collect {
+                if (!it) {
                     val action = ChatFragmentDirections.navChatToGroups(null)
                     findNavController().navigate(action)
-                    Toast.makeText(requireActivity(), getString(R.string.kicked_out_of_group_message,""), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireActivity(),
+                        getString(R.string.kicked_out_of_group_message, ""),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -53,10 +63,32 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
-    private fun prepareBinding(){
-        binding.sendButton.setOnClickListener{
+    private fun prepareBinding() {
+        binding.sendImgButton.setOnClickListener(this::onAddPhotoClick)
+        binding.sendButton.setOnClickListener {
             viewModel.setMessageText(binding.inputEditText.text.toString().trim())
-            Toast.makeText(requireContext(), viewModel.validateMessage(requireContext()).toString(), Toast.LENGTH_SHORT).show()
+            val validationResult = viewModel.validateMessage(requireContext())
+            if (validationResult == null) {
+                viewModel.sendMessage(selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!)
+            } else {
+                Toast.makeText(requireContext(), validationResult, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+    }
+
+    private fun onAddPhotoClick(view: View?){
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        alertDialogFactory.createPhotoDialog(binding.root, {imageLoader.getPhotoFromGallery()}, {imageLoader.getPhotoFromCamera()})
+    }
+
+    private fun onPhotoMessageComplete(task: Task<Void>) {
+        if(task.isSuccessful){
+            Toast.makeText(requireContext(), "foto subida correctamente", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(requireContext(), "error rrrrrrrrr", Toast.LENGTH_SHORT).show()
+
         }
     }
 }
