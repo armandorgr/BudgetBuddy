@@ -22,6 +22,7 @@ sealed class ListItemUiModel {
     ):ListItemUiModel()
     data class MessageUiModel(
         val uid: String,
-        val message: Message
-    )
+        val message: Message,
+        val senderData: com.example.budgetbuddy.model.User?,
+    ) : ListItemUiModel()
 }

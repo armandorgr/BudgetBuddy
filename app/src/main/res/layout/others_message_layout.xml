@@ -3,88 +3,103 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/messageConstraintLayout"
     android:layout_gravity="start"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/senderUsernameView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pedrito"
-        app:layout_constraintEnd_toStartOf="@id/messageLimit"
-        app:layout_constraintStart_toEndOf="@id/senderPicImageView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/contentConstraintLayout"
-        app:layout_constraintHorizontal_bias="0"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/contentConstraintLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/custom_dialog_bkg"
-        android:padding="@dimen/margin_small"
-        app:layout_constraintBottom_toTopOf="@id/dateSentTextView"
-        app:layout_constraintStart_toEndOf="@id/senderPicImageView"
-        app:layout_constraintEnd_toStartOf="@id/messageLimit"
-        app:layout_constraintTop_toBottomOf="@id/senderUsernameView"
-        app:layout_constraintWidth_max="320dp">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/messageTextView"
+            android:id="@+id/senderUsernameView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mensaje menfsdjkfsfd fkjsfdsjkfha sfjsdfjksdhf asdfsdjfhsdkjfhas fashdfjk asdfjkasnd fjasd fkhf jsdf kdhfsjkdhfsjkdfdjkfhakjdf fhasjkfskjdfsjkd"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:text="Pedrito"
+            app:layout_constraintEnd_toStartOf="@id/messageLimit"
+            app:layout_constraintStart_toEndOf="@id/senderPicImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/contentConstraintLayout"
+            app:layout_constraintHorizontal_bias="0"/>
 
-        <ImageView
-            android:id="@+id/imageMessageView"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentConstraintLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/prueba"
-            android:scaleType="centerCrop"
-            app:layout_constraintHeight_max="200dp"
+            android:background="@drawable/custom_dialog_bkg"
+            android:padding="@dimen/margin_small"
+            app:layout_constraintBottom_toTopOf="@id/dateSentTextView"
+            app:layout_constraintStart_toEndOf="@id/senderPicImageView"
+            app:layout_constraintEnd_toStartOf="@id/messageLimit"
+            app:layout_constraintTop_toBottomOf="@id/senderUsernameView"
+            app:layout_constraintWidth_max="320dp">
+
+            <TextView
+                android:id="@+id/messageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mensaje menfsdjkfsfd fkjsfdsjkfha sfjsdfjksdhf asdfsdjfhsdkjfhas fashdfjk asdfjkasnd fjasd fkhf jsdf kdhfsjkdhfsjkdfdjkfhakjdf fhasjkfskjdfsjkd"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageMessageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/default_group_pic"
+                android:scaleType="centerCrop"
+                app:layout_constraintHeight_max="200dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:textSize="@dimen/textSizeSentDateMessage"
+            android:id="@+id/dateSentTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="26-04-2024"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/senderPicImageView"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintEnd_toStartOf="@id/messageLimit"
+            app:layout_constraintTop_toBottomOf="@id/contentConstraintLayout" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/senderPicImageView"
+            style="@style/circularImg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/default_profile_pic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintEnd_toStartOf="@id/contentConstraintLayout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintWidth_max="100dp"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/messageLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/dateSentTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="26-04-2024"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/senderPicImageView"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintEnd_toStartOf="@id/messageLimit"
-        app:layout_constraintTop_toBottomOf="@id/contentConstraintLayout" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/senderPicImageView"
-        style="@style/circularImg"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/default_profile_pic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintEnd_toStartOf="@id/contentConstraintLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/messageLimit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

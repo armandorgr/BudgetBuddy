@@ -14,10 +14,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.adapters.recyclerView.MessageAdapter
 import com.example.budgetbuddy.databinding.FragmentChatBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewmodels.ChatViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.google.android.gms.tasks.Task
@@ -59,6 +62,7 @@ class ChatFragment : Fragment() {
                 }
             }
         }
+        viewModel.loadMessages(selectedGroupUID)
         prepareBinding()
         return binding.root
     }
@@ -74,8 +78,22 @@ class ChatFragment : Fragment() {
                 Toast.makeText(requireContext(), validationResult, Toast.LENGTH_SHORT).show()
             }
         }
-
-
+        val messagesAdapter = MessageAdapter(
+            homeViewModel.firebaseUser.value?.uid!!,
+            layoutInflater,
+            ListItemImageLoader(requireContext()),
+            requireContext()
+        )
+        binding.chatRecyclerView.adapter = messagesAdapter
+        binding.chatRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
+        lifecycleScope.launch {
+            viewModel.messages.collect{
+                val orderedList = it.sortedWith { g1, g2 ->
+                    (g2.message.sentDate!! - g1.message.sentDate!!).toInt()
+                }
+                messagesAdapter.setData(orderedList)
+            }
+        }
     }
 
     private fun onAddPhotoClick(view: View?){

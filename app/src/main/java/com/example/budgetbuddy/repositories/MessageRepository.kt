@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.budgetbuddy.model.Message
 import com.example.budgetbuddy.util.Utilities
 import com.google.android.gms.tasks.Task
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ktx.database
@@ -34,14 +35,19 @@ class MessageRepository {
         return database.child(groupsRef).child(groupUID).child(messagesRef).push().key
     }
 
-    fun writeNewImageMessage(groupUID: String, key:String, message: Message): Task<Void> {
+    fun writeNewImageMessage(groupUID: String, key: String, message: Message): Task<Void> {
         val childUpdates = hashMapOf<String, Any?>(
             "$groupsRef/$groupUID/$messagesRef/$key/text" to message.text,
             "$groupsRef/$groupUID/$messagesRef/$key/senderUID" to message.senderUID,
             "$groupsRef/$groupUID/$messagesRef/$key/sentDate" to ServerValue.TIMESTAMP,
             "$groupsRef/$groupUID/$messagesRef/$key/type" to message.type,
-            "$groupsRef/$groupUID/$messagesRef/$key/imgPath" to (Utilities.PROFILE_PIC_ST + key),
+            "$groupsRef/$groupUID/$messagesRef/$key/imgPath" to (Utilities.PROFILE_PIC_ST + "images/" + key),
         )
         return database.updateChildren(childUpdates)
+    }
+
+    fun addChildEventListener(groupUID: String, childEventListener: ChildEventListener) {
+        database.child(groupsRef).child(groupUID).child("messages")
+            .addChildEventListener(childEventListener)
     }
 }
