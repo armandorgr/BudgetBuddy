@@ -53,6 +53,7 @@ class GroupRepository {
             "$groupsRef/$key/startDate" to group.startDate.toString(),
             "$groupsRef/$key/lastUpdated" to ServerValue.TIMESTAMP,
             "$groupsRef/$key/members" to group.members,
+            "$groupsRef/$key/pic" to group.pic,
             "$usersRef/$currentUserUid/$groupsRef/$key" to true
         )
         for(member in members){
@@ -82,6 +83,7 @@ class GroupRepository {
             "$groupsRef/$groupUID/name" to group.name.toString(),
             "$groupsRef/$groupUID/endDate" to group.endDate.toString(),
             "$groupsRef/$groupUID/startDate" to group.startDate.toString(),
+            "$groupsRef/$groupUID/pic" to group.pic,
             "$groupsRef/$groupUID/lastUpdated" to ServerValue.TIMESTAMP
         )
         // Se borran los miembros no seleccionados
@@ -130,5 +132,9 @@ class GroupRepository {
 
     fun changeMemberRole(groupUID: String, userUid: String, newRole:ROLE, onComplete: (task: Task<Void>) -> Unit){
         database.child(groupsRef).child(groupUID).child("members").child(userUid).setValue(newRole).addOnCompleteListener(onComplete)
+    }
+
+    fun addMemberShipListener(groupUID: String, userUid: String, valueEventListener: ValueEventListener){
+        database.child(groupsRef).child(groupUID).child("members").child(userUid).addValueEventListener(valueEventListener)
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="textSizeSentDateMessage">10sp</dimen>
     <dimen name="textSizeTitle">30sp</dimen>
     <dimen name="notFoundTextSize">20sp</dimen>
     <dimen name="inputTextSize">10sp</dimen>

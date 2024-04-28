@@ -2,6 +2,7 @@ package com.example.budgetbuddy.modules
 
 import com.example.budgetbuddy.repositories.GroupRepository
 import com.example.budgetbuddy.repositories.InvitationsRepository
+import com.example.budgetbuddy.repositories.MessageRepository
 import com.example.budgetbuddy.repositories.StorageRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.google.firebase.auth.FirebaseUser
@@ -32,4 +33,7 @@ class ReposModules {
 
     @Provides
     fun provideStorageRepository(): StorageRepository = StorageRepository()
+
+    @Provides
+    fun provideMessagesRepository(): MessageRepository = MessageRepository()
 }

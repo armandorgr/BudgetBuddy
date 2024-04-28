@@ -17,6 +17,7 @@ class ListItemImageLoader(
         val url = path.substring(2)
         if(prefix == Utilities.PROFILE_PIC_ST){
             val storageReference = Firebase.storage.getReference(url)
+            Log.d("foto", url)
             storageReference.downloadUrl.addOnCompleteListener {
                 if(it.isSuccessful){
                     val uri = it.result as Uri

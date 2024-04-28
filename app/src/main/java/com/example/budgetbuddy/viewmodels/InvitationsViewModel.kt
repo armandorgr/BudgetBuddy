@@ -97,7 +97,7 @@ class InvitationsViewModel @Inject constructor(
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            TODO("Not yet implemented")
+            Log.d("prueba", "onChildChanged invitations")
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -114,11 +114,11 @@ class InvitationsViewModel @Inject constructor(
         }
 
         override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            TODO("Not yet implemented")
+            Log.d("prueba", "onChildMoved invitations")
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
+            Log.d("prueba", "onCancelled invitations")
         }
 
     }

@@ -5,7 +5,6 @@ sealed class ListItemUiModel {
     data class Invitation(
         val invitationUiModel: InvitationUiModel
     ) : ListItemUiModel()
-    //TODO Refactorizar nombres
     data class User(
         val uid:String,
         val userUiModel: com.example.budgetbuddy.model.User,
@@ -13,7 +12,6 @@ sealed class ListItemUiModel {
         var role:ROLE? = null,
         var editable:Boolean?= false
     ) : ListItemUiModel()
-    //TODO Refactorizar nombres
     data class Group(
         val uid:String,
         val groupUiModel: com.example.budgetbuddy.model.Group
@@ -22,4 +20,9 @@ sealed class ListItemUiModel {
         val day: String,
         val hasEvent:Boolean
     ):ListItemUiModel()
+    data class MessageUiModel(
+        val uid: String,
+        val message: Message,
+        val senderData: com.example.budgetbuddy.model.User?,
+    ) : ListItemUiModel()
 }
