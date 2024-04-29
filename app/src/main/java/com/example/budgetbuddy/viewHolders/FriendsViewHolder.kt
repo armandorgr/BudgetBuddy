@@ -9,9 +9,12 @@ import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.ListItemImageLoader
 
 class FriendsViewHolder(
-    itemView: View,
+    private val containerView: View,
     private val imageLoader: ListItemImageLoader
-) : RecyclerView.ViewHolder(itemView) {
+) :ListItemViewHolder(containerView) {
+    private val imgView: ImageView by lazy {
+        containerView.findViewById(R.id.profilePicImageView)
+    }
     private val firstName: TextView = itemView.findViewById(R.id.firstNameTextView)
     private val lastName: TextView = itemView.findViewById(R.id.lastNameTextView)
     private val username: TextView = itemView.findViewById(R.id.usernameTextView)
@@ -28,6 +31,20 @@ class FriendsViewHolder(
 
         val userData = listItem.userUiModel
         userData.profilePic?.let { path -> imageLoader.loadImage(path, profilePic)
+        }
+    }
+
+    override fun bindData(listItem: ListItemUiModel) {
+        require(listItem is ListItemUiModel.User) {
+            "Expected ListItemUiModel.Group $listItem"
+        }
+
+        val userData = listItem.userUiModel
+        userData.pic?.let { imageLoader.loadImage(it, imgView) }
+        firstName.text = userData.firstName
+        lastName.text = userData.lastName
+        username.text = userData.username
+        containerView.setOnClickListener {
         }
     }
 }

@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.adapters.recyclerView.FriendsAdapter
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentFriendsBinding
 import com.example.budgetbuddy.model.INVITATION_TYPE
@@ -20,6 +21,7 @@ import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
@@ -34,12 +36,12 @@ import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class FriendsFragment : Fragment() {
-    private lateinit var friendsViewModel: FriendsViewModel
+    private val friendsViewModel: FriendsViewModel by viewModels()
     private var _binding: FragmentFriendsBinding? = null
     private val viewModel: InvitationsViewModel by viewModels()
     private lateinit var homeViewModel: HomeViewModel
 
-    private lateinit var membersAdapter: NewGroupFriendsAdapter
+    private lateinit var membersAdapter: FriendsAdapter
     private val _members: MutableStateFlow<List<ListItemUiModel.User>> =
         MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
@@ -58,8 +60,9 @@ class FriendsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val imageLoader = ListItemImageLoader(requireContext())
         // Se inicializa el adaptador
-        membersAdapter = NewGroupFriendsAdapter()
+        membersAdapter = FriendsAdapter(layoutInflater,imageLoader)
         binding.recyclerView.adapter = membersAdapter
 
         lifecycleScope.launch {
