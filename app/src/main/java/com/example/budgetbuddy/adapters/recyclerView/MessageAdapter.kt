@@ -18,7 +18,8 @@ class MessageAdapter(
     private val currentUserUID: String,
     private val layoutInflater: LayoutInflater,
     private val imageLoader: ListItemImageLoader,
-    private val context: Context
+    private val context: Context,
+    private val onImageClick: MessageViewHolder.OnImageClick
 ) : RecyclerView.Adapter<MessageViewHolder>() {
     private val listData = mutableListOf<ListItemUiModel.MessageUiModel>()
 
@@ -37,12 +38,12 @@ class MessageAdapter(
         return when(viewType){
             VIEW_TYPE_OWN_MESSAGE -> {
                 val view = layoutInflater.inflate(R.layout.own_message_layout, parent, false)
-                MessageViewHolder(view, imageLoader, context)
+                MessageViewHolder(view, imageLoader, context, onImageClick)
             }
 
             VIEW_TYPE_OTHER_MESSAGE -> {
                 val view = layoutInflater.inflate(R.layout.others_message_layout, parent, false)
-                MessageViewHolder(view, imageLoader, context)
+                MessageViewHolder(view, imageLoader, context, onImageClick)
             }
 
             else -> throw IllegalArgumentException("Unknown view type requested: $viewType")

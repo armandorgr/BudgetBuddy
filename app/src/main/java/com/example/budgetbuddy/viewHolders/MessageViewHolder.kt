@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.viewHolders
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
@@ -18,7 +19,8 @@ import java.time.format.DateTimeFormatter
 class MessageViewHolder(
     private val containerView: View,
     private val imageLoader: ListItemImageLoader,
-    private val context: Context
+    private val context: Context,
+    private val onImageClick: OnImageClick
 ) : ListItemViewHolder(containerView) {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val profilePicView: ImageView by lazy {
@@ -72,6 +74,13 @@ class MessageViewHolder(
             pictureImageView.visibility = View.VISIBLE
             messageTextView.visibility = View.GONE
             imageLoader.loadImage(messageData.imgPath!!, pictureImageView)
+            pictureImageView.setOnClickListener{
+                onImageClick.onClick(messageData.imgPath)
+            }
         }
+    }
+
+    interface OnImageClick{
+        fun onClick(imgPath:String)
     }
 }
