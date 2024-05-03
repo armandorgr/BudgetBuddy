@@ -5,7 +5,11 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Path
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.media.Image
+import android.net.Uri
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +24,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -57,7 +62,7 @@ class AlertDialogFactory(private val context: Context) {
     }
 
 
-    @SuppressLint("MissingInflatedId")
+
     fun createDatePickerDialog(view: View, result: DateResult): View {
         val constraintLayout = view.findViewById<ConstraintLayout>(R.id.dateDialogConstraintLayout)
         val dialogView = LayoutInflater.from(context)
@@ -208,7 +213,7 @@ class AlertDialogFactory(private val context: Context) {
         return dialogView
     }
 
-    @SuppressLint("MissingInflatedId")
+
     fun createPhotoDialog(
         view: View,
         onGallery: () -> Unit,
@@ -281,5 +286,27 @@ class AlertDialogFactory(private val context: Context) {
             alertDialog.dismiss()
         }
         return dialogView
+    }
+
+    fun createFullScreenPhotoDialog(view: View, path: String, imageLoader: ListItemImageLoader){
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.fullImageConstraintLayout)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.full_image_layout, constraintLayout)
+        val btnBack = dialogView.findViewById<ImageView>(R.id.backButton)
+        val imageView = dialogView.findViewById<ImageView>(R.id.imageView)
+
+
+        imageLoader.loadImage(path, imageView)
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        if (alertDialog.window != null) {
+            alertDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+
+        alertDialog.show()
+
+        btnBack.setOnClickListener{
+            alertDialog.dismiss()
+        }
     }
 }

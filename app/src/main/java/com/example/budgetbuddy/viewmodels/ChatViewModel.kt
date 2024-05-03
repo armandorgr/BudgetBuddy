@@ -167,6 +167,6 @@ class ChatViewModel @Inject constructor(
     fun loadMessages(groupUID: String) {
         if (childEventsAdded) return
         messagesRepository.addChildEventListener(groupUID, messagesChildEventListener)
-        childEventsAdded = false
+        childEventsAdded = true
     }
 }

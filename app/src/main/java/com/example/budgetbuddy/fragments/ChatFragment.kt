@@ -1,6 +1,8 @@
 package com.example.budgetbuddy.fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,6 +23,7 @@ import com.example.budgetbuddy.databinding.FragmentChatBinding
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
+import com.example.budgetbuddy.viewHolders.MessageViewHolder
 import com.example.budgetbuddy.viewmodels.ChatViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.google.android.gms.tasks.Task
@@ -67,12 +70,20 @@ class ChatFragment : Fragment() {
         return binding.root
     }
 
+    private val onImageClick = object : MessageViewHolder.OnImageClick{
+        override fun onClick(imgPath: String) {
+            val alertDialogFactory = AlertDialogFactory(requireContext())
+            alertDialogFactory.createFullScreenPhotoDialog(binding.root, imgPath, ListItemImageLoader(requireContext()))
+        }
+    }
+
     private fun prepareBinding() {
         binding.sendImgButton.setOnClickListener(this::onAddPhotoClick)
         binding.sendButton.setOnClickListener {
             viewModel.setMessageText(binding.inputEditText.text.toString().trim())
             val validationResult = viewModel.validateMessage(requireContext())
             if (validationResult == null) {
+                binding.inputEditText.setText("")
                 viewModel.sendMessage(selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!)
             } else {
                 Toast.makeText(requireContext(), validationResult, Toast.LENGTH_SHORT).show()
@@ -82,7 +93,8 @@ class ChatFragment : Fragment() {
             homeViewModel.firebaseUser.value?.uid!!,
             layoutInflater,
             ListItemImageLoader(requireContext()),
-            requireContext()
+            requireContext(),
+            onImageClick
         )
         binding.chatRecyclerView.adapter = messagesAdapter
         binding.chatRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, true)
