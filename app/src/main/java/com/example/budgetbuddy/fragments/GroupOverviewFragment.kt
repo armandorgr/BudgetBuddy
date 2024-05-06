@@ -26,6 +26,7 @@ import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.PickerData
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
@@ -90,12 +91,14 @@ class GroupOverviewFragment : Fragment() {
         selectedGroupUID.let { viewModel.loadMembers(it) }
 
         friendsAdapter = NewGroupFriendsAdapter(
+            requireContext(),
             inflater,
             viewModel.getSelectedList(),
             ListItemImageLoader(requireContext()),
             onChangeRoleListener
         )
         membersAdapter = NewGroupFriendsAdapter(
+            requireContext(),
             inflater,
             viewModel.getSelectedList(),
             ListItemImageLoader(requireContext())
@@ -127,11 +130,15 @@ class GroupOverviewFragment : Fragment() {
             }
         }
         viewModel.setOnCurrentUserBanned {
-            try{
-                if(!deletingGroup && !leavingGroup){
-                    findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups(null))
+            try {
+                if (!deletingGroup && !leavingGroup) {
+                    findNavController().navigate(
+                        GroupOverviewFragmentDirections.navGroupOverviewToGroups(
+                            null
+                        )
+                    )
                 }
-            }catch (e: IllegalStateException){
+            } catch (e: IllegalStateException) {
                 Log.d("prueba", "illegal state exception")
             }
         }
@@ -165,10 +172,11 @@ class GroupOverviewFragment : Fragment() {
 
     private fun showRoleSpinnerDialog(user: ListItemUiModel.User) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
-        val adapter = ArrayAdapter.createFromResource(
+        val rolesArray = Utilities.ROLES_LIST.map { role -> getString(role.resourceID) }
+        val adapter = ArrayAdapter(
             requireContext(),
-            R.array.roles_array,
-            android.R.layout.simple_spinner_item
+            android.R.layout.simple_spinner_item,
+            rolesArray
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
@@ -177,10 +185,11 @@ class GroupOverviewFragment : Fragment() {
             getString(R.string.change_role_title, user.userUiModel.username),
             adapter,
             { dialog, valueSelected ->
-                val role = if (valueSelected == resources.getStringArray(R.array.roles_array)[0]) ROLE.ADMIN else ROLE.MEMBER
+                val role = Utilities.ROLES_LIST.first { role -> getString(role.resourceID) == valueSelected }
                 viewModel.changeMemberRole(selectedGroupUID, user.uid, role, requireContext())
                 dialog.dismiss()
-                binding.frame.alpha = NORMAL //Hacer que la pantalla vuelva a la normalidad al cerrar la ventana.
+                binding.frame.alpha =
+                    NORMAL //Hacer que la pantalla vuelva a la normalidad al cerrar la ventana.
             }
         ) {
             binding.frame.alpha = NORMAL
@@ -201,7 +210,11 @@ class GroupOverviewFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-            findNavController().navigate(GroupOverviewFragmentDirections.navGroupOverviewToGroups(null))
+            findNavController().navigate(
+                GroupOverviewFragmentDirections.navGroupOverviewToGroups(
+                    null
+                )
+            )
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
@@ -351,8 +364,8 @@ class GroupOverviewFragment : Fragment() {
                     binding.startDate.isClickable = true
                     binding.endDate.isClickable = true
                     binding.groupPic.isClickable = true
-                }else{
-                    Log.d("prueba","Rol cambiado a Member")
+                } else {
+                    Log.d("prueba", "Rol cambiado a Member")
                     friendsAdapter.setEditable(false)
                     binding.deleteGroupBtn.visibility = View.GONE
                     binding.groupNameEditText.isEnabled = false

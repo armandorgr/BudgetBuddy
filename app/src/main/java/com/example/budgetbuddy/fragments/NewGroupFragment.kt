@@ -57,6 +57,7 @@ class NewGroupFragment : Fragment() {
         binding.lifecycleOwner = this
         //Se carga el adapter con un lista de los amigos seleccionados
         friendsAdapter = NewGroupFriendsAdapter(
+            requireContext(),
             layoutInflater,
             viewModel.getSelectedList(),
             ListItemImageLoader(requireContext())

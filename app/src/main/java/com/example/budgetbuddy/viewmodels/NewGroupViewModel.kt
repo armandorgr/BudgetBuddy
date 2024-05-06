@@ -479,13 +479,13 @@ class NewGroupViewModel @Inject constructor(
                 if (it.isSuccessful) {
                     Toast.makeText(
                         context,
-                        context.getString(R.string.change_username_success),
+                        context.getString(R.string.change_role_success),
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
                     Toast.makeText(
                         context,
-                        context.getString(R.string.change_username_fail),
+                        context.getString(R.string.change_role_fail),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

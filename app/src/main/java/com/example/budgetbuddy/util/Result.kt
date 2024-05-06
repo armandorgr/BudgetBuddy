@@ -40,7 +40,7 @@ data class TwoPromptResult(
 
 data class PickerData(
     val title:String,
-    val adapter: ArrayAdapter<CharSequence>,
+    val adapter: ArrayAdapter<String>,
     val onOk: (dialog: AlertDialog, selection: String)->Unit,
     val onDismiss: () -> Unit
 )
