@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.ListItemImageLoader
+import org.w3c.dom.Text
 
 class GroupViewHolder(
     private val containerView: View,
@@ -26,6 +27,9 @@ class GroupViewHolder(
     private val groupCard: ConstraintLayout by lazy {
         containerView.findViewById(R.id.group_card)
     }
+    private val category: TextView by lazy {
+        containerView.findViewById(R.id.category)
+    }
 
 
     override fun bindData(listItem: ListItemUiModel) {
@@ -39,6 +43,8 @@ class GroupViewHolder(
         containerView.setOnClickListener {
             onClickListener.onClick(listItem, adapterPosition)
         }
+        groupData.category?.stringID?.let { category.text = containerView.context.getString(it) }
+        groupData.category?.colorID?.let { category.background.setTint(containerView.context.getColor(it)) }
     }
 
     interface OnClickListener {

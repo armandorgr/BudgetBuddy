@@ -150,4 +150,9 @@
     <string name="members_num_text">Members: %s</string>
     <string name="kicked_out_of_group_message">You are no longer member of the group  %s</string>
     <string name="account_deleted_message">Account deleted</string>
+    <!--Categorias de los grupos-->
+    <string name="restaurant_category">Restaurant</string>
+    <string name="undefined_category">Undefined</string>
+    <string name="birthday_category">Birthday</string>
+    <string name="trip_category">Trip</string>
 </resources>

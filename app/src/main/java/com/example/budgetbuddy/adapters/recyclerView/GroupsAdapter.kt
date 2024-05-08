@@ -2,10 +2,13 @@ package com.example.budgetbuddy.adapters.recyclerView
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.fragments.GroupOverviewFragmentDirections
+import com.example.budgetbuddy.model.GROUP_CATEGORY
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewHolders.GroupViewHolder
@@ -45,12 +48,16 @@ class GroupsAdapter(
      * de los grupos cargadas, si no lo contiene se oculta.
      * */
     @SuppressLint("NotifyDataSetChanged")
-    fun filterData(groupQuery: String) {
+    fun filterData(groupQuery: String, categories: Set<GROUP_CATEGORY>) {
         shownData.clear()
         shownData.addAll(listData.filter { group ->
-            group.groupUiModel.name?.contains(groupQuery)!!
-                    || group.groupUiModel.description?.contains(groupQuery)!!
+            if(categories.isEmpty()){
+                group.groupUiModel.name?.contains(groupQuery)!! || group.groupUiModel.description?.contains(groupQuery)!!
+            }else{
+                (group.groupUiModel.name?.contains(groupQuery)!! || group.groupUiModel.description?.contains(groupQuery)!!) && categories.any { cat -> cat.name == group.groupUiModel.category?.name }
+            }
         })
+        Log.d("prueba", "filterData $shownData")
         notifyDataSetChanged()
     }
 

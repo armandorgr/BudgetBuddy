@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
+import com.example.budgetbuddy.model.GROUP_CATEGORY
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.ROLE
@@ -56,6 +57,8 @@ class NewGroupViewModel @Inject constructor(
     private val _members: MutableStateFlow<List<ListItemUiModel.User>> =
         MutableStateFlow(emptyList())
     val members: StateFlow<List<ListItemUiModel.User>> = _members
+    private var _groupCategory = GROUP_CATEGORY.UNDEFINED
+    val groupCategory = _groupCategory
 
     private val _currentUserRole: MutableStateFlow<ROLE> = MutableStateFlow(ROLE.MEMBER)
     val currentUserRole: StateFlow<ROLE> = _currentUserRole
@@ -80,6 +83,9 @@ class NewGroupViewModel @Inject constructor(
 
     private var onCurrentUserBanned: (() -> Unit)? = null
 
+    fun setGroupCategory(category: GROUP_CATEGORY){
+        this._groupCategory = category
+    }
 
     fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
         repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
@@ -152,9 +158,9 @@ class NewGroupViewModel @Inject constructor(
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            null
+            null,
+            category = _groupCategory
         )
-
         repo.updateGroup(group, groupUID, membersToDelete, friendsToInvite)
             .addOnCompleteListener { task ->
                 groupPhoto.let { pic ->
@@ -321,7 +327,8 @@ class NewGroupViewModel @Inject constructor(
             _groupDescription.value,
             _startDate.value.toString(),
             _endDate.value.toString(),
-            hashMapOf(currentUserUid to ROLE.ADMIN)
+            hashMapOf(currentUserUid to ROLE.ADMIN),
+            category = _groupCategory
         )
 
         repo.createNewGroup(group, currentUserUid, members, username) { task, uid ->

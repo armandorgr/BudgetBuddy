@@ -32,4 +32,9 @@
     <color name="dark_theme_accent">#88BDBC</color> <!-- Turquesa Pastel -->
     <color name="dark_theme_text_primary">#FAFAFA</color> <!-- Blanco Crema -->
     <color name="dark_theme_text_secondary">#B0BEC5</color> <!-- Gris Claro -->
+    <!--Colores para las categorias de los grupos-->
+    <color name="travel_category_color">#89CFF0</color>
+    <color name="undefined_category_color">#808080</color>
+    <color name="birthday_category_color">#FFAC1C</color>
+    <color name="restaurant_category_color">#D2042D</color>
 </resources>

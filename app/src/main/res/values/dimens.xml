@@ -19,4 +19,7 @@
     <dimen name="date_view_margin">6dp</dimen>
     <dimen name="group_card_height">70dp</dimen>
     <dimen name="group_friends_recyclerView_margin">40dp</dimen>
+    <dimen name="category_padding">2dp</dimen>
+    <dimen name="category_radius">6dp</dimen>
+    <dimen name="category_recyclerView_height">40dp</dimen>
 </resources>
