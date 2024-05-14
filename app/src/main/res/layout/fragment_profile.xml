@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:showPaths="false"
-        app:layoutDescription="@xml/fragment_profile_scene"
+
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -199,6 +199,7 @@
                         android:layout_height="0dp"
                         android:contentDescription="@string/arrow_content_description"
                         android:src="@drawable/baseline_keyboard_arrow_right_24"
+                        app:tint="@color/md_theme_light_onBackground"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/guideline7"
@@ -261,7 +262,8 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/guideline9"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/md_theme_light_onBackground"/>
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline8"
@@ -321,6 +323,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/guideline11"
+                        app:tint="@color/md_theme_light_onBackground"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline
@@ -381,6 +384,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/guideline13"
+                        app:tint="@color/md_theme_light_onBackground"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline
@@ -441,6 +445,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/guideline15"
+                        app:tint="@color/md_theme_light_onBackground"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline

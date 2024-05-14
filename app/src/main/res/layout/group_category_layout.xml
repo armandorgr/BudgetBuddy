@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toStartOf="@id/unselectIcon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:textColor="@color/md_theme_light_surface"
+        android:textColor="@color/white"
         android:padding="@dimen/category_padding"
         android:id="@+id/category"
         android:layout_width="wrap_content"

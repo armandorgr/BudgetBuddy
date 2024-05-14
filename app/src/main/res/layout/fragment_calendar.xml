@@ -34,8 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="Feb 2024"
                 android:textSize="20sp"
-                android:textAlignment="center"
-                android:textColor="@color/black"/>
+                android:textAlignment="center" />
             <Button
                 android:id="@+id/nextBtn"
                 android:layout_width="0dp"
@@ -56,7 +55,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/sun"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
             <TextView
@@ -64,7 +62,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/mon"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
             <TextView
@@ -72,7 +69,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/tue"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
             <TextView
@@ -80,7 +76,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/wed"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
             <TextView
@@ -88,7 +83,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/thur"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
             <TextView
@@ -96,7 +90,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/fri"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
             <TextView
@@ -104,7 +97,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/sat"
-                android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="16sp"/>
         </LinearLayout>
