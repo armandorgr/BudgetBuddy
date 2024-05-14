@@ -13,6 +13,16 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="not_found_message" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/notFoundTextSize</item>
+        <item name="fontFamily">@font/ptsans_bold</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="sendButton">
+        <item name="backgroundTint">@color/md_theme_light_primary</item>
+    </style>
+
     <style name="actionConstraint">
         <item name="android:layout_marginVertical">@dimen/action_constraint_margin</item>
     </style>

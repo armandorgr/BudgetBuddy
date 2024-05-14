@@ -2,6 +2,9 @@ package com.example.budgetbuddy.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -9,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.budgetbuddy.R
@@ -65,7 +69,7 @@ class HomeActivity : AppCompatActivity() {
         //Diferences pestañas del menu de navagacion
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_groups, R.id.nav_friends, R.id.nav_profile
+                R.id.nav_home, R.id.nav_groups, R.id.nav_friends, R.id.nav_profile, R.id.nav_invitations
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -81,5 +85,15 @@ class HomeActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.home_nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.tool_bar_manu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
+        return item.onNavDestinationSelected(findNavController(R.id.home_nav_host_fragment))
     }
 }

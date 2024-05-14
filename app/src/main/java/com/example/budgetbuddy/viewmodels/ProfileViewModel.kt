@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.ViewModel
+import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.StorageRepository
 import com.example.budgetbuddy.repositories.UsersRepository
@@ -33,9 +34,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    suspend fun deleteUser(uid: String): Boolean {
+    suspend fun deleteUser(
+        uid: String,
+        friends: List<ListItemUiModel>,
+        groups: List<ListItemUiModel.Group>
+    ): Boolean {
         return withContext(Dispatchers.IO) {
-            repo.deleteUser(uid)
+            repo.deleteUser(uid, friends, groups)
         }
     }
 

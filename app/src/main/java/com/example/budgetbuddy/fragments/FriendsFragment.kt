@@ -158,6 +158,7 @@ class FriendsFragment : Fragment() {
                                 println("Enviada correctamente!")
                             }else{
                                 println("La invitacion no se ha podido enviar!")
+
                             }
                         }
 

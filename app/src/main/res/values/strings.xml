@@ -61,7 +61,7 @@
     <string name="success_email_change">An email to verify the new email has been sent to the address provided</string>
     <string name="fail_email_change">An error occurred trying to change the email</string>
     <string name="reathenticate">Reauthenticate</string>
-    <string name="fail_reauthentication">Failed to reauthenticate</string>
+    <string name="fail_reauthentication">Failed to reauthenticate, you must have recently logged in to authenticate if you have logged in with Google</string>
     <string name="change_password">Change password</string>
     <string name="change_password_title">Password change</string>
     <string name="change_password_hint">New password</string>
@@ -80,7 +80,9 @@
     <string name="change_username_fail">An error occurred trying to change your username</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="blank_validation_error">%s can\'t be blank</string>
+    <string name="blank_message_validation_error">The message can\'t be blank</string>
     <string name="length_validation_error">%s can\'t have more than %d letters</string>
+    <string name="length_message_validation_error">The message can\'t have more than %d letters</string>
     <string name="regex_validation_error">%s is malformed</string>
     <string name="new_group">New Group</string>
     <string name="group_name_hint">Group Name</string>
@@ -134,4 +136,22 @@
     <string name="change_role_title">Change role of user %s</string>
     <string name="change_role_success">Role changed successfully</string>
     <string name="change_role_fail">Role change failed</string>
+    <string name="search_group_hint">Search Group</string>
+    <string name="invitations_title">Invitations</string>
+    <!--Calendar values-->
+    <string name="calendar_prev">Prev</string>
+    <string name="calendar_next">Next</string>
+    <string name="sun">SUN</string>
+    <string name="mon">MON</string>
+    <string name="tue">TUE</string>
+    <string name="wed">WED</string>
+    <string name="thur">THUR</string>
+    <string name="fri">FRI</string>
+    <string name="sat">SAT</string>
+    <string name="no_groups_message">No groups to show</string>
+    <string name="no_invitations_message">You have no invitations</string>
+    <string name="budget_buddy_title">Budget Buddy</string>
+    <string name="members_num_text">Members: %s</string>
+    <string name="kicked_out_of_group_message">You are no longer member of the group  %s</string>
+    <string name="account_deleted_message">Account deleted</string>
 </resources>

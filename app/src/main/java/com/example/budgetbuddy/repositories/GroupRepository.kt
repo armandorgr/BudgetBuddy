@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ServerValue
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
@@ -41,11 +43,17 @@ class GroupRepository {
             key,
             username,
             INVITATION_TYPE.GROUP_REQUEST,
-            LocalDateTime.now().toString()
+            ServerValue.TIMESTAMP
             )
 
-        val childUpdates = hashMapOf<String, Any>(
-            "$groupsRef/$key" to group,
+        val childUpdates = hashMapOf<String, Any?>(
+            "$groupsRef/$key/description" to group.description.toString(),
+            "$groupsRef/$key/name" to group.name.toString(),
+            "$groupsRef/$key/endDate" to group.endDate.toString(),
+            "$groupsRef/$key/startDate" to group.startDate.toString(),
+            "$groupsRef/$key/lastUpdated" to ServerValue.TIMESTAMP,
+            "$groupsRef/$key/members" to group.members,
+            "$groupsRef/$key/pic" to group.pic,
             "$usersRef/$currentUserUid/$groupsRef/$key" to true
         )
         for(member in members){
@@ -67,14 +75,16 @@ class GroupRepository {
             groupUID,
             group.name,
             INVITATION_TYPE.GROUP_REQUEST,
-            LocalDateTime.now().toString()
+            ServerValue.TIMESTAMP
         )
 
         val childUpdates = hashMapOf<String, Any?>(
             "$groupsRef/$groupUID/description" to group.description.toString(),
             "$groupsRef/$groupUID/name" to group.name.toString(),
             "$groupsRef/$groupUID/endDate" to group.endDate.toString(),
-            "$groupsRef/$groupUID/startDate" to group.startDate.toString()
+            "$groupsRef/$groupUID/startDate" to group.startDate.toString(),
+            "$groupsRef/$groupUID/pic" to group.pic,
+            "$groupsRef/$groupUID/lastUpdated" to ServerValue.TIMESTAMP
         )
         // Se borran los miembros no seleccionados
         for (i in membersToDelete){
@@ -107,6 +117,10 @@ class GroupRepository {
         database.child(usersRef).child(currentUserUid).child(groupsRef).removeEventListener(childEventListener)
     }
 
+    fun setValueEventListener(groupUID: String, valueEventListener: ValueEventListener){
+        database.child(groupsRef).child(groupUID).addValueEventListener(valueEventListener);
+    }
+
     fun setGroupMembersChildEvents(groupUID: String, childEventListener: ChildEventListener) {
         database.child(groupsRef).child(groupUID).child("members")
             .addChildEventListener(childEventListener)
@@ -118,5 +132,9 @@ class GroupRepository {
 
     fun changeMemberRole(groupUID: String, userUid: String, newRole:ROLE, onComplete: (task: Task<Void>) -> Unit){
         database.child(groupsRef).child(groupUID).child("members").child(userUid).setValue(newRole).addOnCompleteListener(onComplete)
+    }
+
+    fun addMemberShipListener(groupUID: String, userUid: String, valueEventListener: ValueEventListener){
+        database.child(groupsRef).child(groupUID).child("members").child(userUid).addValueEventListener(valueEventListener)
     }
 }

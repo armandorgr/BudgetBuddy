@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.adapters.recyclerView
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,19 +20,47 @@ import com.example.budgetbuddy.viewHolders.GroupViewHolder
 class   GroupsAdapter(
     private val layoutInflater: LayoutInflater,
     private val imageLoader: ListItemImageLoader,
-    private val onClickListener: OnClickListener
+    private val onClickListener: OnClickListener,
 ) : RecyclerView.Adapter<GroupViewHolder>() {
-    private val listData = mutableListOf<ListItemUiModel>()
-    //TODO HACER UNA LISTA FILTRADA COMO CON LOS AMIGOS
+    private val listData = mutableListOf<ListItemUiModel.Group>()
+    private val shownData = mutableListOf<ListItemUiModel.Group>()
 
     /**
      * Metodo que sirve para establecer la lista de los grupos cargados y actualizar el [RecyclerView]
      * @param newItems Lista con los nuevos grupos a establecer en el [RecyclerView]
      * */
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(newItems: List<ListItemUiModel>) {
+    fun setData(newItems: List<ListItemUiModel.Group>) {
         listData.clear()
         listData.addAll(newItems)
+        shownData.clear()
+        shownData.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Metodo que sirve para filtrar los grupos que se muestran, solo se mostraran
+     * los que contengan en su nombre de grupo [groupQuery]
+     * @param groupQuery Valor que cual se validará si esta contenido en el nombre del grupo
+     * de los grupos cargadas, si no lo contiene se oculta.
+     * */
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterData(groupQuery: String) {
+        shownData.clear()
+        shownData.addAll(listData.filter { group ->
+            group.groupUiModel.name?.contains(groupQuery)!!
+                    || group.groupUiModel.description?.contains(groupQuery)!!
+        })
+        notifyDataSetChanged()
+    }
+
+    /**
+     * Metodo que sirve para hacer a todos los grupos visibles de nuevo
+     * */
+    @SuppressLint("NotifyDataSetChanged")
+    fun resetData() {
+        shownData.clear()
+        shownData.addAll(listData)
         notifyDataSetChanged()
     }
 
@@ -43,7 +72,6 @@ class   GroupsAdapter(
         override fun onClick(group: ListItemUiModel.Group, position: Int) {
             onClickListener.onItemClick(group, position)
         }
-
     }
 
     /**
@@ -66,10 +94,10 @@ class   GroupsAdapter(
     }
 
     override fun getItemCount(): Int {
-        return listData.size
+        return shownData.size
     }
 
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
-        holder.bindData(listData[position])
+        holder.bindData(shownData[position])
     }
 }
