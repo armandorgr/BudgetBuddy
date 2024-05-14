@@ -20,6 +20,16 @@ class InvitationsRepository {
         database.child(usersRef).child(uid).child("invitations").child(fromUid).setValue(invitation)
     }
 
+    fun sendFriendsRequest(
+        uid: String,
+        fromUid: String,
+        invitation: InvitationUiModel,
+        onComplete:(task: Task<Void>)->Unit
+    ) {
+        database.child(usersRef).child(uid).child("invitations").child(fromUid).setValue(invitation).addOnCompleteListener(onComplete)
+    }
+
+
     fun getInvitationsReference(uid: String): DatabaseReference {
         return database.child(usersRef).child(uid).child("invitations")
     }

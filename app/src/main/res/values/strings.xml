@@ -34,6 +34,7 @@
     <string name="profile">Profile</string>
     <string name="buscarAmigo">Buscar amigo</string>
     <string name="buscar">Buscar</string>
+    <string name="añadirAmigo">Añadir amigo</string>
     <string name="pedro">Pedro</string>
     <string name="viajeAMadrid">Viaje a Madrid</string>
     <string name="vacacionesEnIbiza">Vacaciones en Ibiza</string>
@@ -127,6 +128,7 @@
     <string name="leave_group_error">Error trying to leave the group</string>
     <string name="warning">Warning</string>
     <string name="leave_group_delete_text">You\'re the only member of this group, leaving it will delete it</string>
+    <string name="empty"></string>
     <string-array name="roles_array">
         <item>Admin</item>
         <item>Member</item>

@@ -17,7 +17,7 @@ import com.example.budgetbuddy.viewHolders.GroupViewHolder
  * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
  * capitulo 6 'Adding and Interacting with RecyclerView'
  * */
-class GroupsAdapter(
+class   GroupsAdapter(
     private val layoutInflater: LayoutInflater,
     private val imageLoader: ListItemImageLoader,
     private val onClickListener: OnClickListener,
