@@ -40,7 +40,7 @@ class FriendsViewHolder(
         }
 
         val userData = listItem.userUiModel
-        userData.pic?.let { imageLoader.loadImage(it, imgView) }
+        userData.profilePic?.let { imageLoader.loadImage(it, imgView) }
         firstName.text = userData.firstName
         lastName.text = userData.lastName
         username.text = userData.username

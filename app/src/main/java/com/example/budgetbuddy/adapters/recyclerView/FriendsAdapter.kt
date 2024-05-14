@@ -36,5 +36,25 @@ package com.example.budgetbuddy.adapters.recyclerView
             listUser.addAll(newItems)
             notifyDataSetChanged()
         }
+
+        /**
+         * Metodo que sirve para filtar la busqueda concreta de amigos a traves del SearchView a partir del texto que introduzca
+         * el usuario.
+         * @param String texto que contiene el nombre de usuario a buscar
+         * */
+        fun filter(nombreUsuario: String) {
+            val listaFiltrada = if (nombreUsuario.isBlank()) {
+                // Si el texto de búsqueda está vacío, se muestran todos los amigos
+                listUser.toList()
+            } else {
+                // Se filtra la lista de amigos basándose en el texto de búsqueda
+                listUser.filter {
+                    it is ListItemUiModel.User && it.userUiModel.username?.contains(nombreUsuario, true) ?: false
+
+                }
+            }
+            setData(listaFiltrada)
+        }
+
     }
 

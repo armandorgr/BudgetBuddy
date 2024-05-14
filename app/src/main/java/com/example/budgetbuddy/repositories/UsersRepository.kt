@@ -4,7 +4,9 @@ import android.util.Log
 import com.example.budgetbuddy.model.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -30,15 +32,24 @@ class UsersRepository {
         return database.child(uid).child("profilePic").setValue(null)
     }
 
-    suspend fun findUserUIDByUsername(username:String):String?{
-        return try{
-            val snapshot = database.orderByChild("username").equalTo(username).get().await()
-            val key = snapshot.getValue(User::class.java)
-            Log.d("prueba","valor:$key")
-            key?.username
-        }catch (e: Exception){
-            null
-        }
+    fun findUIDByUsername(username: String, onComplete: (UID: String?) -> Unit) {
+        database.orderByChild("username").equalTo(username)
+            .addListenerForSingleValueEvent(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.childrenCount > 0) {
+                            snapshot.children.forEach { userData ->
+                                onComplete(userData.key)
+                            }
+                        } else {
+                            onComplete(null)
+                        }
+                    }
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d("prueba", "onCancelled InvitationsRepository")
+                    }
+                }
+            )
     }
 
     suspend fun findUserByUserName(username:String):User?{
