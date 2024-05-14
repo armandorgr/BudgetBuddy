@@ -59,6 +59,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("com.google.dagger:hilt-android:2.48")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.android.car.ui:car-ui-lib:2.6.0")
     kapt ("com.google.dagger:hilt-compiler:2.48")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")

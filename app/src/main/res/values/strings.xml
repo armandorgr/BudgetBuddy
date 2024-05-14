@@ -34,6 +34,7 @@
     <string name="profile">Profile</string>
     <string name="buscarAmigo">Buscar amigo</string>
     <string name="buscar">Buscar</string>
+    <string name="añadirAmigo">Añadir amigo</string>
     <string name="pedro">Pedro</string>
     <string name="viajeAMadrid">Viaje a Madrid</string>
     <string name="vacacionesEnIbiza">Vacaciones en Ibiza</string>
@@ -129,6 +130,7 @@
     <string name="leave_group_delete_text">You\'re the only member of this group, leaving it will delete it</string>
     <string name="admin_role">Admin</string>
     <string name="member_role">Member</string>
+    <string name="empty"></string>
     <string name="change_role_title">Change role of user %s</string>
     <string name="change_role_success">Role changed successfully</string>
     <string name="change_role_fail">Role change failed</string>

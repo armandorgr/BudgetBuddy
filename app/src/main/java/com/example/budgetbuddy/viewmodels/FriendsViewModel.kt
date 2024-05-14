@@ -2,9 +2,12 @@ package com.example.budgetbuddy.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
+import com.example.budgetbuddy.repositories.InvitationsRepository
 import com.example.budgetbuddy.repositories.UsersRepository
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
-    private val repo: UsersRepository
+    private val repo: UsersRepository,
+    private val invitationRepo: InvitationsRepository
 ) : ViewModel() {
     private val _friendsUidList:MutableStateFlow<List<ListItemUiModel>> = MutableStateFlow<List<ListItemUiModel>>(emptyList())
     val friendsUidList: StateFlow<List<ListItemUiModel>> = _friendsUidList
@@ -81,4 +85,9 @@ class FriendsViewModel @Inject constructor(
         reference.addChildEventListener(childEventListener)
         childEventsAdded = true
     }
+
+    fun sendInvitation(invitation: InvitationUiModel, toUID: String ,funcion:(task: Task<Void>)->Unit){
+        invitationRepo.sendFriendsRequest(toUID, invitation.senderUid!!, invitation, funcion)
+    }
+
 }
