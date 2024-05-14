@@ -25,4 +25,8 @@ sealed class ListItemUiModel {
         val message: Message,
         val senderData: com.example.budgetbuddy.model.User?,
     ) : ListItemUiModel()
+    data class CategoryUiModel(
+        val category: GROUP_CATEGORY,
+        var isSelected: Boolean
+    ) : ListItemUiModel()
 }

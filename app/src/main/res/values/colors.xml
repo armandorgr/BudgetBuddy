@@ -7,6 +7,8 @@
     <color name="md_theme_light_onPrimary">#333333</color> <!-- Gris muy oscuro for Text on Primary -->
     <color name="md_theme_light_secondary">#B5DBFF</color> <!-- Azul Bebé Pastel for Secondary -->
     <color name="md_theme_light_onSecondary">#333333</color> <!-- Gris muy oscuro for Text on Secondary -->
+    <color name="md_theme_light_tertiary">#A3D4FF</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color> <!-- Blanco for Text on Tertiary -->
     <color name="md_theme_light_surface">#FFFFFF</color> <!-- White for Surface -->
     <color name="md_theme_light_onSurface">#333333</color> <!-- Gris muy oscuro for Text on Surface -->
     <color name="md_theme_light_background">#FFFFFF</color> <!-- White for Background -->
@@ -32,4 +34,10 @@
     <color name="dark_theme_accent">#88BDBC</color> <!-- Turquesa Pastel -->
     <color name="dark_theme_text_primary">#FAFAFA</color> <!-- Blanco Crema -->
     <color name="dark_theme_text_secondary">#B0BEC5</color> <!-- Gris Claro -->
+    <color name="dark_theme_light_background">#333333</color> <!-- White for Background -->
+    <!--Colores para las categorias de los grupos-->
+    <color name="travel_category_color">#89CFF0</color>
+    <color name="undefined_category_color">#808080</color>
+    <color name="birthday_category_color">#FFAC1C</color>
+    <color name="restaurant_category_color">#D2042D</color>
 </resources>

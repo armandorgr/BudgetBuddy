@@ -54,7 +54,8 @@ class GroupRepository {
             "$groupsRef/$key/lastUpdated" to ServerValue.TIMESTAMP,
             "$groupsRef/$key/members" to group.members,
             "$groupsRef/$key/pic" to group.pic,
-            "$usersRef/$currentUserUid/$groupsRef/$key" to true
+            "$usersRef/$currentUserUid/$groupsRef/$key" to true,
+            "$groupsRef/$key/category" to group.category
         )
         for(member in members){
             childUpdates["$usersRef/$member/$invitationsRef/$key"] = invitation
@@ -84,7 +85,8 @@ class GroupRepository {
             "$groupsRef/$groupUID/endDate" to group.endDate.toString(),
             "$groupsRef/$groupUID/startDate" to group.startDate.toString(),
             "$groupsRef/$groupUID/pic" to group.pic,
-            "$groupsRef/$groupUID/lastUpdated" to ServerValue.TIMESTAMP
+            "$groupsRef/$groupUID/lastUpdated" to ServerValue.TIMESTAMP,
+            "$groupsRef/$groupUID/category" to group.category,
         )
         // Se borran los miembros no seleccionados
         for (i in membersToDelete){

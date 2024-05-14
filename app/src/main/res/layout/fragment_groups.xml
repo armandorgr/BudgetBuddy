@@ -18,12 +18,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/GroupsRecyclerView"
+            app:layout_constraintBottom_toTopOf="@id/categoriesRecyclerView"
             app:layout_constraintVertical_weight="0.1"
             android:hint="@string/search_group_hint"
             app:queryHint="@string/search_group_hint"
             />
-
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoriesRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/category_recyclerView_height"
+            app:layout_constraintTop_toBottomOf="@id/searchView"
+            app:layout_constraintBottom_toTopOf="@id/GroupsRecyclerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
         <ProgressBar
             android:id="@+id/determinateBar"
             style="@android:style/Widget.Material.Light.ProgressBar.Large"
@@ -60,7 +67,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchView"
+            app:layout_constraintTop_toBottomOf="@id/categoriesRecyclerView"
             app:layout_constraintVertical_weight="0.9"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -43,6 +43,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/place_holder_username_profile" />
+        <TextView
+            android:background="@drawable/group_category_bkg"
+            android:textColor="@color/white"
+            android:padding="@dimen/category_padding"
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/undefined_category"/>
     </LinearLayout>
 
 
@@ -64,6 +72,7 @@
         android:id="@+id/arrowImg"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:tint="@color/md_theme_light_onBackground"
         android:src="@drawable/baseline_keyboard_arrow_right_24"
         app:layout_constraintStart_toStartOf="@id/guidelineEndText"
         app:layout_constraintEnd_toEndOf="parent"

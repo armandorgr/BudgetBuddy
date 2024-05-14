@@ -87,6 +87,7 @@
                             android:id="@+id/addPhotoIcon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            app:tint="@color/md_theme_light_onBackground"
                             android:src="@drawable/baseline_add_a_photo_24"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
@@ -135,7 +136,12 @@
                             android:text="@{viewmodel.groupDescription}"
                             android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
-
+                    <Spinner
+                        android:id="@+id/categorySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_medium"
+                        />
                     <LinearLayout
                         android:id="@+id/datesLinearLayout"
                         android:layout_width="match_parent"

@@ -5,6 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.core.view.get
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -17,10 +22,12 @@ import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
 import com.example.budgetbuddy.databinding.FragmentNewGroupBinding
+import com.example.budgetbuddy.model.GROUP_CATEGORY
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
@@ -57,6 +64,7 @@ class NewGroupFragment : Fragment() {
         binding.lifecycleOwner = this
         //Se carga el adapter con un lista de los amigos seleccionados
         friendsAdapter = NewGroupFriendsAdapter(
+            requireContext(),
             layoutInflater,
             viewModel.getSelectedList(),
             ListItemImageLoader(requireContext())
@@ -187,6 +195,28 @@ class NewGroupFragment : Fragment() {
         viewModel.endDate.observe(viewLifecycleOwner) {
             binding.endDate.text =
                 it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
+        }
+        val categoryAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            Utilities.CATEGORIES_LIST
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        binding.categorySpinner.adapter = categoryAdapter
+        binding.categorySpinner.onItemSelectedListener = object : OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.setGroupCategory(Utilities.CATEGORIES_LIST[position])
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                viewModel.setGroupCategory(GROUP_CATEGORY.UNDEFINED)
+            }
+
         }
     }
 }

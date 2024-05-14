@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.adapters.recyclerView
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.text.BoringLayout
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.example.budgetbuddy.viewHolders.NewGroupFriendViewHolder
  * capitulo 6 'Adding and Interacting with RecyclerView'
  * */
 class NewGroupFriendsAdapter(
+    private val context: Context,
     private val layoutInflater: LayoutInflater,
     private val selectedList: MutableList<ListItemUiModel.User>,
     private val imageLoader: ListItemImageLoader,
@@ -142,6 +144,7 @@ class NewGroupFriendsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewGroupFriendViewHolder {
         val view = layoutInflater.inflate(R.layout.new_group_friend_layout, parent, false)
         return NewGroupFriendViewHolder(
+            context,
             view,
             imageLoader,
             onCheckClickEvent,

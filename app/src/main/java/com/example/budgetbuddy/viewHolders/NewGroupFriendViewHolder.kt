@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.viewHolders
 
+import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.CheckBox
@@ -11,6 +12,7 @@ import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.util.ListItemImageLoader
 
 class NewGroupFriendViewHolder(
+    private val context: Context,
     private val containerView: View,
     private val imageLoader: ListItemImageLoader,
     private val onCheckClickListener: OnCheckClickListener,
@@ -44,7 +46,7 @@ class NewGroupFriendViewHolder(
         userData.profilePic?.let { path -> imageLoader.loadImage(path, profilePic) }
         listItem.role?.let {
             roleView.visibility = View.VISIBLE
-            roleView.text = listItem.role!!.name
+            roleView.text = context.getString(it.resourceID)
         }
         Log.d("prueba", "Elemento ${listItem.userUiModel.username} selected: ${listItem.selected}")
 
