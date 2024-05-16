@@ -42,7 +42,7 @@ import com.google.android.gms.tasks.Tasks
 
 @AndroidEntryPoint
 class FriendsFragment : Fragment() {
-    private val friendsViewModel: FriendsViewModel by viewModels()
+    private lateinit var  friendsViewModel: FriendsViewModel
     private var _binding: FragmentFriendsBinding? = null
     private val viewModel: InvitationsViewModel by viewModels()
     private lateinit var homeViewModel: HomeViewModel
@@ -62,6 +62,7 @@ class FriendsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+        friendsViewModel = ViewModelProvider(requireActivity())[FriendsViewModel::class.java]
         _binding = FragmentFriendsBinding.inflate(inflater, container, false)
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -113,8 +114,8 @@ class FriendsFragment : Fragment() {
             println(recipientUsername.toString())
             val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
             println(currentUserUid.toString())
-            if (currentUserUid != null) {
-                sendFriendRequest(currentUserUid, recipientUsername) { task ->
+
+                sendFriendRequest(currentUserUid!!, recipientUsername) { task ->
                     if (task.isSuccessful) {
                         // La solicitud de amistad se envió correctamente
                         Toast.makeText(requireContext(), "Solicitud de amistad enviada correctamente", Toast.LENGTH_SHORT).show()
@@ -124,7 +125,7 @@ class FriendsFragment : Fragment() {
                     }
                     dialog.dismiss()
                 }
-            }
+
         }
         alertDialogBuilder.setNegativeButton(R.string.cancel) { dialog, which ->
             // Lógica para manejar la acción Cancel
