@@ -44,6 +44,7 @@
                 android:id="@+id/messageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/message_text_size"
                 android:text="Mensaje menfsdjkfsfd fkjsfdsjkfha sfjsdfjksdhf asdfsdjfhsdkjfhas fashdfjk asdfjkasnd fjasd fkhf jsdf kdhfsjkdhfsjkdfdjkfhakjdf fhasjkfskjdfsjkd"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

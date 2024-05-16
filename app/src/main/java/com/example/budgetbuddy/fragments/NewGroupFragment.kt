@@ -109,9 +109,11 @@ class NewGroupFragment : Fragment() {
             getString(R.string.ok)
         ) {
             findNavController().navigate(NewGroupFragmentDirections.navNewGroupToGroups(null))
+
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
+
 
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())

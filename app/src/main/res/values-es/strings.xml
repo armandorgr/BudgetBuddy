@@ -63,9 +63,9 @@
     <string name="new_group">Nuevo grupo</string>
     <string name="group_name_hint">Nombre de grupo</string>
     <string name="group_description_hint">Descripción de grupo</string>
-    <string name="start_date_limit_error">La fecha de inicio no puede ser antes de 2000-01-01</string>
+    <string name="start_date_limit_error">La fecha de inicio no puede ser antes de 2000–01-01</string>
     <string name="end_date_error">La fecha de fin no puede ser antes que la fecha de inicio</string>
-    <string name="end_date_limit_error">La fecha de fin no puede ser despúes de 2030-01-01</string>
+    <string name="end_date_limit_error">La fecha de fin no puede ser despúes de 2030–01-01</string>
     <string name="end_date_title">Selecciona una fecha de fin</string>
     <string name="new_group_btn_text">Crear grupo</string>
     <string name="update_group_btn_text">Actualizar grupo</string>
@@ -91,7 +91,7 @@
     <string name="passwords_are_not_the_same">Las contraseeñas no coinciden</string>
     <string name="camera_btn_txt">Cámara</string>
     <string name="galley_btn_txt">Galería</string>
-    <string name="select_photo_title">Seleccionar imagen desde...</string>
+    <string name="select_photo_title">Seleccionar imagen desde…</string>
     <string name="select_photo_error">Error cargando foto</string>
     <string name="delete_photo_btn_text">Borrar foto</string>
     <string name="delete_photo_success">Foto borrado exítosamente</string>
@@ -126,4 +126,9 @@
     <string name="birthday_category">Cumpleaños</string>
     <string name="trip_category">Viaje</string>
     <string name="calendar_prev">Ant.</string>
+    <string name="category">Categoría</string>
+    <string name="reset_password">Resetear contraseña</string>
+    <string name="reset_password_email_sent">Se ha enviado un mail pare resetear tu contraseña</string>
+    <string name="info">Info</string>
+    <string name="password_info">La contraseña debe contar con al menos 1 mayúscula, 1 minúscula, 1 número, 1 carácter especial y una logitud de 8</string>
 </resources>

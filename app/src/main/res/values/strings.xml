@@ -157,4 +157,9 @@
     <string name="errorEmpty">%s can not be empty</string>
     <string name="errorLength">%s can not have mora than %d letters</string>
     <string name="errorForm">%s is malformed</string>
+    <string name="category">Group category</string>
+    <string name="reset_password">Reset password</string>
+    <string name="reset_password_email_sent">An email was sent to reset your password</string>
+    <string name="info">Info</string>
+    <string name="password_info">The password must contain al least 1 uppercase letter, 1 lower case letter, 1 digit, 1 special character (@._-) and a length of 8</string>
 </resources>
