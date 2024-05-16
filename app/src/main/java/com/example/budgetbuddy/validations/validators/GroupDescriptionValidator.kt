@@ -9,25 +9,25 @@ import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
 
 class GroupDescriptionValidator(private val context: Context) : BaseValidator(){
-    private val validator = BlankValidationHandler(
-        context.getString(
-            R.string.blank_validation_error,
-            "The group description"
-        )
-    )
-        .setNext(
-            LengthValidationHandler(
-                150,
-                context.getString(R.string.length_validation_error, "The group description", 150)
-            ).setNext(
-                RegexValidationHandler(
-                    ExpValidations.GROUP_DESCRIPTION,
-                    context.getString(R.string.regex_validation_error, "The group description")
-                )
+    override fun validate(input: Any): String? {
+        val subject = context.getString(R.string.group_description_hint)
+        val validator = BlankValidationHandler(
+            context.getString(
+                R.string.blank_validation_error,
+                subject
             )
         )
-
-    override fun validate(input: Any): String? {
+            .setNext(
+                LengthValidationHandler(
+                    150,
+                    context.getString(R.string.length_validation_error, subject, 150)
+                ).setNext(
+                    RegexValidationHandler(
+                        ExpValidations.GROUP_DESCRIPTION,
+                        context.getString(R.string.regex_validation_error, subject)
+                    )
+                )
+            )
         return validator.validate(input)
     }
 }

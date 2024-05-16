@@ -120,6 +120,7 @@ class DetailsFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("prueba", "onDestroy")
+        viewModel.removeListener(selectedGroupUID)
         _binding = null
     }
 }
