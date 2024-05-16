@@ -26,7 +26,6 @@ class UsersRepository {
         return database.child(usersRef).child(uid).setValue(user)
     }
 
-    //TODO borrar esto
      fun writeNewUser(user: User, uid:String):Task<Void>{
         return database.child(usersRef).child(uid).setValue(user)
     }
@@ -36,7 +35,7 @@ class UsersRepository {
     }
 
     fun findUIDByUsername(username: String, onComplete: (UID: String?) -> Unit) {
-        database.orderByChild("username").equalTo(username)
+        database.child(usersRef).orderByChild("username").equalTo(username)
             .addListenerForSingleValueEvent(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {

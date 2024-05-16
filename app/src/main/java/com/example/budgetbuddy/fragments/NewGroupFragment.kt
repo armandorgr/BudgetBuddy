@@ -199,7 +199,7 @@ class NewGroupFragment : Fragment() {
         val categoryAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            Utilities.CATEGORIES_LIST
+            Utilities.CATEGORIES_LIST.map { cat -> getString(cat.stringID) }
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }

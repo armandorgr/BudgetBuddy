@@ -119,8 +119,12 @@ class GroupRepository {
         database.child(usersRef).child(currentUserUid).child(groupsRef).removeEventListener(childEventListener)
     }
 
-    fun setValueEventListener(groupUID: String, valueEventListener: ValueEventListener){
-        database.child(groupsRef).child(groupUID).addValueEventListener(valueEventListener);
+    fun setValueEventListener(groupUID: String, valueEventListener: ValueEventListener): ValueEventListener{
+        return database.child(groupsRef).child(groupUID).addValueEventListener(valueEventListener)
+    }
+
+    fun removeValueEventListener(groupUID: String, valueEventListener: ValueEventListener){
+        database.child(groupsRef).child(groupUID).removeEventListener(valueEventListener)
     }
 
     fun setGroupMembersChildEvents(groupUID: String, childEventListener: ChildEventListener) {

@@ -1,5 +1,6 @@
 package com.example.budgetbuddy.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
@@ -22,6 +23,7 @@ class DetailsViewModel @Inject constructor(
     var groupData: StateFlow<ListItemUiModel.Group?> = _groupData
     private val _isMember: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isMember:StateFlow<Boolean> = _isMember
+    private lateinit var listenerReference:ValueEventListener
     private var valueEventAdded: Boolean = false
 
     private val memberShipEventListener = object : ValueEventListener{
@@ -31,7 +33,7 @@ class DetailsViewModel @Inject constructor(
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
+            Log.d("prueba", "onCancelled DetailsViewModel")
         }
     }
 
@@ -45,7 +47,7 @@ class DetailsViewModel @Inject constructor(
         }
 
         override fun onCancelled(error: DatabaseError) {
-            TODO("Not yet implemented")
+            Log.d("prueba", "onCancelled DetailsViewModel")
         }
     }
 
@@ -53,11 +55,15 @@ class DetailsViewModel @Inject constructor(
         if (valueEventAdded) {
             return
         }
-        repo.setValueEventListener(groupUID, valueEventListener)
+        listenerReference = repo.setValueEventListener(groupUID, valueEventListener)
         valueEventAdded = true
     }
 
     fun addMemberShipListener(groupUID: String, userUID: String){
         repo.addMemberShipListener(groupUID, userUID, memberShipEventListener)
+    }
+
+    fun removeListener(groupUID: String){
+        repo.removeValueEventListener(groupUID, listenerReference)
     }
 }

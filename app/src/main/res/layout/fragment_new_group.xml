@@ -266,7 +266,7 @@
                         <Button
                             android:layout_weight="0.33"
                             android:id="@+id/deleteGroupBtn"
-                            android:backgroundTint="@color/md_theme_light_red"
+                            android:backgroundTint="@color/delete_group_btn_bkg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -275,7 +275,7 @@
                         <Button
                             android:layout_weight="0.33"
                             android:id="@+id/leaveGroup"
-                            android:backgroundTint="@color/action_icon_orange_bkg"
+                            android:backgroundTint="@color/leave_group_btn_bkg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
