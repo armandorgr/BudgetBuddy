@@ -165,7 +165,6 @@ class GroupOverviewFragment : Fragment() {
         }
     }
 
-    //TODO POER ABAJO DEL TODO
     private val onChangeRoleListener = object : NewGroupFriendsAdapter.OnChangeRoleListener {
         override fun onChangeRole(user: ListItemUiModel.User, position: Int) {
             showRoleSpinnerDialog(user)
@@ -381,7 +380,7 @@ class GroupOverviewFragment : Fragment() {
         val categoryAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            Utilities.CATEGORIES_LIST
+            Utilities.CATEGORIES_LIST.map { cat -> getString(cat.stringID) }
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }

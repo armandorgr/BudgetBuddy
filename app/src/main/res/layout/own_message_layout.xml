@@ -50,6 +50,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:visibility="gone"
+                android:textSize="@dimen/message_text_size"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView

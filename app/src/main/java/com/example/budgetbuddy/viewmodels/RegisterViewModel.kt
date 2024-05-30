@@ -185,7 +185,7 @@ class RegisterViewModel @Inject constructor(
      * @return resultado de validar
      * */
     fun validateLastName(input: String, context: Context):String? {
-        val nameValidator = NameValidator(context)
+        val nameValidator = NameValidator(context, isLastName = true)
         val response:String? = nameValidator.validate(input)
         _lastNameError.postValue( response ?: "")
         return response

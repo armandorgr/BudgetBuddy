@@ -53,11 +53,13 @@
                         android:id="@+id/groupNameView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/details_group_name_size"
                         android:text=""/>
                     <TextView
                         android:id="@+id/membersNumView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/details_group_name_size"
                         android:text=""/>
                 </LinearLayout>
 

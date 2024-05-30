@@ -14,20 +14,22 @@ import com.example.budgetbuddy.validations.SpaceValidationHandler
  * en este caso se usara para aplicar una series de validaciones a la contraseña.
  * */
 class PasswordValidator (private val context: Context) : BaseValidator(){
-    private val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, "The password"))
-        .setNext(
-            SpaceValidationHandler(context.getString(R.string.space_validation_error, "The password"))
-                .setNext(
-                    LengthValidationHandler(20, context.getString(R.string.length_validation_error, "The password", 20))
-                        .setNext(
-                            RegexValidationHandler(
-                                ExpValidations.PASSWORD,
-                                context.getString(R.string.regex_validation_error, "The password")
-                            )
-                        )
-                )
-        )
+
     override fun validate(input: Any): String? {
+        val subject = context.getString(R.string.password)
+        val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, subject))
+            .setNext(
+                SpaceValidationHandler(context.getString(R.string.space_validation_error, subject))
+                    .setNext(
+                        LengthValidationHandler(20, context.getString(R.string.length_validation_error, subject, 20))
+                            .setNext(
+                                RegexValidationHandler(
+                                    ExpValidations.PASSWORD,
+                                    context.getString(R.string.regex_validation_error, subject)
+                                )
+                            )
+                    )
+            )
         return validator.validate(input)
     }
 }

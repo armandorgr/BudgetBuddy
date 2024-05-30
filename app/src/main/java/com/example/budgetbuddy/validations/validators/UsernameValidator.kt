@@ -13,17 +13,18 @@ import com.example.budgetbuddy.validations.RegexValidationHandler
  * en este caso se usara para aplicar una series de validaciones al nombre de usuario.
  * */
 class UsernameValidator (private val context: Context) : BaseValidator(){
-    private val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, "The username"))
-        .setNext(
-            LengthValidationHandler(22, context.getString(R.string.length_validation_error, "The username", 22))
-                .setNext(
-                    RegexValidationHandler(
-                        ExpValidations.USERNAME,
-                        context.getString(R.string.regex_validation_error, "The username")
-                    )
-                )
-        )
     override fun validate(input: Any): String? {
+        val subject = context.getString(R.string.username)
+        val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, subject))
+            .setNext(
+                LengthValidationHandler(22, context.getString(R.string.length_validation_error, subject, 22))
+                    .setNext(
+                        RegexValidationHandler(
+                            ExpValidations.USERNAME,
+                            context.getString(R.string.regex_validation_error, subject)
+                        )
+                    )
+            )
         return validator.validate(input)
     }
 }

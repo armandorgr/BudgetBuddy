@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSizeSentDateMessage">10sp</dimen>
+    <dimen name="textSizeTitle">50sp</dimen>
+    <dimen name="notFoundTextSize">20sp</dimen>
+    <dimen name="inputTextSize">20sp</dimen>
+    <dimen name="margin_small">6dp</dimen>
+    <dimen name="margin_medium">12dp</dimen>
+    <dimen name="corner_radius_dialog">14dp</dimen>
+    <dimen name="text_size_title_dialog">30sp</dimen>
+    <dimen name="text_size_title_text">22sp</dimen>
+    <dimen name="alert_dialog_padding">32dp</dimen>
+    <dimen name="btnTextSize">24sp</dimen>
+    <dimen name="action_icon_size">70dp</dimen>
+    <dimen name="username_text_size_profile">32sp</dimen>
+    <dimen name="email_text_size_profile">16sp</dimen>
+    <dimen name="action_constraint_margin">3dp</dimen>
+    <dimen name="date_view_padding">10dp</dimen>
+    <dimen name="date_view_margin">6dp</dimen>
+    <dimen name="group_card_height">90dp</dimen>
+    <dimen name="group_friends_recyclerView_margin">40dp</dimen>
+    <dimen name="category_padding">2dp</dimen>
+    <dimen name="category_radius">6dp</dimen>
+    <dimen name="category_recyclerView_height">40dp</dimen>
+
+    <!--Medidas Login-->
+    <dimen name="login_logo_size">150dp</dimen>
+    <dimen name="links_text_size">20sp</dimen>
+    <dimen name="login_max_width">900dp</dimen>
+
+    <!--Medidas Profile-->
+    <dimen name="actions_text_size">28sp</dimen>
+    <dimen name="profile_pic_size">160dp</dimen>
+
+    <!--Medidas new group friends layout-->
+    <dimen name="new_group_friend_text_size">22sp</dimen>
+    <dimen name="friend_layout_height">80dp</dimen>
+
+    <!--Medidas chat-->
+    <dimen name="message_text_size">16sp</dimen>
+
+    <!--Medidas invitation-->
+    <dimen name="invitation_text_size">16sp</dimen>
+
+    <!--Medida Group Layout-->
+    <dimen name="group_card_text_size">18sp</dimen>
+
+    <!-- Medida new group-->
+    <dimen name="new_group_label_text_size">20sp</dimen>
+    <dimen name="new_group_recyclerview_height">200dp</dimen>
+</resources>

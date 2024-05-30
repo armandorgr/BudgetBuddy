@@ -13,13 +13,14 @@ import com.example.budgetbuddy.validations.RegexValidationHandler
  * en este caso se usara para aplicar una series de validaciones al email..
  * */
 class EmailValidator(private val context: Context) : BaseValidator(){
-    private val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, "The email"))
-        .setNext(
-            LengthValidationHandler(50, context.getString(R.string.length_validation_error, "The email", 50))
-                .setNext(RegexValidationHandler(ExpValidations.EMAIL, context.getString(R.string.regex_validation_error, "The email")))
-        )
 
     override fun validate(input: Any): String? {
+        val subject = context.getString(R.string.email)
+        val validator = BlankValidationHandler(context.getString(R.string.blank_validation_error, subject))
+            .setNext(
+                LengthValidationHandler(50, context.getString(R.string.length_validation_error, subject, 50))
+                    .setNext(RegexValidationHandler(ExpValidations.EMAIL, context.getString(R.string.regex_validation_error, subject)))
+            )
         return validator.validate(input)
     }
 }

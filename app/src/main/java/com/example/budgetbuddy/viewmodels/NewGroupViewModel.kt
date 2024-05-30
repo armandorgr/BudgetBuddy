@@ -200,7 +200,7 @@ class NewGroupViewModel @Inject constructor(
 
     fun onStartDateClick(context: Context, view: View) {
         val dateResult = DateResult(
-            context.getString(R.string.new_group),
+            context.getString(R.string.start_date_text),
             {
                 val datePicker = it.findViewById<DatePicker>(R.id.datePicker)
                 val response: String? = validateStartDate(getDate(datePicker), context)

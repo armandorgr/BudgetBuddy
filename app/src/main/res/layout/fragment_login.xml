@@ -42,7 +42,9 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5">
+                app:layout_constraintVertical_bias="0.5"
+                app:layout_constraintWidth_max="@dimen/login_max_width"
+                >
 
                 <LinearLayout
                     android:id="@+id/linearLogo"
@@ -54,8 +56,8 @@
 
                     <ImageView
                         android:id="@+id/icon_app"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="@dimen/login_logo_size"
+                        android:layout_height="@dimen/login_logo_size"
                         android:contentDescription="@string/icon_description"
                         android:scaleType="fitXY"
                         android:src="@drawable/app_icon_test" />
@@ -110,9 +112,10 @@
                         android:padding="@dimen/margin_small">
 
                         <TextView
-                            android:id="@+id/textViewLogin"
+                            android:id="@+id/forgotPasswordTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="@dimen/links_text_size"
                             android:text="@string/forgot_password" />
                     </LinearLayout>
 
@@ -146,7 +149,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:text="OR"
-                            android:textSize="18sp" />
+                            android:textSize="@dimen/links_text_size" />
 
                         <View
                             android:id="@+id/view3"
@@ -165,8 +168,8 @@
 
                         <com.google.android.gms.common.SignInButton
                             android:id="@+id/google"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_width="@dimen/google_button_width"
+                            android:layout_height="@dimen/google_button_height" />
                     </LinearLayout>
 
 
@@ -183,6 +186,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
+                            android:textSize="@dimen/links_text_size"
                             android:text="@string/doNotHaveAccount" />
 
                         <TextView
@@ -190,7 +194,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/registro"
-                            android:textColor="@color/md_theme_light_primary" />
+                            android:textColor="@color/md_theme_light_primary"
+                            android:textSize="@dimen/links_text_size"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

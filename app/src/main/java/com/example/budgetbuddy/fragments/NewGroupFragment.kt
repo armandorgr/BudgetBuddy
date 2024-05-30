@@ -109,9 +109,11 @@ class NewGroupFragment : Fragment() {
             getString(R.string.ok)
         ) {
             findNavController().navigate(NewGroupFragmentDirections.navNewGroupToGroups(null))
+
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
+
 
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
@@ -199,7 +201,7 @@ class NewGroupFragment : Fragment() {
         val categoryAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
-            Utilities.CATEGORIES_LIST
+            Utilities.CATEGORIES_LIST.map { cat -> getString(cat.stringID) }
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }

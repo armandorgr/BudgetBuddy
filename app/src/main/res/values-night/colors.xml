@@ -21,6 +21,8 @@
     <color name="md_theme_light_error">#CF6679</color> <!-- Rojo oscuro for Error -->
     <color name="md_theme_light_onError">#FFFFFF</color> <!-- Blanco for Text on Error -->
 
+    <color name="delete_group_btn_bkg">#BD2A23</color>
+    <color name="leave_group_btn_bkg">#D98916</color>
 
     <color name="gray">#808080</color>
     <color name="action_icon_blue">#304674</color>

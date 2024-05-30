@@ -136,6 +136,13 @@
                             android:text="@{viewmodel.groupDescription}"
                             android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        android:id="@+id/categoryTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/category"
+                        android:textSize="@dimen/new_group_label_text_size"
+                        android:layout_marginVertical="@dimen/margin_small"/>
                     <Spinner
                         android:id="@+id/categorySpinner"
                         android:layout_width="match_parent"
@@ -160,6 +167,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textSize="@dimen/new_group_label_text_size"
                                 android:text="@string/start_date_text" />
 
                             <TextView
@@ -181,6 +189,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textSize="@dimen/new_group_label_text_size"
                                 android:text="@string/end_date_text" />
 
                             <TextView
@@ -198,6 +207,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/friends"
+                        android:textSize="@dimen/new_group_label_text_size"
                         android:layout_marginVertical="@dimen/margin_small"/>
                     <LinearLayout
                         android:id="@+id/membersLinearLayout"
@@ -216,7 +226,7 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/membersRecyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="@dimen/new_group_recyclerview_height"  />
                     </LinearLayout>
 
                     <TextView
@@ -224,6 +234,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/friends"
+                        android:textSize="@dimen/new_group_label_text_size"
                         android:layout_marginVertical="@dimen/margin_small"/>
                     <LinearLayout
                         android:background="@drawable/recycler_view_bkg"
@@ -235,12 +246,13 @@
                             android:id="@+id/searchView"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+
                             android:hint="@string/search_friends_hint"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/friendsRecyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="@dimen/new_group_recyclerview_height" />
 
                     </LinearLayout>
                     <LinearLayout
@@ -266,7 +278,7 @@
                         <Button
                             android:layout_weight="0.33"
                             android:id="@+id/deleteGroupBtn"
-                            android:backgroundTint="@color/md_theme_light_red"
+                            android:backgroundTint="@color/delete_group_btn_bkg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -275,7 +287,7 @@
                         <Button
                             android:layout_weight="0.33"
                             android:id="@+id/leaveGroup"
-                            android:backgroundTint="@color/action_icon_orange_bkg"
+                            android:backgroundTint="@color/leave_group_btn_bkg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"

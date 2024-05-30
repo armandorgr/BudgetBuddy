@@ -56,8 +56,8 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/profle_pic"
                         style="@style/circularImg"
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
+                        android:layout_width="@dimen/profile_pic_size"
+                        android:layout_height="@dimen/profile_pic_size"
                         android:src="@drawable/default_profile_pic"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -139,6 +139,7 @@
                 app:layout_constraintGuide_percent="0.15" />
 
             <TextView
+                android:textSize="@dimen/actions_text_size"
                 android:id="@+id/titleOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -186,6 +187,7 @@
                         android:id="@+id/logOutTV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/actions_text_size"
                         app:layout_constraintStart_toStartOf="@id/guideline6"
                         app:layout_constraintEnd_toEndOf="@id/guideline7"
                         app:layout_constraintHorizontal_bias="0.15"
@@ -251,6 +253,7 @@
                         app:layout_constraintHorizontal_bias="0.15"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        android:textSize="@dimen/actions_text_size"
                         android:text="@string/change_email" />
 
                     <ImageView
@@ -311,6 +314,7 @@
                         app:layout_constraintEnd_toEndOf="@id/guideline11"
                         app:layout_constraintHorizontal_bias="0.15"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:textSize="@dimen/actions_text_size"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:text="@string/change_password" />
 
@@ -372,6 +376,7 @@
                         app:layout_constraintEnd_toEndOf="@id/guideline13"
                         app:layout_constraintHorizontal_bias="0.15"
                         app:layout_constraintTop_toTopOf="parent"
+                        android:textSize="@dimen/actions_text_size"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:text="@string/delete_account" />
 
@@ -434,6 +439,7 @@
                         app:layout_constraintHorizontal_bias="0.15"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        android:textSize="@dimen/actions_text_size"
                         android:text="@string/change_username" />
 
                     <ImageView

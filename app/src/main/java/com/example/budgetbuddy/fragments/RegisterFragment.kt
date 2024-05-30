@@ -48,6 +48,16 @@ class RegisterFragment : Fragment() {
         return view
     }
 
+    private fun onInfoClick(view: View?){
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        val data = Result(
+            getString(R.string.info),
+            getString(R.string.password_info),
+            getString(R.string.ok)
+            ){}
+        alertDialogFactory.createDialog(R.layout.custom_info_dialog, binding.root, data)
+    }
+
     /**
      * Metodo que se llamara cuando se complete la tarea de crear una nueva cuenta mediante correo y contraseña
      * Si es exitosa se creara un nuevo usuario en la base de datos y se muestra un mensaje de exito, si no lo es, se muestra un mensaje de error
@@ -140,6 +150,8 @@ class RegisterFragment : Fragment() {
                 createAccount(viewModel.email.value.toString(), viewModel.password.value.toString())
             }
         }
+        binding.btnInfo.setOnClickListener(this::onInfoClick)
+
         //Se añaden eventos a los widgets de las vistas para aplicar la logica definida en el ViewModel
         binding.usernameEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setUserName(text.toString())

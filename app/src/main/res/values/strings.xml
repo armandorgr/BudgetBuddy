@@ -8,45 +8,42 @@
     <string name="last_name">Last Name</string>
     <string name="password">Password</string>
     <string name="repeatPassword">Repeat password</string>
-    <string name="icon_description">icon</string>
+    <string name="icon_description" translatable="false">icon</string>
     <string name="doNotHaveAccount">Don\'t have an account?</string>
     <string name="forgot_password">Forgot password?</string>
-    <string name="contrasena">Proyecto1234</string>
-    <string name="default_web_client_id">366242925352-8d4o893bvr01ohv68gu7li0m4semlkrp.apps.googleusercontent.com</string>
-    <string name="saldos">Saldos</string>
-    <string name="Gastos">Gastos</string>
-    <string name="errorEmpty">%s no puede estar vacío</string>
-    <string name="errorLength">%s no puede tener mas de %s letras</string>
-    <string name="errorForm">%s no esta bien formado</string>
-    <string name="template">template</string>
+    <string name="contrasena" translatable="false">Proyecto1234</string>
+    <string name="default_web_client_id" translatable="false">366242925352-8d4o893bvr01ohv68gu7li0m4semlkrp.apps.googleusercontent.com</string>
+    <string name="saldos" translatable="false">Saldos</string>
+    <string name="Gastos" translatable="false">Gastos</string>
+    <string name="template" translatable="false">template</string>
     <string name="success_title">Success</string>
-    <string name="success_registro_text">Te has registrado correctamente</string>
-    <string name="fail_title">Error</string>
+    <string name="success_registro_text">Account created successfully</string>
+    <string name="fail_title" translatable="false">Error</string>
     <string name="try_again">Try again</string>
     <string name="username_already_exits">This username isn\'t available</string>
     <string name="loggedin_success">Logged in successfully</string>
     <string name="go_to_home">Go to Home</string>
     <string name="fail_login">Couldn\'t log in</string>
     <string name="account_doesnt_exist">There is no account with this credentials</string>
-    <string name="home">Home</string>
+    <string name="home" translatable="false">Home</string>
     <string name="friends">Friends</string>
     <string name="groups">Groups</string>
     <string name="profile">Profile</string>
-    <string name="buscarAmigo">Buscar amigo</string>
-    <string name="buscar">Buscar</string>
-    <string name="añadirAmigo">Añadir amigo</string>
-    <string name="pedro">Pedro</string>
-    <string name="viajeAMadrid">Viaje a Madrid</string>
-    <string name="vacacionesEnIbiza">Vacaciones en Ibiza</string>
-    <string name="detallesViajeCompleto">VER DETALLES DEL VIAJE COMPLETO</string>
-    <string name="pedirPago">PETICIÓN PAGO</string>
-    <string name="mandarMensaje">MANDAR MENSAJE</string>
-    <string name="place_holder_username_profile">...</string>
-    <string name="place_holder_email_profile">Email placeholder</string>
+    <string name="buscarAmigo" translatable="false">Buscar amigo</string>
+    <string name="buscar" translatable="false">Buscar</string>
+    <string name="añadirAmigo" translatable="false">Añadir amigo</string>
+    <string name="pedro" translatable="false">Pedro</string>
+    <string name="viajeAMadrid" translatable="false">Viaje a Madrid</string>
+    <string name="vacacionesEnIbiza" translatable="false">Vacaciones en Ibiza</string>
+    <string name="detallesViajeCompleto" translatable="false">VER DETALLES DEL VIAJE COMPLETO</string>
+    <string name="pedirPago" translatable="false">PETICIÓN PAGO</string>
+    <string name="mandarMensaje" translatable="false">MANDAR MENSAJE</string>
+    <string name="place_holder_username_profile" translatable="false">...</string>
+    <string name="place_holder_email_profile" translatable="false">Email placeholder</string>
     <string name="account_overview">Account overview</string>
-    <string name="log_out_content_description">Logout button</string>
+    <string name="log_out_content_description" translatable="false">Logout button</string>
     <string name="log_out_btn_text">Logout</string>
-    <string name="arrow_content_description">arrow button</string>
+    <string name="arrow_content_description" translatable="false">arrow button</string>
     <string name="personal_data_title">Personal data</string>
     <string name="fail_creating_user">Failed trying to crear new user</string>
     <string name="more_data">We need some personal data about you</string>
@@ -57,7 +54,7 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="change_email">Change email address</string>
-    <string name="change_email_content_description">Change email button</string>
+    <string name="change_email_content_description" translatable="false">Change email button</string>
     <string name="success_email_change">An email to verify the new email has been sent to the address provided</string>
     <string name="fail_email_change">An error occurred trying to change the email</string>
     <string name="reathenticate">Reauthenticate</string>
@@ -68,17 +65,17 @@
     <string name="change_password_success">Your password has been updated</string>
     <string name="change_password_fail">An error occurred trying to change your password</string>
     <string name="delete_account">Delete account</string>
-    <string name="delete_account_content_descriptor">Delete account button</string>
+    <string name="delete_account_content_descriptor" translatable="false">Delete account button</string>
     <string name="delete_account_message">Are you sure you want to delete your account?</string>
     <string name="delete_account_fail">An error occurred when trying to delete your account</string>
     <string name="delete_account_success">Account deleted successfully</string>
-    <string name="change_username_content_descriptor">Change username button</string>
+    <string name="change_username_content_descriptor" translatable="false">Change username button</string>
     <string name="change_username">Change username</string>
     <string name="change_username_title">Change username</string>
     <string name="change_username_hint">Enter new username</string>
     <string name="change_username_success">Username successfully changed</string>
     <string name="change_username_fail">An error occurred trying to change your username</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="blank_validation_error">%s can\'t be blank</string>
     <string name="blank_message_validation_error">The message can\'t be blank</string>
     <string name="length_validation_error">%s can\'t have more than %d letters</string>
@@ -89,24 +86,24 @@
     <string name="text_select_users">Users who share the expense</string>
     <string name="group_name_hint">Group Name</string>
     <string name="group_description_hint">Group Description</string>
-    <string name="date_placeholder">YYYY-MM-DD</string>
+    <string name="date_placeholder" translatable="false">YYYY-MM-DD</string>
     <string name="start_date_limit_error">The start date can not be before 2000–01-01</string>
-    <string name="end_date_error">The end data can not be before the start date</string>
-    <string name="end_date_limit_error">The end data can not be after 2030-01-01</string>
+    <string name="end_date_error">The end date can not be before the start date</string>
+    <string name="end_date_limit_error">The end date can not be after 2030-01-01</string>
     <string name="end_date_title">Select an End date</string>
     <string name="new_group_btn_text">Create New Group</string>
     <string name="update_group_btn_text">Update Group data</string>
     <string name="delete_groupo_btn_text">Delete group</string>
     <string name="new_group_success_text">New Group created successfully!</string>
-    <string name="selected_group_arg_name">SELECTED GROUP</string>
+    <string name="selected_group_arg_name" translatable="false">SELECTED GROUP</string>
     <string name="group_update_success">Group updated successfully!</string>
     <string name="group_update_fail">Group update failed</string>
     <string name="group_delete_success">Group deleted successfully!</string>
-    <string name="group_delete_fail">Group delete failed</string>
+    <string name="group_delete_fail">Group deletion failed</string>
     <string name="group_create_fail">Group creation failed</string>
-    <string name="group_create_success">Group creation Successfully</string>
     <string name="expense_create_fail">Expense creation failed</string>
     <string name="expense_create_success">Expense creation Successfully</string>
+    <string name="group_create_success">Group created Successfully</string>
     <string name="send_invitation_button_text">Invite friends</string>
     <string name="send_invitation_title">Send invitation</string>
     <string name="send_invitation_hint">Username to send invitation</string>
@@ -135,14 +132,13 @@
     <string name="leave_group_delete_text">You\'re the only member of this group, leaving it will delete it</string>
     <string name="admin_role">Admin</string>
     <string name="member_role">Member</string>
-    <string name="empty"></string>
-    <string name="change_role_title">Change role of user %s</string>
+    <string name="empty" translatable="false"></string>
+    <string name="change_role_title">Change role of  %s</string>
     <string name="change_role_success">Role changed successfully</string>
     <string name="change_role_fail">Role change failed</string>
     <string name="search_group_hint">Search Group</string>
     <string name="invitations_title">Invitations</string>
     <!--Calendar values-->
-    <string name="calendar_prev">Prev</string>
     <string name="calendar_next">Next</string>
     <string name="sun">SUN</string>
     <string name="mon">MON</string>
@@ -153,7 +149,7 @@
     <string name="sat">SAT</string>
     <string name="no_groups_message">No groups to show</string>
     <string name="no_invitations_message">You have no invitations</string>
-    <string name="budget_buddy_title">Budget Buddy</string>
+    <string name="budget_buddy_title" translatable="false">Budget Buddy</string>
     <string name="members_num_text">Members: %s</string>
     <string name="kicked_out_of_group_message">You are no longer member of the group  %s</string>
     <string name="account_deleted_message">Account deleted</string>
@@ -166,6 +162,13 @@
     <string name="total_personal">MI TOTAL</string>
     <string name="total_group">GASTO TOTAL</string>
     <string name="paid_by">Paid by:</string>
-
-
+    <string name="calendar_prev">Prev</string>
+    <string name="errorEmpty">%s can not be empty</string>
+    <string name="errorLength">%s can not have mora than %d letters</string>
+    <string name="errorForm">%s is malformed</string>
+    <string name="category">Group category</string>
+    <string name="reset_password">Reset password</string>
+    <string name="reset_password_email_sent">An email was sent to reset your password</string>
+    <string name="info">Info</string>
+    <string name="password_info">The password must contain al least 1 uppercase letter, 1 lower case letter, 1 digit, 1 special character (@._-) and a length of 8</string>
 </resources>
