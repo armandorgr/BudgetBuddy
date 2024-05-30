@@ -42,7 +42,9 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5">
+                app:layout_constraintVertical_bias="0.5"
+                app:layout_constraintWidth_max="@dimen/login_max_width"
+                >
 
                 <LinearLayout
                     android:id="@+id/linearLogo"
@@ -110,7 +112,7 @@
                         android:padding="@dimen/margin_small">
 
                         <TextView
-                            android:id="@+id/textViewLogin"
+                            android:id="@+id/forgotPasswordTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/links_text_size"
@@ -147,7 +149,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             android:text="OR"
-                            android:textSize="18sp" />
+                            android:textSize="@dimen/links_text_size" />
 
                         <View
                             android:id="@+id/view3"
@@ -166,9 +168,8 @@
 
                         <com.google.android.gms.common.SignInButton
                             android:id="@+id/google"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            />
+                            android:layout_width="@dimen/google_button_width"
+                            android:layout_height="@dimen/google_button_height" />
                     </LinearLayout>
 
 

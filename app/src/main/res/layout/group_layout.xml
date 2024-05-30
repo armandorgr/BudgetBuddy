@@ -37,11 +37,13 @@
             android:id="@+id/item_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/group_card_text_size"
             android:text="@string/place_holder_username_profile" />
         <TextView
             android:id="@+id/item_description_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/group_card_text_size"
             android:text="@string/place_holder_username_profile" />
         <TextView
             android:background="@drawable/group_category_bkg"
@@ -50,6 +52,7 @@
             android:id="@+id/category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/group_card_text_size"
             android:text="@string/undefined_category"/>
     </LinearLayout>
 

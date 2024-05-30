@@ -34,11 +34,13 @@
             android:id="@+id/item_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/invitation_text_size"
             android:text="Pepe quiere conectar contigo"/>
         <TextView
             android:id="@+id/item_ago_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/invitation_text_size"
             android:text="1d ago"/>
     </LinearLayout>
 

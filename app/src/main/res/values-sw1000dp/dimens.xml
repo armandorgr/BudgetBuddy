@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSizeSentDateMessage">10sp</dimen>
+    <dimen name="textSizeTitle">50sp</dimen>
+    <dimen name="notFoundTextSize">20sp</dimen>
+    <dimen name="inputTextSize">40sp</dimen>
+    <dimen name="margin_small">6dp</dimen>
+    <dimen name="margin_medium">12dp</dimen>
+    <dimen name="corner_radius_dialog">14dp</dimen>
+    <dimen name="text_size_title_dialog">20sp</dimen>
+    <dimen name="text_size_title_text">16sp</dimen>
+    <dimen name="alert_dialog_padding">32dp</dimen>
+    <dimen name="btnTextSize">38sp</dimen>
+    <dimen name="action_icon_size">50dp</dimen>
+    <dimen name="username_text_size_profile">22sp</dimen>
+    <dimen name="email_text_size_profile">16sp</dimen>
+    <dimen name="action_constraint_margin">3dp</dimen>
+    <dimen name="date_view_padding">10dp</dimen>
+    <dimen name="date_view_margin">6dp</dimen>
+    <dimen name="group_card_height">70dp</dimen>
+    <dimen name="group_friends_recyclerView_margin">40dp</dimen>
+    <dimen name="category_padding">2dp</dimen>
+    <dimen name="category_radius">6dp</dimen>
+    <dimen name="category_recyclerView_height">40dp</dimen>
+
+    <!--Medidas Login-->
+    <dimen name="login_logo_size">250dp</dimen>
+    <dimen name="links_text_size">40sp</dimen>
+    <dimen name="login_max_width">1000dp</dimen>
+    <dimen name="google_button_height">80dp</dimen>
+    <dimen name="google_button_width">260dp</dimen>
+</resources>

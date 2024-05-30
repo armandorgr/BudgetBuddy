@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -19,6 +21,7 @@ import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.databinding.FragmentLoginBinding
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
+import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.RegisterViewModel
@@ -28,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -35,6 +39,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 
 @AndroidEntryPoint
@@ -125,6 +130,24 @@ class LoginFragment : Fragment() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this::onSignInWithEmailPasswordComplete)
     }
 
+    private fun onForgotPasswordClick(view: View?){
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        val data = PromptResult(
+            getString(R.string.reset_password),
+                getString(R.string.email),
+            { dialog ->
+                val txt = dialog.findViewById<TextView>(R.id.newEditText).text.toString()
+                if(txt.isNotEmpty()){
+                    auth.sendPasswordResetEmail(txt)
+                    Toast.makeText(requireContext(), getString(R.string.reset_password_email_sent), Toast.LENGTH_LONG).show()
+                    dialog.dismiss()
+                }
+            },
+            {}
+        )
+        alertDialogFactory.createPromptDialog(binding.root, data)
+    }
+
     /**
      * Método usado para conseguir autorización de firebase mediante las
      * credenciales obtenidas de Google
@@ -197,6 +220,8 @@ class LoginFragment : Fragment() {
         binding.google.setOnClickListener {
             signIn()
         }
+
+        binding.forgotPasswordTextView.setOnClickListener(this::onForgotPasswordClick)
         return view
     }
 

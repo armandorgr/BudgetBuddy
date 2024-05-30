@@ -140,23 +140,36 @@
                         android:text="@{viewmodel.email}" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/boxInputText"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/password"
-                    app:endIconMode="password_toggle"
-                    app:helperText="@{viewmodel.passwordError}">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/passwordEditText"
-                        style="@style/inputText"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/boxInputText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:text="@{viewmodel.password}" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:ems="10"
+                        android:hint="@string/password"
+                        app:endIconMode="password_toggle"
+                        app:helperText="@{viewmodel.passwordError}"
+                        android:layout_weight="0.95">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/passwordEditText"
+                            style="@style/inputText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:text="@{viewmodel.password}" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <Button
+                        android:id="@+id/btnInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info"
+                        android:layout_weight="0.05"
+                        />
+                </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/boxInputText"

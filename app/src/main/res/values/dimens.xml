@@ -26,4 +26,34 @@
     <!--Medidas Login-->
     <dimen name="login_logo_size">100dp</dimen>
     <dimen name="links_text_size">15sp</dimen>
+    <dimen name="login_max_width">900dp</dimen>
+    <dimen name="google_button_height">60dp</dimen>
+    <dimen name="google_button_width">120dp</dimen>
+
+    <!--Medidas Profile-->
+    <dimen name="actions_text_size">18sp</dimen>
+    <dimen name="profile_pic_size">120dp</dimen>
+
+    <!--Medidas chat-->
+    <dimen name="message_text_size">12sp</dimen>
+
+    <!--Medidas new group friends layout-->
+    <dimen name="new_group_friend_text_size">12sp</dimen>
+    <dimen name="friend_layout_height">50dp</dimen>
+
+    <!--Medidas invitation-->
+    <dimen name="invitation_text_size">12sp</dimen>
+
+    <!--Medida Group Layout-->
+    <dimen name="group_card_text_size">12sp</dimen>
+
+    <!-- Medidas group Details-->
+    <dimen name="details_group_name_size">16sp</dimen>
+    
+    <!-- Medida new group-->
+    <dimen name="new_group_label_text_size">12sp</dimen>
+    <dimen name="new_group_recyclerview_height">100dp</dimen>
+
+    <!-- Medida prompt layout-->
+    <dimen name="prompt_width_size">400dp</dimen>
 </resources>
