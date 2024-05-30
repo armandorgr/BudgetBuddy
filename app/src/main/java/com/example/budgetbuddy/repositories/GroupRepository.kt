@@ -6,9 +6,11 @@ import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.ROLE
+import com.example.budgetbuddy.model.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
@@ -45,6 +47,7 @@ class GroupRepository {
             INVITATION_TYPE.GROUP_REQUEST,
             ServerValue.TIMESTAMP
             )
+
 
         val childUpdates = hashMapOf<String, Any?>(
             "$groupsRef/$key/description" to group.description.toString(),
@@ -139,4 +142,5 @@ class GroupRepository {
     fun addMemberShipListener(groupUID: String, userUid: String, valueEventListener: ValueEventListener){
         database.child(groupsRef).child(groupUID).child("members").child(userUid).addValueEventListener(valueEventListener)
     }
+
 }

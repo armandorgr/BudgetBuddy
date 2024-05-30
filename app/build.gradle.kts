@@ -46,6 +46,8 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     val lottieVersion = "3.5.0"
     implementation("com.airbnb.android:lottie:$lottieVersion")
     implementation("com.github.bumptech.glide:glide:4.16.0")

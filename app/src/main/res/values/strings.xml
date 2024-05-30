@@ -85,6 +85,8 @@
     <string name="length_message_validation_error">The message can\'t have more than %d letters</string>
     <string name="regex_validation_error">%s is malformed</string>
     <string name="new_group">New Group</string>
+    <string name="new_expense">New Expense</string>
+    <string name="text_select_users">Users who share the expense</string>
     <string name="group_name_hint">Group Name</string>
     <string name="group_description_hint">Group Description</string>
     <string name="date_placeholder">YYYY-MM-DD</string>
@@ -103,11 +105,14 @@
     <string name="group_delete_fail">Group delete failed</string>
     <string name="group_create_fail">Group creation failed</string>
     <string name="group_create_success">Group creation Successfully</string>
+    <string name="expense_create_fail">Expense creation failed</string>
+    <string name="expense_create_success">Expense creation Successfully</string>
     <string name="send_invitation_button_text">Invite friends</string>
     <string name="send_invitation_title">Send invitation</string>
     <string name="send_invitation_hint">Username to send invitation</string>
     <string name="new_group_title">Create new group</string>
     <string name="start_date_text">Start date</string>
+    <string name="date_text">Date</string>
     <string name="end_date_text">End Date</string>
     <string name="search_friends_hint">Search friends</string>
     <string name="group_overview_title">Group Overview</string>
@@ -157,4 +162,10 @@
     <string name="undefined_category">Undefined</string>
     <string name="birthday_category">Birthday</string>
     <string name="trip_category">Trip</string>
+    <!--Expenses-->
+    <string name="total_personal">MI TOTAL</string>
+    <string name="total_group">GASTO TOTAL</string>
+    <string name="paid_by">Paid by:</string>
+
+
 </resources>
