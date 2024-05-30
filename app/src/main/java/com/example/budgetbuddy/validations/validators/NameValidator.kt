@@ -12,6 +12,11 @@ import com.example.budgetbuddy.validations.ValidationHandler
 /**
  * Clase que implementa la clase abstrcta [BaseValidator], viendose obligada a implementar el metodo [validate]
  * en este caso se usara para aplicar una series de validaciones al nombre.
+ * @param context Contexto usado para acceder a los recursos de la aplicación
+ * @param isLastName Valor que indica si el mensaje usado de respuesta debe hacer referencia a los nombres o a los
+ * apellidos
+ *
+ * @author Armando Guzmán
  * */
 class NameValidator(private val context: Context, private val isLastName:Boolean = false) : BaseValidator(){
     override fun validate(input: Any): String? {

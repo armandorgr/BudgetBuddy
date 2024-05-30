@@ -7,6 +7,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Clase del activity en donde se cargan los fragmentos de Login Y Registro
+ * @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

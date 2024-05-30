@@ -28,6 +28,12 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * Fragmento desde donde el usuario puede registrarse al rellenar sus datos dentro del formulario de la vista
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * La forma de trabajar con la autenticación de Firebase fue consultada en la documentacion de Firebase: https://firebase.google.com/docs/auth/android/start
+ * @author Armando Guzmán
+ * */
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
     private val viewModel: RegisterViewModel by viewModels()
@@ -43,18 +49,24 @@ class RegisterFragment : Fragment() {
         val view = binding.root
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
-        view.findViewById<TextView>(R.id.textViewLogin).setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_register_to_login))
+        view.findViewById<TextView>(R.id.textViewLogin)
+            .setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_register_to_login))
         prepareBinding(binding)
         return view
     }
 
-    private fun onInfoClick(view: View?){
+    /**
+     * Método que se llama al pulsar sobre la opción de info de la contraseña.
+     * Se mostrará un AlertDialog informado de los requisitos de la contraseña
+     * @param view Vista que disparó el evento
+     * */
+    private fun onInfoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val data = Result(
             getString(R.string.info),
             getString(R.string.password_info),
             getString(R.string.ok)
-            ){}
+        ) {}
         alertDialogFactory.createDialog(R.layout.custom_info_dialog, binding.root, data)
     }
 
@@ -63,24 +75,28 @@ class RegisterFragment : Fragment() {
      * Si es exitosa se creara un nuevo usuario en la base de datos y se muestra un mensaje de exito, si no lo es, se muestra un mensaje de error
      * @param task Tarea que devuelve el metodo para crear una nueva cuenta, esta contiene el resultado de dicha tarea.
      * */
-    private fun onCreateUserWithEmailPasswordComplete(task: Task<AuthResult>){
+    private fun onCreateUserWithEmailPasswordComplete(task: Task<AuthResult>) {
         val dialogFactory = AlertDialogFactory(requireContext())
-        var dialogLayout:Int = 0
-        var data:Result? = null
+        var dialogLayout: Int = 0
+        var data: Result? = null
         if (task.isSuccessful) {
             val user = auth.currentUser
             if (user?.uid != null) {
                 lifecycleScope.launch {
                     val result = viewModel.createNewUser(user.uid)
-                    if (result){
+                    if (result) {
                         dialogLayout = R.layout.success_dialog
-                        data = Result(getString(R.string.success_title), getString(R.string.success_registro_text), getString(R.string.go_to_home)
+                        data = Result(
+                            getString(R.string.success_title),
+                            getString(R.string.success_registro_text),
+                            getString(R.string.go_to_home)
                         ) {
                             updateUI(auth.currentUser)
                         }
                     }
                     data?.let { it1 ->
-                        dialogFactory.createDialog(dialogLayout, binding.root,
+                        dialogFactory.createDialog(
+                            dialogLayout, binding.root,
                             it1
                         )
                     }
@@ -88,18 +104,23 @@ class RegisterFragment : Fragment() {
             }
         } else {
             dialogLayout = R.layout.error_dialog
-            data = Result(getString(R.string.fail_title), task.exception?.message ?: "error", getString(R.string.try_again)
+            data = Result(
+                getString(R.string.fail_title),
+                task.exception?.message ?: "error",
+                getString(R.string.try_again)
             ) {
                 binding.frame.alpha = 1f
             }
         }
         data?.let { it1 ->
-            dialogFactory.createDialog(dialogLayout, binding.root,
+            dialogFactory.createDialog(
+                dialogLayout, binding.root,
                 it1
             )
         }
 
     }
+
     /**
      * Metodo que sirve para crear una nueva cuenta mediante correo electronico y contraseña
      * @param email Direccion de correo con la cual se intentara crear la nueva cuenta
@@ -108,21 +129,26 @@ class RegisterFragment : Fragment() {
     private fun createAccount(email: String, password: String) {
         val dialogFactory = AlertDialogFactory(requireContext())
         var dialogLayout = 0
-        var data:Result? = null
+        var data: Result? = null
         binding.determinateBar.visibility = View.VISIBLE;
         binding.frame.alpha = 0.4f
         lifecycleScope.launch {
             if (viewModel.username.value?.let { viewModel.findUser(it) } != null) {
                 dialogLayout = R.layout.error_dialog
-                data = Result(getString(R.string.fail_title), getString(R.string.username_already_exits),getString(R.string.try_again)
+                data = Result(
+                    getString(R.string.fail_title),
+                    getString(R.string.username_already_exits),
+                    getString(R.string.try_again)
                 ) {
                     binding.frame.alpha = 1f
                 }
             } else {
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { onCreateUserWithEmailPasswordComplete(it) }
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { onCreateUserWithEmailPasswordComplete(it) }
             }
             binding.determinateBar.visibility = View.INVISIBLE
-            data?.let { it1 -> dialogFactory.createDialog(dialogLayout, binding.root, it1)
+            data?.let { it1 ->
+                dialogFactory.createDialog(dialogLayout, binding.root, it1)
             }
         }
     }
@@ -132,7 +158,7 @@ class RegisterFragment : Fragment() {
      * @param user Usuario con el cual se ha iniciado sesión
      * */
     private fun updateUI(user: FirebaseUser?) {
-        val intent:Intent = Intent(activity, HomeActivity::class.java)
+        val intent: Intent = Intent(activity, HomeActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent)
@@ -178,7 +204,11 @@ class RegisterFragment : Fragment() {
         })
         binding.repeatPasswordEditText.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setRepeatPassword(text.toString())
-            viewModel.validatePassword(text.toString(), binding.passwordEditText.text.toString(), requireContext())
+            viewModel.validatePassword(
+                text.toString(),
+                binding.passwordEditText.text.toString(),
+                requireContext()
+            )
         })
 
     }

@@ -26,8 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 /**
- * Clase del activity principal el cual se configura la navegacion y ademas se cargan datos correspondientes al usuario
- * que inicio sesion. Ademas se añaden eventos para cargar los amigos e invitaciones del usuario.
+ * Clase del activity principal el cual se configura la navegación y además se cargan datos correspondientes al usuario
+ * que inicio sesión. Además se añaden eventos para cargar los amigos e invitaciones del usuario.
+ * @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {

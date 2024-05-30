@@ -1,8 +1,6 @@
 package com.example.budgetbuddy.viewHolders
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,6 +14,21 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+/**
+ * Clase ViewHolder encargada de vincular los datos de un mensaje en el layout cargado en
+ * el RecyclerView
+ * @param containerView Vista del layout de la categoría
+ * @param imageLoader Objeto usado para cargar las fotos de los mensaje
+ * @param context Contexto usado para acceder a los recursos de la aplicación
+ * @param onImageClick Objeto de clase que implementa la interfaz [MessageViewHolder.onImageClick] cuyo método onImageClick
+ * será llamada al pulsar sobre un mensaje con foto
+ *
+ * La manera empleada para el uso del [RecyclerView.ViewHolder] fue obtenida de la fuente:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capitulo 6 'Adding and Interacting with RecyclerView'
+ *
+ * @author Armando Guzmán
+ * */
 class MessageViewHolder(
     private val containerView: View,
     private val imageLoader: ListItemImageLoader,
@@ -39,6 +52,12 @@ class MessageViewHolder(
         containerView.findViewById(R.id.dateSentTextView)
     }
 
+    /**
+     * Método que sirve para convertir el [Long] guardado en Firebase que representa el momento
+     * del servidor en el cual fue enviado el mensaje, a un objeto [LocalDateTime]
+     * @param dateSent Fecha del servidor
+     * @return Fecha convertida a [LocalDateTime]
+     * */
     private fun getDateSent(dateSent: Any?): LocalDateTime {
         var dateResult: LocalDateTime = LocalDateTime.now()
         dateSent?.let {
@@ -47,8 +66,9 @@ class MessageViewHolder(
         }
         return dateResult
     }
+
     override fun bindData(listItem: ListItemUiModel) {
-        require(listItem is ListItemUiModel.MessageUiModel){
+        require(listItem is ListItemUiModel.MessageUiModel) {
             "Expected ListItemUiModel.MessageUiModel got $listItem"
         }
         val messageData = listItem.message
@@ -56,31 +76,36 @@ class MessageViewHolder(
         showAndHideContent(messageData)
 
 
-        if(senderData!=null){
+        if (senderData != null) {
             usernameTextView.text = senderData.username
             senderData.profilePic?.let { imageLoader.loadImage(it, profilePicView) }
-        }else{
+        } else {
             usernameTextView.text = context.getString(R.string.account_deleted_message)
         }
         dateSentTextView.text = dateFormatter.format(getDateSent(messageData.sentDate))
     }
 
-    private fun showAndHideContent(messageData: Message){
-        if(messageData.type == MESSAGE_TYPE.TEXT){
+    /**
+     * Método que sirve para mostrar y esconder ciertos apartados del mensaje en función del tipo
+     * de este
+     * @param messageData Objeto contenedor de los datos del mensaje
+     * */
+    private fun showAndHideContent(messageData: Message) {
+        if (messageData.type == MESSAGE_TYPE.TEXT) {
             messageTextView.visibility = View.VISIBLE
             messageTextView.text = messageData.text
             pictureImageView.visibility = View.GONE
-        }else{
+        } else {
             pictureImageView.visibility = View.VISIBLE
             messageTextView.visibility = View.GONE
             imageLoader.loadImage(messageData.imgPath!!, pictureImageView)
-            pictureImageView.setOnClickListener{
+            pictureImageView.setOnClickListener {
                 onImageClick.onClick(messageData.imgPath)
             }
         }
     }
 
-    interface OnImageClick{
-        fun onClick(imgPath:String)
+    interface OnImageClick {
+        fun onClick(imgPath: String)
     }
 }

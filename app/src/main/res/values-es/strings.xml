@@ -131,4 +131,12 @@
     <string name="reset_password_email_sent">Se ha enviado un mail pare resetear tu contraseña</string>
     <string name="info">Info</string>
     <string name="password_info">La contraseña debe contar con al menos 1 mayúscula, 1 minúscula, 1 número, 1 carácter especial y una logitud de 8</string>
+    <string name="photo_load_success">Foto subida correctamente</string>
+    <string name="photo_load_fail">Error al cargar la foto</string>
+    <string name="months_ago">Hace %d mes/es</string>
+    <string name="days_ago">Hace %d día/s</string>
+    <string name="hours_ago">Hace %d hora/s</string>
+    <string name="minutes_ago">Hace %d minuto/s</string>
+    <string name="seconds_ago">Hace %d segundo/s</string>
+    <string name="error_loading_picture">Error cargando foto</string>
 </resources>

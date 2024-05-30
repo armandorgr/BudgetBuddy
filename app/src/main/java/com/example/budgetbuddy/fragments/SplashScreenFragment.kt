@@ -18,6 +18,20 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * Fragmento en donde se determina si el usuario ha iniciado sesión o no, y si lo ha hecho, se valida si
+ * existen sus datos personales dentro de la base de datos.
+ *
+ * Si el usuario no ha iniciado sesión será redirigido hacia [LoginFragment]
+ *
+ * Si el usuario si ha iniciado sesión y existen datos dentro dentro la base de datos será redirigo hacia [HomeActivity]
+ *
+ * Si el usuario si ha iniciado sesión, pero no existen datos dentro de la base de datos, será redirigido hacia [PersonalDataFragment]
+ *
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * La forma de trabajar con la autenticación de Firebase fue consultada en la documentacion de Firebase: https://firebase.google.com/docs/auth/android/start
+ * @author Armando Guzmán
+ * */
 @AndroidEntryPoint
 class SplashScreenFragment : Fragment() {
     private var _binding:FragmentSplashScreenBinding? = null
@@ -55,7 +69,9 @@ class SplashScreenFragment : Fragment() {
         return binding.root
     }
 
-    //TODO pasar por parametro en el intent el usuario de Firebase
+    /**
+     * Método que sirve para ir a [HomeActivity]
+     * */
     private fun goToHome(){
         val intent = Intent(activity, HomeActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -63,11 +79,17 @@ class SplashScreenFragment : Fragment() {
         startActivity(intent)
     }
 
+    /**
+     * Método que sirve para ir a [LoginFragment]
+     * */
     private fun goToLogin(){
         val action = SplashScreenFragmentDirections.navSplashToLogin()
         findNavController().navigate(action)
     }
 
+    /**
+     * Método que sirve para ir a [PersonalDataFragment]
+     * */
     private fun goToPersonalData(){
         val action = SplashScreenFragmentDirections.navSplashToPersonalData()
         findNavController().navigate(action)

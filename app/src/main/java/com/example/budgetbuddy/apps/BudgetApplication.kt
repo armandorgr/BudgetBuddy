@@ -8,6 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
  * La implementación de la inyección de dependencias se obtuvo de la fuente:
  * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
  * capítulo Dependency Injection with Dagger, Hilt, and Koin
+ *  @author Armando Guzmán
  * */
 @HiltAndroidApp
 class BudgetApplication : Application()

@@ -16,24 +16,52 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * ViewModel en el cual de define la lógica para todas las acciones relacionadas con el perfil del usuario actual
+ * @param repo Repositorio de usuarios
+ * @param storageRepository Repositorio de Firebase Storage
+ * Uso de [ViewModel] consultado aquí:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capítulo Android Architecture Components - ViewModel
+ * @author Armando Guzmán
+ * */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val repo: UsersRepository,
     private val storageRepository: StorageRepository
 ) : ViewModel() {
 
+    /**
+     * Método que sirve para encontrar un usuario mediante su UID
+     * @param uid UID del usuario a buscar
+     * @return El usuario encontrado, si no existe será nulo
+     * */
     suspend fun findUser(uid: String): User? {
         return withContext(Dispatchers.IO) {
             repo.findUserByUID(uid)
         }
     }
 
+    /**
+     * Método que sirve para encontrar un usuario mediante su nombre de usuario
+     * @param username Nombre de usuario del usuario a buscar
+     * @return El usuario encontrado, si no existe será nulo
+     * */
     suspend fun findUserByUsername(username: String): User? {
         return withContext(Dispatchers.IO) {
             repo.findUserByUserName(username)
         }
     }
 
+    /**
+     * Método que sirve para borrar un usuario
+     * @param uid UID del usuario a borrar de la base de datos
+     * @param friends Lista de amigos del usuario, usado para eliminar de estos la referencia del usuario que
+     * se borra
+     * @param groups Lista de grupos a los que pertenece el usuario, usado para eliminar de estos la referencia del usuario que
+     * se borrar
+     * @return El resultado de borrar el usuario
+     * */
     suspend fun deleteUser(
         uid: String,
         friends: List<ListItemUiModel>,
@@ -44,10 +72,22 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que sirve para cambiar el nombre de usuario del usuario
+     * @param uid UID del usuario del cual se cambiará el nombre de usuario
+     * @param newUsername Nuevo nombre de usuario
+     * @return La tarea de cambiar el nombre de usuario
+     * */
     fun updateUsername(uid: String, newUsername: String): Task<Void> {
         return repo.updateUsername(uid, newUsername)
     }
 
+    /**
+     * Método que sirve para eliminar la foto de perfil del usuario actual
+     * @param path Ruta de la foto de perfil del usuario
+     * @param currentUserUid UID del usuario actual
+     * @param onComplete Función que se llama al terminar de borrar la foto de perfil
+     * */
     fun deleteProfilePic(
         path: String,
         currentUserUid: String,
@@ -64,6 +104,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que sirve para subir una foto de perfil a partir de un Uri
+     * @param prefix Prefijo usado para identificar desde donde se carga la foto
+     * @param uri Uri de la foto que se cargar
+     * @param currentUserUid UID del usuario actual
+     * @param onCompleteListener Función que se llama al terminar de subir la foto de perfil
+     * */
     fun uploadProfilePicByUri(
         prefix: String,
         uri: Uri,
@@ -85,6 +132,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que sirve para subir una foto de perfil a partir de un Bitmap
+     * @param prefix Prefijo usado para identificar desde donde se carga la foto
+     * @param bitmap Bitmap de la foto que se cargar
+     * @param currentUserUid UID del usuario actual
+     * @param onCompleteListener Función que se llama al terminar de subir la foto de perfil
+     * */
     fun uploadProfilePicByBitmap(
         prefix: String,
         bitmap: Bitmap,
@@ -106,6 +160,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que sirve para cargar la foto de perfil del usuario actual
+     * @param context Contexto usado para cargar la foto en la vista
+     * @param path Ruta de la foto de perfil
+     * @param view Vista en donde cargar la foto de perfil
+     * */
     fun loadProfilePic(context: Context, path: String, view: ImageView) {
         val imageLoader = ListItemImageLoader(context)
         imageLoader.loadImage(path, view)

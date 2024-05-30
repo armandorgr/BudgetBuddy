@@ -8,13 +8,15 @@ import com.example.budgetbuddy.validations.ExpValidations
 import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
 
+/**
+ * Clase que implementa la clase abstrcta [BaseValidator], viendose obligada a implementar el metodo [validate]
+ * en este caso se usara para aplicar una series de validaciones al nombre del grupo
+ * @param context Contexto usaodo para acceder a los recursos de la aplicación
+ *
+ * @author Armando Guzmán
+ * */
 class GroupNameValidator(private val context: Context):BaseValidator(){
 
-    /**
-     * Metodo que funciona que para validar la entrada de texto
-     * @param input [String] valor a validar
-     * @return resultado [String]? de validar, es nulo si no hay error.
-     * */
     override fun validate(input: Any): String? {
         val subject = context.getString(R.string.group_name_hint)
         val validator = BlankValidationHandler(

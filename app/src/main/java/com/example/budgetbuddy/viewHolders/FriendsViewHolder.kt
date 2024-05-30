@@ -21,19 +21,6 @@ class FriendsViewHolder(
     private val profilePic: ImageView = itemView.findViewById(R.id.profilePicImageView)
 
 
-    fun bind(user: User,listItem: ListItemUiModel) {
-        require(listItem is ListItemUiModel.User) {
-            "Expected ListItemUiModel.User $listItem"
-        }
-        firstName.text = user.firstName
-        lastName.text = user.lastName
-        username.text = user.username
-
-        val userData = listItem.userUiModel
-        userData.profilePic?.let { path -> imageLoader.loadImage(path, profilePic)
-        }
-    }
-
     override fun bindData(listItem: ListItemUiModel) {
         require(listItem is ListItemUiModel.User) {
             "Expected ListItemUiModel.Group $listItem"

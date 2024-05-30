@@ -27,6 +27,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
+/**
+ * ViewModel en el cual de define toda la lógica relacionada al fragmento de chat
+ * @param groupRepository Repositorio de grupos
+ * @param usersRepository Repositorio de usuarios
+ * @param messagesRepository Repositorio de mensajes
+ * @param storageRepository Repositorio para el almacenamiento de Firebase Storage
+ * Uso de [ViewModel] consultado aquí:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capítulo Android Architecture Components - ViewModel
+ *
+ * @author Armando Guzmán
+ * */
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val groupRepository: GroupRepository,
@@ -43,6 +55,10 @@ class ChatViewModel @Inject constructor(
     private var messageText: String = ""
     private var childEventsAdded: Boolean = false
 
+    /**
+     * Objeto anonimo que implementa la interfaz [ChildEventListener] usado para
+     * cargar los mensajes desde la base de datos
+     * */
     private val messagesChildEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val message = snapshot.getValue(Message::class.java)
@@ -52,13 +68,18 @@ class ChatViewModel @Inject constructor(
                 usersRepository.findUserByUIDNotSuspend(it).addOnSuccessListener { data ->
                     senderData = data.getValue(User::class.java)
                     if (key != null) {
-                        val messageUiModel = ListItemUiModel.MessageUiModel(key, message, senderData)
+                        val messageUiModel =
+                            ListItemUiModel.MessageUiModel(key, message, senderData)
                         addMessage(messageUiModel)
                     }
                 }
             }
         }
 
+        /**
+         * Método que sirve para añadir un mensaje a la lista de mensaje cargados
+         * @param message Mensaje a añadir
+         * */
         private fun addMessage(message: ListItemUiModel.MessageUiModel) {
             val updatedList = _messages.value.toMutableList().apply {
                 add(message)
@@ -66,6 +87,10 @@ class ChatViewModel @Inject constructor(
             _messages.value = updatedList
         }
 
+        /**
+         * Método que sirve para eliminar un mensaje a partir de su UID
+         * @param uid UID del mensaje a eliminar
+         * */
         private fun deleteMessage(uid: String) {
             val updatedList = _messages.value.toMutableList().apply {
                 removeIf { message -> message.uid == uid }
@@ -93,6 +118,10 @@ class ChatViewModel @Inject constructor(
 
     }
 
+    /**
+     * Objeto anónimo que implementa la interfaz [ValueEventListener] usado para estar al tanto
+     * de si el usuario actual sigue siendo miembro o no del grupo
+     * */
     private val memberShipEventListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val memberShipData = snapshot.getValue(ROLE::class.java)
@@ -104,26 +133,57 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que sirve para validar el mensaje escrito por el usuario antes de
+     * enviarlo a la base de datos
+     * @param context Contexto usado para acceder a los recursos de la aplicación y obtener
+     * el mensaje localizado de error
+     *  @return El mensaje de error si el mensaje no cumple la validación, o null si el mensaje
+     *  es correcto
+     * */
     fun validateMessage(context: Context): String? {
         val validator = MessageValidator(context)
         return validator.validate(this.messageText)
     }
 
+    /**
+     * Método que sirve para establecer la variable en donde se almacena
+     * el mensaje actualmente escrito por el usuario
+     * @param message Mensaje a guardar
+     * */
     fun setMessageText(message: String) {
         this.messageText = message
     }
 
+    /**
+     * Método que sirve para añadir el listener que estará pendiente de si el usuario sigue
+     * siendo miembro del grupo o no
+     * @param groupUID UID del grupo del cual se quiere saber si se sigue siendo miembro o no
+     * @param userUID UID del usuario del cual se estará pendiente dentro del grupo
+     * */
     fun addMemberShipListener(groupUID: String, userUID: String) {
         if (valueEventAdded) return
         groupRepository.addMemberShipListener(groupUID, userUID, memberShipEventListener)
         valueEventAdded = true
     }
 
+    /**
+     * Método que sirve para enviar un mensaje nuevo
+     * @param groupUID UID del grupo en donde enviar el mensaje
+     * @param userUID UID del usuario que envía el mensaje
+     * */
     fun sendMessage(groupUID: String, userUID: String) {
         val message = Message(this.messageText, userUID, null, MESSAGE_TYPE.TEXT)
         messagesRepository.writeNewMessage(groupUID, message)
     }
 
+    /**
+     * Método que sirve para guardar un mensaje con foto cargada desde la galería
+     * @param uri Uri de la foto cargada
+     * @param groupUID UID del grupo en donde se guardará el mensaje
+     * @param userUID UID del usuario que envía el mensaje
+     * @param onComplete Función que se llamará al finalizar la tarea de guardar el mensaje
+     * */
     fun onSuccessGallery(
         uri: Uri,
         groupUID: String,
@@ -142,6 +202,13 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que sirve para guardar un mensaje con foto cargada desde la cámara
+     * @param bitmap Bitmap de la foto cargada
+     * @param groupUID UID del grupo en donde se guardará el mensaje
+     * @param userUID UID del usuario que envía el mensaje
+     * @param onComplete Función que se llamará al finalizar la tarea de guardar el mensaje
+     * */
     fun onSuccessCamera(
         bitmap: Bitmap,
         groupUID: String,
@@ -160,10 +227,23 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Método que se llamará al fallar la carga de una foto ya sea desde la galería o la cámara
+     * @param context Contexto usado para mostrar un [Toast] y acceder a los recursos de la aplicación
+     * y obtener el mensaje de error localizado
+     * */
     fun onPhotoLoadFail(context: Context) {
-        Toast.makeText(context, "Error cargando foto", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            context.getString(R.string.error_loading_picture),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
+    /**
+     * Método que sirve para cargar los mensajes pertenecientes al grupo
+     * @param groupUID UID del grupo del cual cargar los mensajes
+     * */
     fun loadMessages(groupUID: String) {
         if (childEventsAdded) return
         messagesRepository.addChildEventListener(groupUID, messagesChildEventListener)

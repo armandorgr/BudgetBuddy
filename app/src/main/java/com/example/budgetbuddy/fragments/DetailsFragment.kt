@@ -8,17 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.tab.DETAILS_TABS_PAIR
 import com.example.budgetbuddy.adapters.tab.DetailsMenuAdapter
 import com.example.budgetbuddy.databinding.FragmentDetailsBinding
-import com.example.budgetbuddy.model.ROLE
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.viewmodels.DetailsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel

@@ -8,14 +8,11 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
-import android.widget.Toast
-import androidx.core.view.get
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -37,6 +34,9 @@ import java.time.format.DateTimeFormatter
 
 /**
  * Clase responsable de vincular la logica definida en el ViewModel [NewGroupViewModel] con la vista de [NewGroupFragment]
+ * La forma de recoger los datos mediante collect fue consulado en la documentación de Kotlin: https://kotlinlang.org/docs/flow.html#flows
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class NewGroupFragment : Fragment() {
@@ -114,7 +114,12 @@ class NewGroupFragment : Fragment() {
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
-
+    /**
+     * Método que se llama al pulsar sobre la opcion de añadir foto de grupo en la vista.
+     * Se mostrará una ventana emergente desde donde el usuario podrá elegir desde donde cargar una foto;
+     * desde la gelería o la cámara. Si el grupo ya tiene una foto cargada, también se mostrará la opcion de borrar dicha foto.
+     * @param view Vista que disparó el evento
+     * */
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val onDelete = if (viewModel.getGroupPhoto() != null) { ->
@@ -156,6 +161,7 @@ class NewGroupFragment : Fragment() {
         }
 
         viewModel.getGroupPhoto()?.let {
+            // Forma de uso consultada aquí: https://github.com/bumptech/glide
             Glide.with(requireContext()).load(it).placeholder(R.drawable.default_group_pic)
                 .into(binding.groupPic)
         }
@@ -198,6 +204,7 @@ class NewGroupFragment : Fragment() {
             binding.endDate.text =
                 it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }
+        // Funcionamiento de Spinner consultado en la documentación de Android: https://developer.android.com/develop/ui/views/components/spinner
         val categoryAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
@@ -206,6 +213,7 @@ class NewGroupFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
         binding.categorySpinner.adapter = categoryAdapter
+        //Funcionamiento consultado aquí: https://stackoverflow.com/questions/1337424/android-spinner-get-the-selected-item-change-event
         binding.categorySpinner.onItemSelectedListener = object : OnItemSelectedListener{
             override fun onItemSelected(
                 parent: AdapterView<*>?,

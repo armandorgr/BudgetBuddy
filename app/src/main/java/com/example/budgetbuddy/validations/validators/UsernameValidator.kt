@@ -11,6 +11,9 @@ import com.example.budgetbuddy.validations.RegexValidationHandler
 /**
  * Clase que implementa la clase abstrcta [BaseValidator], viendose obligada a implementar el metodo [validate]
  * en este caso se usara para aplicar una series de validaciones al nombre de usuario.
+ * @param context Contexto usado para acceder a los recursos del sistema
+ *
+ * @author Armando Guzmán
  * */
 class UsernameValidator (private val context: Context) : BaseValidator(){
     override fun validate(input: Any): String? {

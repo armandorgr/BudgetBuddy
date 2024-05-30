@@ -42,6 +42,9 @@ import kotlinx.coroutines.launch
 /**
  * Clase responsable de vincular la logica definida en el viewmodel [ProfileViewModel] con los widgets del fragmento [ProfileFragment]
  * Este fragmento servira para manejar la cuenta del usuario y cerrar sesion.
+ * La forma de trabajar con la autenticación de Firebase fue consultada en la documentacion de Firebase: https://firebase.google.com/docs/auth/android/start
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -56,6 +59,9 @@ class ProfileFragment : Fragment() {
     private val PASSWORD_PROVIDER = "password"
     private val imageLoader = ImageLoader(this,this::onSuccessGallery,this::onSuccessCamera,this::onPhotoLoadFail)
 
+    /**
+     * Método que se llama cuando la carga de la foto falla o es cancelada por el usuario.
+     * */
     private fun onPhotoLoadFail() {
         Toast.makeText(requireContext(), getString(R.string.select_photo_error), Toast.LENGTH_SHORT).show()
     }
@@ -127,6 +133,9 @@ class ProfileFragment : Fragment() {
         binding.changeUsernameConstraintLayout.setOnClickListener(this::onChangeUsername)
     }
 
+    /**
+     * Método que sirve para borrar la foto de perfil del usuario.
+     * */
     private fun onDeleteProfilePic(){
         val path = homeViewModel.currentUser.value?.profilePic?.substring(2)
         path?.let {
@@ -135,6 +144,7 @@ class ProfileFragment : Fragment() {
                     if(task.isSuccessful){
                         Toast.makeText(requireContext(), getString(R.string.delete_photo_success),Toast.LENGTH_SHORT).show()
                         homeViewModel.currentUser.value?.profilePic = null
+                        // Forma de uso consultada aquí: https://github.com/bumptech/glide
                         Glide.with(requireContext()).load(R.drawable.default_profile_pic).into(binding.proflePic)
                     }else{
                         Toast.makeText(requireContext(), path,Toast.LENGTH_SHORT).show()
@@ -144,16 +154,27 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que se llama al pulsar sobre la opción de añadir foto de perfil en la vista.
+     * Se mostrará una ventana emergente desde donde el usuario podrá escoger desde donde cargar la foto;
+     * desde la galería o la cámara.
+     * @param view Vista que disparó el evento
+     * */
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val onDelete = if(homeViewModel.currentUser.value?.profilePic != null) this::onDeleteProfilePic else null
         alertDialogFactory.createPhotoDialog(binding.root, { imageLoader.getPhotoFromGallery() },{ imageLoader.getPhotoFromCamera() }, onDelete)
     }
 
+    /**
+     * Método que se llamará al cargar correctamente una foto desde la cámara
+     * @param img Imagen cargada desde la cámmara
+     * */
     private fun onSuccessCamera(img: Bitmap) {
         homeViewModel.firebaseUser.value?.uid?.let {uid->
             viewModel.uploadProfilePicByBitmap(Utilities.PROFILE_PIC_ST ,img, uid){it, path->
                 if(it.isSuccessful){
+                    // Forma de uso consultada aquí: https://github.com/bumptech/glide
                     Glide.with(requireContext()).load(img).into(binding.proflePic)
                     homeViewModel.currentUser.value?.profilePic = path
                 }else{
@@ -163,10 +184,15 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que se llamará al cargar con exíto la imagen desde la galería.
+     * @param uri Uri de la foto cargada desde la galería
+     * */
     private fun onSuccessGallery(uri: Uri) {
         homeViewModel.firebaseUser.value?.uid?.let {uid->
             viewModel.uploadProfilePicByUri(Utilities.PROFILE_PIC_ST, uri, uid){it, path ->
                 if(it.isSuccessful){
+                    // Forma de uso consultada aquí: https://github.com/bumptech/glide
                     Glide.with(requireContext()).load(uri).into(binding.proflePic)
                     homeViewModel.currentUser.value?.profilePic = path
                 }else{
@@ -447,6 +473,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que se llamará al terminar la tarea de cambiar la contraseña del usuario
+     * @param result Tarea de cambiar la contraseña del usuario
+     * */
     private fun onPasswordChangeComplete(result: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         if (result.isSuccessful) {
@@ -456,6 +486,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que se llamará al terminar la tarea de cambiar el correo del usuario
+     * @param result Tarea de cambiar el correo del usuario
+     * */
     private fun onEmailChangeComplete(result: Task<Void>) {
         binding.profileFrame.alpha = 0.3f
         if (result.isSuccessful) {
@@ -465,6 +499,10 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    /**
+     * Método que sirve para mostrar una ventana emergente informado al usuario de que ha ocurrido un error.
+     * @param message Mensaje a mostrar para indicar el error al usuario
+     * */
     private fun failedChange(message: String) {
         val data = Result(
             getString(R.string.fail_title),
@@ -476,6 +514,10 @@ class ProfileFragment : Fragment() {
         dialogFactory.createDialog(R.layout.error_dialog, binding.root, data)
     }
 
+    /**
+     * Método que sirve para mostrar una ventana emergente informado al usuario de que ha ocurrido un error en la reautenticación.
+     * @param message Mensaje a mostrar para indicar el error al usuario
+     * */
     private fun failReauthentication(message: String) {
         binding.profileFrame.alpha = 0.3f
         val data = Result(
@@ -488,11 +530,21 @@ class ProfileFragment : Fragment() {
         dialogFactory.createDialog(R.layout.error_dialog, binding.root, data)
     }
 
+    /**
+     * Método que sirve para mostrar una ventana emergente indicando al usuario de que ha cerrado
+     * sesión correctamente.
+     * @param data Datos usados para crear el AlertDialog
+     * */
     private fun logOut(data: Result) {
         val layout = R.layout.success_dialog
         dialogFactory.createDialog(layout, binding.root, data)
     }
 
+    /**
+     * Método que sirve para mostrar una venta de exíto cuando el usuario haya realizado algún cambio
+     * exítosamente
+     * @param message Mensaje a mostrar para indicar el exíto de la operación
+     * */
     private fun successChange(message: String) {
         val data = Result(
             getString(R.string.success_title),
@@ -504,6 +556,9 @@ class ProfileFragment : Fragment() {
         dialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
 
+    /**
+     * Método que sirve parar ir al Activity de Login
+     * */
     private fun goToLoginActivity() {
         val intent: Intent = Intent(activity, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

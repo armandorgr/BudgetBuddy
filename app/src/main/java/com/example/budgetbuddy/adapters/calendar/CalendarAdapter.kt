@@ -9,6 +9,15 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.viewHolders.CalendarViewHolder
 
+/**
+ * Clase adaptador que sirve para mostrar los días del mes dentro del [RecyclerView] de CalendarFragment
+ * @param daysOfMonth lista de los días del mes a mostrar.
+ * @param context contexto usado para acceder a los recursos de la aplicación
+ * @param onItemListener objeto que implementa la interfaz [CalendarAdapter.OnItemListener] cuyo método onItemClick será llamado
+ * al hacer clic sobre algún día.
+ * Extraído de https://www.youtube.com/watch?v=Ba0Q-cK1fJo
+ * @author Armando Guzmán
+ * */
 class CalendarAdapter(
     private val daysOfMonth:List<ListItemUiModel.CalendarDayUiModel>,
     private val context: Context,

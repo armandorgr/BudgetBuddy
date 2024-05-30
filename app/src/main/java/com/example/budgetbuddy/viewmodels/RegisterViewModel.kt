@@ -1,11 +1,9 @@
 package com.example.budgetbuddy.viewmodels
 
 import android.content.Context
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.Navigation
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.UsersRepository
@@ -21,7 +19,12 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * ViewModel encargado del comportamiento del proceso de registro de nuevos usuarios.
+ * ViewModel en el cual de define la lógica para registrarse en la aplicación
+ * @param repo Repositorio de usuarios
+ * Uso de [ViewModel] consultado aquí:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capítulo Android Architecture Components - ViewModel
+ * @author Armando Guzmán
  * */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -39,7 +42,7 @@ class RegisterViewModel @Inject constructor(
         }
 
     val personalDataGood: Boolean
-        get(){
+        get() {
             return userNameError.value.equals("") &&
                     firstNameError.value.equals("") &&
                     lastNameError.value.equals("")
@@ -112,8 +115,8 @@ class RegisterViewModel @Inject constructor(
      * */
     fun validateUserName(input: String, context: Context): String? {
         val usernameValidator = UsernameValidator(context)
-        val response:String? = usernameValidator.validate(input)
-        _usernameError.postValue( response ?: "")
+        val response: String? = usernameValidator.validate(input)
+        _usernameError.postValue(response ?: "")
         return response
     }
 
@@ -123,10 +126,10 @@ class RegisterViewModel @Inject constructor(
      * @param context [Context] Contexto para obtener recursos de String
      * @return resultado de validar
      * */
-    fun validateEmail(input: String, context: Context):String? {
+    fun validateEmail(input: String, context: Context): String? {
         val emailValidator = EmailValidator(context)
-        val response:String? = emailValidator.validate(input)
-        _emailError.postValue( response ?: "")
+        val response: String? = emailValidator.validate(input)
+        _emailError.postValue(response ?: "")
         return response
     }
 
@@ -137,11 +140,11 @@ class RegisterViewModel @Inject constructor(
      * @param context [Context] Contexto para obtener recursos de String
      * @return resultado de validar
      * */
-    fun validatePassword(password: String, repeatPassword: String, context: Context):String? {
+    fun validatePassword(password: String, repeatPassword: String, context: Context): String? {
         val passwordValidator = PasswordValidator(context)
-        val response:String? = passwordValidator.validate(password)
+        val response: String? = passwordValidator.validate(password)
         _passwordError.postValue(
-             response ?: validateRepeatPassword(
+            response ?: validateRepeatPassword(
                 password,
                 repeatPassword,
                 context
@@ -171,10 +174,10 @@ class RegisterViewModel @Inject constructor(
      * @param context [Context] Contexto para obtener recursos de String
      * @return resultado de validar
      * */
-    fun validateFirstName(input: String, context: Context):String? {
+    fun validateFirstName(input: String, context: Context): String? {
         val nameValidator = NameValidator(context)
-        val response:String? = nameValidator.validate(input)
-        _firstNameError.postValue( response ?: "")
+        val response: String? = nameValidator.validate(input)
+        _firstNameError.postValue(response ?: "")
         return response
     }
 
@@ -184,27 +187,44 @@ class RegisterViewModel @Inject constructor(
      * @param context [Context] Contexto para obtener recursos de String
      * @return resultado de validar
      * */
-    fun validateLastName(input: String, context: Context):String? {
+    fun validateLastName(input: String, context: Context): String? {
         val nameValidator = NameValidator(context, isLastName = true)
-        val response:String? = nameValidator.validate(input)
-        _lastNameError.postValue( response ?: "")
+        val response: String? = nameValidator.validate(input)
+        _lastNameError.postValue(response ?: "")
         return response
     }
+
+    /**
+     * Método que sirve para encontrar un usuario a partir de su nombre de usuario
+     * @param username Nombre de usuario usado para encontrar el usuario
+     * @return El usuario si existe, si no devolverá nulo
+     * */
     suspend fun findUser(username: String): User? {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             repo.findUserByUserName(username)
         }
     }
 
-    suspend fun findUserByUID(uid: String): User?{
-        return withContext(Dispatchers.IO){
+    /**
+     * Método que sirve para encontrar un usuario a partir de su UID
+     * @param uid UID del usuario usado para encontrarlo
+     * @return El usuario si existe, si no devolverá nulo
+     * */
+    suspend fun findUserByUID(uid: String): User? {
+        return withContext(Dispatchers.IO) {
             repo.findUserByUID(uid)
         }
     }
 
-    suspend fun createNewUser(user:User, uid:String):Boolean{
+    /**
+     * Método que sirve para guardar un usuario en la base de datos
+     * @param user Usuario a guardar
+     * @param uid UID usado para identificar el usuario dentro de la base de datos
+     * @return El resultado de guardar el usuario dentro de la base de datos
+     * */
+    suspend fun createNewUser(user: User, uid: String): Boolean {
         return suspendCoroutine { continuation ->
-            repo.writeNewUser(user, uid).addOnCompleteListener {
+            repo.writeNewUser(uid, user).addOnCompleteListener {
                 if (it.isSuccessful) {
                     continuation.resume(true)
                 } else {

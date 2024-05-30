@@ -1,7 +1,11 @@
 package com.example.budgetbuddy.validations
 
 /**
- * Interfaz que define los metodos a implementar por un validador*/
+ * Interfaz que define los metodos a implementar por un validador
+ * Patrón de diseño cadena de responsabilidad consultado aquí: https://refactoring.guru/design-patterns/chain-of-responsibility
+ *
+ * @author Armando Guzmán
+ * */
 interface ValidationHandler {
     /**
      * Metodo que sirve para definir el siguiente validador a usar en caso de que la entrada
