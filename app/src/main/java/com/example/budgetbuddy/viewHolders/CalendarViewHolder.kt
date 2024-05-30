@@ -9,6 +9,17 @@ import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.calendar.CalendarAdapter
 import com.example.budgetbuddy.model.ListItemUiModel
 
+/**
+ * Clase ViewHolder encargada de vincular los datos de un día del calendario en el layout cargado en
+ * el RecyclerView
+ * @param containerView Vista del layout del día
+ * @param context Contexto usado para acceder a los recursos de la aplicación
+ * @param onItemListener Objeto de clase que implementa la interfaz [CalendarAdapter.OnItemListener]
+ * usado para responder al clic sobre alguno de los días
+ * Extraído de https://www.youtube.com/watch?v=Ba0Q-cK1fJo
+ *
+ * @author Armando Guzmán
+ * */
 class CalendarViewHolder
     (
     private val containerView: View,
@@ -33,7 +44,7 @@ class CalendarViewHolder
             "Expected ListItemUiModel.CalendarDayUiModel got $listItem"
         }
         dayOfMonth.text = listItem.day
-
+        
         if (listItem.hasEvent) {
             hasEventCircle.visibility = View.VISIBLE
             hasEventCircle.startAnimation(AnimationUtils.loadAnimation(context, R.anim.event_item_anim))

@@ -12,6 +12,9 @@ import com.example.budgetbuddy.validations.SpaceValidationHandler
 /**
  * Clase que implementa la clase abstrcta [BaseValidator], viendose obligada a implementar el metodo [validate]
  * en este caso se usara para aplicar una series de validaciones a la contraseña.
+ * @param context Contexto usado para acceder a los recursos del sistema
+ *
+ * @author Armando Guzmán
  * */
 class PasswordValidator (private val context: Context) : BaseValidator(){
 

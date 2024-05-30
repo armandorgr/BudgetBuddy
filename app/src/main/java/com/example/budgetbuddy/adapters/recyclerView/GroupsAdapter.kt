@@ -19,6 +19,11 @@ import com.example.budgetbuddy.viewHolders.GroupViewHolder
  * La manera empleada para el uso del [RecyclerView.Adapter] fue obtenida de la fuente:
  * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
  * capitulo 6 'Adding and Interacting with RecyclerView'
+ * @param layoutInflater LayoutInflater usado para inflar las vistas
+ * @param imageLoader Objeto usado para cargar la imagenes de los elementos
+ * @param onClickListener Objeto de clase implemente la interfaz [GroupsAdapter.OnClickListener]
+ * cuyo método onClick será llamado al hacer clic sobre algunos de los elementos
+ * @author Armando Guzmán
  * */
 class   GroupsAdapter(
     private val layoutInflater: LayoutInflater,

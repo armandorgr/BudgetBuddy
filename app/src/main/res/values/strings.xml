@@ -171,4 +171,12 @@
     <string name="reset_password_email_sent">An email was sent to reset your password</string>
     <string name="info">Info</string>
     <string name="password_info">The password must contain al least 1 uppercase letter, 1 lower case letter, 1 digit, 1 special character (@._-) and a length of 8</string>
+    <string name="photo_load_success">Photo uploaded successfully</string>
+    <string name="photo_load_fail">Photo upload failed</string>
+    <string name="months_ago">%d month/s ago</string>
+    <string name="days_ago">%d days ago</string>
+    <string name="hours_ago">%d hours ago</string>
+    <string name="minutes_ago">%d minutes ago</string>
+    <string name="seconds_ago">%d seconds ago</string>
+    <string name="error_loading_picture">Error loading photo</string>
 </resources>

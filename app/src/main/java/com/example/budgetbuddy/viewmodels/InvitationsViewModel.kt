@@ -21,30 +21,41 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * ViewModel en el cual de define la lógica para cargar los datos de las invitacione del usuario actual
+ * @param repo Repositorio de invitaciones
+ * @param userRepo Repositorio de usuarios
+ * @param groupsRepo Repositorio de grupos
+ * Uso de [ViewModel] consultado aquí:
+ * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
+ * capítulo Android Architecture Components - ViewModel
+ *  La forma de trabajar con la autenticación de Firebase fue consultada en la documentacion de Firebase: https://firebase.google.com/docs/auth/android/start
+ * @author Armando Guzmán
+ * */
 @HiltViewModel
 class InvitationsViewModel @Inject constructor(
     private val repo: InvitationsRepository,
     private val userRepo: UsersRepository,
     private val groupsRepo: GroupRepository
 ) : ViewModel() {
-    private val _invitationsList:MutableStateFlow<List<ListItemUiModel>> = MutableStateFlow(emptyList())
+    private val _invitationsList: MutableStateFlow<List<ListItemUiModel>> =
+        MutableStateFlow(emptyList())
     val invitationsList: StateFlow<List<ListItemUiModel>> = _invitationsList
     private var childEventsAdded = false
 
-    suspend fun findUIDByUsername(username: String): User? {
-        return withContext(Dispatchers.IO) {
-            userRepo.findUserByUserName(username)
-        }
-    }
-
-    fun writeNewInvitation(uid:String, currentUserUid: String, invitation: InvitationUiModel){
-        repo.writeNewInvitation(uid, currentUserUid, invitation)
-    }
-
+    /**
+     * Método que sirve para actualizar la lista actual de invitaciones cargadas
+     * @param newInvitations Lista de invitaciones a guardar
+     * */
     fun updateList(newInvitations: List<ListItemUiModel>) {
         _invitationsList.value = newInvitations
     }
 
+    /**
+     * Método que sirve para añadir una invitacion a la lista de invitaciones
+     * cargadas
+     * @param invitation Invitación a añadir
+     * */
     fun addInvitation(invitation: ListItemUiModel) {
         val updatedInvitations = _invitationsList.value.toMutableList().apply {
             add(invitation)
@@ -52,22 +63,29 @@ class InvitationsViewModel @Inject constructor(
         _invitationsList.value = updatedInvitations
     }
 
+    /**
+     * Objeto anónimo que implementa la interfaz [InvitationAdapter.OnClickListener]
+     * usado para definir que ocurre al aceptar una invitación
+     * */
     val onAccept = object : InvitationAdapter.OnClickListener {
         override fun onItemClick(invitation: InvitationUiModel, currentUser: FirebaseUser) {
             if (invitation.senderUid != null) {
                 if (invitation.type == INVITATION_TYPE.FRIEND_REQUEST) {
                     userRepo.findUserByUIDNotSuspend(invitation.senderUid).addOnCompleteListener {
-                        if(it.result.exists()){
-                            repo.confirmFriendRequestInvitation(currentUser.uid, invitation.senderUid)
-                        }else{
+                        if (it.result.exists()) {
+                            repo.confirmFriendRequestInvitation(
+                                currentUser.uid,
+                                invitation.senderUid
+                            )
+                        } else {
                             repo.deleteInvitation(currentUser.uid, invitation.senderUid)
                         }
                     }
-                }else{
+                } else {
                     groupsRepo.findGroupByUID(invitation.senderUid).addOnCompleteListener {
-                        if(it.result.exists()){
+                        if (it.result.exists()) {
                             repo.confirmGroupInvitation(currentUser.uid, invitation.senderUid)
-                        }else{
+                        } else {
                             repo.deleteInvitation(currentUser.uid, invitation.senderUid)
                         }
                     }
@@ -76,6 +94,10 @@ class InvitationsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Objeto anónimo que implementa la interfaz [InvitationAdapter.OnClickListener]
+     * usado para definir que ocurre al rechazar una invitación
+     * */
     val onDecline = object : InvitationAdapter.OnClickListener {
         override fun onItemClick(invitation: InvitationUiModel, currentUser: FirebaseUser) {
             invitation.senderUid?.let {
@@ -90,6 +112,11 @@ class InvitationsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Objeto anónimo que implementa la interfaz [ChildEventListener]
+     * usado para actualizar la lista de invitaciones cargadas cada vez que añada
+     * o elimine una invitación dentro de la base de datos
+     * */
     private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val invitation = snapshot.getValue(InvitationUiModel::class.java)
@@ -123,8 +150,13 @@ class InvitationsViewModel @Inject constructor(
 
     }
 
+    /**
+     * Método que sirve para cargar las invitaciones del usuario cuyo UID
+     * ha sido pasado por argumento
+     * @param uid UID del usuario del cual se quieren cargar las invitaciones
+     * */
     fun loadInvitations(uid: String) {
-        if(childEventsAdded) return
+        if (childEventsAdded) return
         val reference = repo.getInvitationsReference(uid)
         reference.addChildEventListener(childEventListener)
         childEventsAdded = true

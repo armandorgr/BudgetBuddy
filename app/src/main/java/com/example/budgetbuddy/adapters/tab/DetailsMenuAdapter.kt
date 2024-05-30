@@ -19,6 +19,7 @@ val DETAILS_TABS_PAIR = listOf(
  * Adaptador usado para crear las pestañas del menú del fragmento Details
  * La forma de implementar el ViewPager se obtuvo de la documentación de Android Developer:
  * https://developer.android.com/guide/navigation/navigation-swipe-view-2?hl=es-419
+ * @author Armando Guzmán
  * */
 class DetailsMenuAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle,private val currentGroupId: String) :
     FragmentStateAdapter(fragmentManager, lifecycle) {

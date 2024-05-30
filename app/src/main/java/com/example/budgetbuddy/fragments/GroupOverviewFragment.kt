@@ -28,6 +28,7 @@ import com.example.budgetbuddy.util.ImageLoader
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.example.budgetbuddy.util.PickerData
 import com.example.budgetbuddy.util.Result
+import com.example.budgetbuddy.util.ResultOkCancel
 import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
@@ -38,12 +39,16 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+// Constantes para ajustar el brillo de la pantalla al mostrar y esconder los AlertDialogs
 private const val OSCURE = 0.3f
 private const val NORMAL = 1f
 
 /**
  * Clase del fragmento que sirve para cargar los datos de un grupo,
  * asi como actualizar sus datos y eliminarlo.
+ * La forma de recoger los datos mediante collect fue consulado en la documentación de Kotlin: https://kotlinlang.org/docs/flow.html#flows
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ *  @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class GroupOverviewFragment : Fragment() {
@@ -63,7 +68,6 @@ class GroupOverviewFragment : Fragment() {
     private var deletingGroup = false
     private var leavingGroup = false
 
-    //TODO CAMBIAR NOMBRES INVERTIDOS DE friends y members
     private lateinit var friendsAdapter: NewGroupFriendsAdapter
     private lateinit var membersAdapter: NewGroupFriendsAdapter
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -84,6 +88,7 @@ class GroupOverviewFragment : Fragment() {
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
         // Se recogen los argumentos pasados desde el fragmento de Grupos
+        // la forma de trabajar con argumentos entre fragmentos fue consutlado en la documentación de Google: https://developer.android.com/guide/navigation/use-graph/pass-data
         selectedGroup = args.selectedGroup
         selectedGroupUID = args.selectedGroupUID
 
@@ -120,6 +125,7 @@ class GroupOverviewFragment : Fragment() {
             launch {
                 friendsViewModel.friendsUidList.collect {
                     val filteredList = it.toMutableList().apply {
+                        // Se eliminan aquellos amigos que ya sean miembros del grupo
                         removeIf { item ->
                             require(item is ListItemUiModel.User)
                             viewModel.members.value.any { member -> member.uid == item.uid }
@@ -134,6 +140,7 @@ class GroupOverviewFragment : Fragment() {
         viewModel.setOnCurrentUserBanned {
             try {
                 if (!deletingGroup && !leavingGroup) {
+                    // Esto solo se ejecuta cuando el usuario haya sido eliminado del grupo por otro usuario
                     findNavController().navigate(
                         GroupOverviewFragmentDirections.navGroupOverviewToGroups(
                             null
@@ -147,6 +154,10 @@ class GroupOverviewFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Método que sirve para cargar en el adapter de amigos, solo aquellos amigos que no sean miembros del grupo.
+     * @param members Lista de miembros para realizar la filtración
+     * */
     private fun addFriendsAreNoMembers(members: List<ListItemUiModel.User>) {
         val filteredList = friendsViewModel.friendsUidList.value.toMutableList().apply {
             removeIf { item ->
@@ -158,6 +169,10 @@ class GroupOverviewFragment : Fragment() {
         membersAdapter.setData(filteredList)
     }
 
+    /**
+     * Método que sirve para borrar del adaptador de amigos, aquellos que sean miembros
+     * @param members Lista miembros usados para la filtración
+     * */
     private fun deleteMembersInFriends(members: List<ListItemUiModel>) {
         for (i in members) {
             require(i is ListItemUiModel.User)
@@ -165,12 +180,21 @@ class GroupOverviewFragment : Fragment() {
         }
     }
 
+    /**
+     * Objeto anonimo que implementa la interfaz [NewGroupFriendsAdapter.OnChangeRoleListener] cuyo método
+     * onChageRole será llamado cuando se pulse sobre la opcióon de cambiar rol de algún miembro del grupo.
+     * */
     private val onChangeRoleListener = object : NewGroupFriendsAdapter.OnChangeRoleListener {
         override fun onChangeRole(user: ListItemUiModel.User, position: Int) {
             showRoleSpinnerDialog(user)
         }
     }
 
+    /**
+     * Método que sirve para mostrar un AlertDialog desde donde se podrá cambiar el rol del usuario
+     * sobre el cual se haya pulsado.
+     * @param user Usuario sobre el cual se haya pulsado para cambiar su rol
+     * */
     private fun showRoleSpinnerDialog(user: ListItemUiModel.User) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val rolesArray = Utilities.ROLES_LIST.map { role -> getString(role.resourceID) }
@@ -357,6 +381,7 @@ class GroupOverviewFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.currentUserRole.collect { role ->
+                // En función del rol del usuario actual se mustran solo algunas partes de la vista.
                 if (role == ROLE.ADMIN) {
                     friendsAdapter.setEditable(true)
                     binding.deleteGroupBtn.visibility = View.VISIBLE
@@ -366,7 +391,6 @@ class GroupOverviewFragment : Fragment() {
                     binding.endDate.isClickable = true
                     binding.groupPic.isClickable = true
                 } else {
-                    Log.d("prueba", "Rol cambiado a Member")
                     friendsAdapter.setEditable(false)
                     binding.deleteGroupBtn.visibility = View.GONE
                     binding.groupNameEditText.isEnabled = false
@@ -403,28 +427,68 @@ class GroupOverviewFragment : Fragment() {
 
     }
 
+    /**
+     * Método que se llamará cuando se pulse sobre la opción de dejar el grupo
+     * Si el grupo solo tiene 1 miembro, se le informará al usuario, que si deja el grupo,
+     * este será borrado.
+     * @param view Vista que disparó el evento
+     * */
     private fun onLeaveGroupClick(view: View?) {
         leavingGroup = true
-        viewModel.leaveGroup(selectedGroupUID) {
-            if (it.isSuccessful) {
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.leave_group_success),
-                    Toast.LENGTH_SHORT
-                ).show()
-                val action = GroupOverviewFragmentDirections.navGroupOverviewToGroups(null)
-                findNavController().navigate(action)
-            } else {
-                leavingGroup = false
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.leave_group_error),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        if(viewModel.members.value.size<2){
+            showLeaveGroupConfirmationDialog()
+        }else{
+            viewModel.leaveGroup(selectedGroupUID, this::onLeaveGroupComplete)
         }
     }
 
+    /**
+     * Método que se llamará al terminar la tarea de dejar el grupo, en este se validará si
+     * la tarea fue un éxito o no y se le informará al usuario en cada caso.
+     * @param task Tarea de dejar el grupo
+     * */
+    private fun onLeaveGroupComplete(task: Task<Void>){
+        if (task.isSuccessful) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.leave_group_success),
+                Toast.LENGTH_SHORT
+            ).show()
+            val action = GroupOverviewFragmentDirections.navGroupOverviewToGroups(null)
+            findNavController().navigate(action)
+        } else {
+            leavingGroup = false
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.leave_group_error),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    /**
+     * Método que sirve para mostrar una ventana de confimarcion en donde se le informa al usuario que como al ser
+     * el único miembro, si deja el grupo, este será borrado.
+     * */
+    private fun showLeaveGroupConfirmationDialog(){
+        val alertDialogFactory = AlertDialogFactory(requireContext())
+        val data = ResultOkCancel(
+            getString(R.string.warning),
+            getString(R.string.leave_group_delete_text),
+            {
+                viewModel.deleteGroup(selectedGroupUID, this::onLeaveGroupComplete)
+                it.dismiss() // se esconde el dialog despues de hacer click
+            },
+            { leavingGroup=false }
+        )
+        alertDialogFactory.createOkCancelDialog(binding.root, data)
+    }
+
+    /**
+     * Método que se llama al puslar sobre la opción de añadir foto en la vista,
+     * si el grupo ya tiene foto, se le mostrará también la opción de borrar esta.
+     * @param view Vista que disparó el evento
+     * */
     private fun onAddPhotoClick(view: View?) {
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val onDelete = if (viewModel.getGroupPhoto() != null) { ->

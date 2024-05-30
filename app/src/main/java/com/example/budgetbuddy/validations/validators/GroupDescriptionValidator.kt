@@ -8,6 +8,12 @@ import com.example.budgetbuddy.validations.ExpValidations
 import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
 
+/**
+ * Clase que implementa la clase abstrcta [BaseValidator], viendose obligada a implementar el metodo [validate]
+ * en este caso se usara para aplicar una series de validaciones al descripción de grupo
+ *
+ * @author Armando Guzmán
+ * */
 class GroupDescriptionValidator(private val context: Context) : BaseValidator(){
     override fun validate(input: Any): String? {
         val subject = context.getString(R.string.group_description_hint)

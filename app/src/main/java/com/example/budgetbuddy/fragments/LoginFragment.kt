@@ -19,7 +19,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.activities.HomeActivity
 import com.example.budgetbuddy.databinding.FragmentLoginBinding
-import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.util.AlertDialogFactory
 import com.example.budgetbuddy.util.PromptResult
 import com.example.budgetbuddy.util.Result
@@ -31,7 +30,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
-import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -39,9 +37,13 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 
-
+/**
+ * Fragmento desde donde el usuario podrá iniciar sesión mediante correo electrónico o mediante una cuenta de Google
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * La forma de trabajar con la autenticación de Firebase fue consultada en la documentacion de Firebase: https://firebase.google.com/docs/auth/android/start
+ * @author Armando Guzmán
+ * */
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
@@ -130,6 +132,12 @@ class LoginFragment : Fragment() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this::onSignInWithEmailPasswordComplete)
     }
 
+    /**
+     * Método que se llama al pulsar sobre la opción de resetear contraseña en la vista.
+     * Se mostrará una ventana emergente, desde donde el usuari podra introducir una dirección de correo electrónico
+     * a la cual se le enviará un correo para que cambie su contraseña
+     * @param view Vista que disparó el evento
+     * */
     private fun onForgotPasswordClick(view: View?){
         val alertDialogFactory = AlertDialogFactory(requireContext())
         val data = PromptResult(
@@ -160,6 +168,10 @@ class LoginFragment : Fragment() {
         auth.signInWithCredential(credential).addOnCompleteListener(this::onSignInWithGoogleComplete)
     }
 
+    /**
+     * Método que se llamará cuando termine el inicio de sesión mediante Google
+     * @param task La tarea de inico de sesión que se usará para validar si fue exítosa o no.
+     * */
     private fun onSignInWithGoogleComplete(task: Task<AuthResult>) {
         val dialogFactory = AlertDialogFactory(requireContext())
         val dialogLayout: Int

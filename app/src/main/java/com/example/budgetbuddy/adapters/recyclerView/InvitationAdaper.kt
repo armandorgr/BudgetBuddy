@@ -18,6 +18,15 @@ import com.google.firebase.auth.FirebaseUser
  * La manera empleada para el uso del [RecyclerView.Adapter] fue obtenida de la fuente:
  * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934
  * capitulo 6 'Adding and Interacting with RecyclerView'
+ * @param layoutInflater LayoutInflater usado para inflar las vistas
+ * @param imageLoader Objeto usado para cargar la imagenes de los elementos
+ * @param context Contexto usado para acceder a los recursos de la apllicacion
+ * @param onAcceptListener Objeto de clase que implemente la interfaz [InvitationAdapter.OnClickListener]
+ * cuyo método OnClick será llamado hacer clic sobre la opción de aceptar la invitación
+ * @param onDeclineListener Objeto de clase que implemente la interfaz [InvitationAdapter.OnClickListener]
+ * cuyo método OnClick será llamado hacer clic sobre la opción de rechazar la invitación
+ * @param currentUser Usuario actual en la aplicación
+ * @author Armando Guzmán
  * */
 
 class InvitationAdapter(

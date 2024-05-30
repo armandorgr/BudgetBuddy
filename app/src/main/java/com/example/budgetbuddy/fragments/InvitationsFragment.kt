@@ -18,6 +18,9 @@ import kotlinx.coroutines.launch
 
 /**
  * Clase responsable de vincular la logica definida en [InvitationsViewModel] con la vista del fragmento [InvitationsFragment]
+ * La forma de recoger los datos mediante collect fue consulado en la documentación de Kotlin: https://kotlinlang.org/docs/flow.html#flows
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class InvitationsFragment : Fragment() {

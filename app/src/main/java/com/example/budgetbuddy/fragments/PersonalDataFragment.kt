@@ -1,6 +1,5 @@
 package com.example.budgetbuddy.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -32,6 +30,9 @@ import kotlinx.coroutines.launch
  * Clase responsable de vincular la logica definida en el viewmodel [RegisterViewModel] con el fragmento [PersonalDataFragment]
  * Este fragmento sirve para en caso de inciar sesion con Google, se le pedira al usuario sus datos personales y nombre de usuario
  * para guardarlos en la base de datos.
+ * La forma de trabajar con la autenticación de Firebase fue consultada en la documentacion de Firebase: https://firebase.google.com/docs/auth/android/start
+ * La forma de trabajar con el binding fue consulada en la documentación de Android: https://developer.android.com/topic/libraries/view-binding
+ * @author Armando Guzmán
  * */
 @AndroidEntryPoint
 class PersonalDataFragment : Fragment(), OnClickListener {

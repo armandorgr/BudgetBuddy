@@ -1,5 +1,11 @@
 package com.example.budgetbuddy.validations
 
+/**
+ * Clase abstracta de la cual heredarán todas los validadores de los campos
+ * existentes dentro de la aplicación
+ *
+ * @author Armando Guzmáan
+ * */
 abstract class BaseValidator {
 
     /**
