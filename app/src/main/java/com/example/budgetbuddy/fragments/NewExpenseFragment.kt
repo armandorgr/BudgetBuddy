@@ -21,11 +21,28 @@ import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewExpenseViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
 import java.time.format.DateTimeFormatter
-
+/**
+ * Fragmento para la creación de un nuevo gasto.
+ * Utiliza ViewModel para manejar la lógica de creación y validación del gasto.
+ * Implementa funcionalidades como la selección de fecha y la validación de los campos de entrada.
+ * Referencias:
+ * ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel
+ * Data Binding: https://developer.android.com/topic/libraries/data-binding
+ *
+ * @property viewModel ViewModel para la lógica del fragmento.
+ * @property args Argumentos pasados al fragmento.
+ * @property selectedGroupUID ID del grupo seleccionado.
+ * @property dateFormatter Formateador de fecha para el campo de fecha.
+ * @property binding Binding generado por ViewBinding.
+ * @property homeViewModel ViewModel para la actividad principal.
+ * @property showSuccessDialog Método para mostrar un cuadro de diálogo de éxito.
+ * @property showFailDialog Método para mostrar un cuadro de diálogo de fracaso.
+ * @autor Álvaro Aparicio
+ */
 class NewExpenseFragment : Fragment() {
     private val viewModel: NewExpenseViewModel by viewModels()
     private val args: NewExpenseFragmentArgs by navArgs()
-    private val viewModelNewGroup: NewGroupViewModel by viewModels()
+   // private val viewModelNewGroup: NewGroupViewModel by viewModels()
     private lateinit var selectedGroupUID: String
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private lateinit var binding: FragmentNewExpenseBinding
@@ -65,7 +82,7 @@ class NewExpenseFragment : Fragment() {
 
     /**
      * Metodo que sirve para mostrar una ventana emergent con un mensaje de exito y un boton.
-     * Al hacer click sobre el boton de ok o simplemente fuera de la ventana, se ira al fragmento de [GroupsFragment]
+     * Al hacer click sobre el boton de ok o simplemente fuera de la ventana, se ira al fragmento de [ExpenseFragment]
      * @param message Mensaje a mostrar sobre la ventana de exito
      * */
     private fun showSuccessDialog(message: String) {
@@ -113,7 +130,7 @@ class NewExpenseFragment : Fragment() {
                 it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }
 
-        viewModelNewGroup.loadMembers(selectedGroupUID)
+       // viewModelNewGroup.loadMembers(selectedGroupUID)
 
         binding.btnSaveExpense.setOnClickListener {
             if (viewModel.allGood) {

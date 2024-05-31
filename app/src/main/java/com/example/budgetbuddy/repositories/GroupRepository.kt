@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.repositories
 
 import android.util.Log
+import com.example.budgetbuddy.model.Balance
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
@@ -31,6 +32,7 @@ class GroupRepository {
     private val usersRef: String = "users"
     private val groupsRef: String = "groups"
     private val invitationsRef: String = "invitations"
+    private val balancesRef: String = "balances"
     private val database: DatabaseReference = Firebase.database.reference
 
     /**
@@ -81,6 +83,28 @@ class GroupRepository {
             ServerValue.TIMESTAMP
         )
 
+        for (i in members.indices) {
+            for (j in i + 1 until members.size) {
+                val user1 = members[i]
+                val user2 = members[j]
+                val balance = Balance(
+                    user1 = user1,
+                    user2 = user2,
+                    amountUser1 = 0.0,
+                    amountUser2 = 0.0
+                )
+                val keyBalance = user1 + user2
+                val childUpdates = hashMapOf<String, Any?>(
+                    "$groupsRef/$key/$balancesRef/$keyBalance/user1" to balance.user1,
+                    "$groupsRef/$key/$balancesRef/$keyBalance/user2" to balance.user2,
+                    "$groupsRef/$key/$balancesRef/$keyBalance/amountUser1" to balance.amountUser1,
+                    "$groupsRef/$key/$balancesRef/$keyBalance/amountUser2" to balance.amountUser2,
+                )
+                database.updateChildren(childUpdates).addOnCompleteListener {
+                    onComplete(it, keyBalance)
+                }
+            }
+        }
 
         val childUpdates = hashMapOf<String, Any?>(
             "$groupsRef/$key/description" to group.description.toString(),
@@ -91,7 +115,7 @@ class GroupRepository {
             "$groupsRef/$key/members" to group.members,
             "$groupsRef/$key/pic" to group.pic,
             "$usersRef/$currentUserUid/$groupsRef/$key" to true,
-            "$groupsRef/$key/category" to group.category
+            "$groupsRef/$key/category" to group.category,
         )
         for (member in members) {
             childUpdates["$usersRef/$member/$invitationsRef/$key"] = invitation

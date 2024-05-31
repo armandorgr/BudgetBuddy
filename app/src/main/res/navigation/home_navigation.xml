@@ -100,9 +100,6 @@
     </fragment>
 
 
-
-
-
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.budgetbuddy.fragments.ProfileFragment"
@@ -156,5 +153,16 @@
         <argument
             android:name="selectedGroupUID"
             app:argType="string"/>
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/nav_to_newExpenseDetail"
+        android:label=""
+        android:name="com.example.budgetbuddy.fragments.NewExpenseFragment"
+        tools:layout="@layout/fragment_new_expense">
+        <action
+            android:id="@+id/nav_to_newExpense"
+            app:destination="@+id/nav_to_newExpenseDetail" />
     </fragment>
 </navigation>

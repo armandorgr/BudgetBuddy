@@ -162,6 +162,7 @@
     <string name="total_personal">MI TOTAL</string>
     <string name="total_group">GASTO TOTAL</string>
     <string name="paid_by">Paid by:</string>
+    <string name="expense_detail">Expense detail</string>
     <string name="calendar_prev">Prev</string>
     <string name="errorEmpty">%s can not be empty</string>
     <string name="errorLength">%s can not have mora than %d letters</string>

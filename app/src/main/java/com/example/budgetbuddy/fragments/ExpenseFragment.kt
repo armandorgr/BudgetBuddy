@@ -20,7 +20,19 @@ import com.example.budgetbuddy.model.Expense
 import com.example.budgetbuddy.viewmodels.ExpenseViewModel
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
-
+/**
+ * Fragmento que muestra una lista de gastos.
+ * Este fragmento utiliza un RecyclerView junto con ExpenseAdapter para mostrar la lista de gastos.
+ * La implementación del RecyclerView sigue las recomendaciones de la documentación oficial de Android:
+ * [RecyclerView | Android Developers](https://developer.android.com/guide/topics/ui/layout/recyclerview)
+ * @property expenseAdapter Adaptador para el RecyclerView que muestra la lista de gastos.
+ * @property expenseViewModel ViewModel para manejar la lógica de los gastos.
+ * @property _binding Referencia mutable al binding del fragmento.
+ * @property currentGroupId ID del grupo actual.
+ * @property binding Binding generado por ViewBinding.
+ * @property homeViewModel ViewModel para la actividad principal.
+ * @author Álvaro Aparicio
+ */
 class ExpenseFragment : Fragment() {
 
     private lateinit var expenseAdapter: ExpenseAdapter
@@ -38,6 +50,9 @@ class ExpenseFragment : Fragment() {
             currentGroupId = it.getString("currentGroupId")
         }
     }
+    /**
+     * Se llama cuando se crea la vista del fragmento.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,7 +74,9 @@ class ExpenseFragment : Fragment() {
         return binding.root
     }
 
-    //
+    /**
+     * Se llama cuando la vista del fragmento está completamente creada.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         currentGroupId?.let { groupId ->
@@ -71,18 +88,14 @@ class ExpenseFragment : Fragment() {
         }
 
     }
-   //
 
+
+    /**
+     * Método estático para crear una nueva instancia de ExpenseFragment.
+     * @param currentGroupId ID del grupo actual.
+     */
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SaldosFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance(currentGroupId: String) =
             ExpenseFragment().apply {
@@ -92,6 +105,9 @@ class ExpenseFragment : Fragment() {
             }
     }
 
+    /**
+     * Se llama cuando la vista del fragmento está a punto de ser destruida.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

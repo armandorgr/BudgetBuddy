@@ -7,7 +7,13 @@ import com.example.budgetbuddy.validations.BlankValidationHandler
 import com.example.budgetbuddy.validations.ExpValidations
 import com.example.budgetbuddy.validations.LengthValidationHandler
 import com.example.budgetbuddy.validations.RegexValidationHandler
-
+/**
+ * Clase que implementa la clase abstracta [BaseValidator] y valida el título de un nuevo gasto.
+ * Aplica una serie de validaciones al título del gasto.
+ * @param context Contexto utilizado para acceder a los recursos de la aplicación.
+ *
+ * @author Álvaro Aparicio
+ */
 class NewExpenseTitleValidator(private val context: Context): BaseValidator() {
     private val validator = BlankValidationHandler(
         context.getString(

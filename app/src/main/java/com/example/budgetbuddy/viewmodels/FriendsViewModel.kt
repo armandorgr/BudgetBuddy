@@ -16,19 +16,36 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
+/**
+ * ViewModel para manejar las operaciones relacionadas con los amigos en la aplicación.
+ * Se encarga de cargar la lista de amigos de un usuario y enviar invitaciones de amistad.
+ *
+ * @author Álvaro Aparicio
+ */
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
     private val repo: UsersRepository,
     private val invitationRepo: InvitationsRepository
 ) : ViewModel() {
+    // MutableStateFlow para contener la lista de amigos
     private val _friendsUidList:MutableStateFlow<List<ListItemUiModel>> = MutableStateFlow<List<ListItemUiModel>>(emptyList())
     val friendsUidList: StateFlow<List<ListItemUiModel>> = _friendsUidList
     private var childEventsAdded: Boolean = false;
 
+    /**
+     * Método para agregar un amigo a la lista de amigos.
+     * @param uid El ID del amigo que se agregará.
+     * @param friend El objeto User que representa al amigo.
+     */
     private fun updateList(newFriends: List<ListItemUiModel>) {
         _friendsUidList.value = newFriends
     }
 
+    /**
+     * Método para agregar un amigo a la lista de amigos.
+     * @param uid El ID del amigo que se agregará.
+     * @param friend El objeto User que representa al amigo.
+     */
     fun addFriend(uid:String, friend: User) {
         val updatedFriends = _friendsUidList.value.toMutableList().apply {
             add(ListItemUiModel.User(uid, friend))
@@ -36,6 +53,10 @@ class FriendsViewModel @Inject constructor(
         _friendsUidList.value = updatedFriends
     }
 
+    /**
+     * Método para eliminar un amigo a la lista de amigos.
+     * @param uid El ID del amigo que se eliminará.
+     */
     private fun removeFriend(uid: String) {
         val updatedList = _friendsUidList.value.toMutableList().apply {
             removeIf { friend -> (friend as ListItemUiModel.User).uid == uid }
@@ -79,6 +100,11 @@ class FriendsViewModel @Inject constructor(
 
     }
 
+
+    /**
+     * Método para cargar la lista de amigos de un usuario.
+     * @param currentUserUid El ID del usuario cuya lista de amigos se cargará.
+     */
     fun loadFriends(currentUserUid: String) {
         if (childEventsAdded) return
         val reference = repo.getUserFriendsListReference(currentUserUid)
@@ -86,6 +112,13 @@ class FriendsViewModel @Inject constructor(
         childEventsAdded = true
     }
 
+
+    /**
+     * Método para enviar una invitación de amistad a otro usuario.
+     * @param invitation La información de la invitación.
+     * @param toUID El ID del usuario al que se enviará la invitación.
+     * @param funcion La función que se llamará después de enviar la invitación.
+     */
     fun sendInvitation(invitation: InvitationUiModel, toUID: String ,funcion:(task: Task<Void>)->Unit){
         invitationRepo.sendFriendsRequest(toUID, invitation.senderUid!!, invitation, funcion)
     }
