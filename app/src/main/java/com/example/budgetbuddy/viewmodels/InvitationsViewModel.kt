@@ -3,6 +3,7 @@ package com.example.budgetbuddy.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.adapters.recyclerView.InvitationAdapter
+import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
 import com.example.budgetbuddy.model.ListItemUiModel
@@ -120,7 +121,27 @@ class InvitationsViewModel @Inject constructor(
     private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val invitation = snapshot.getValue(InvitationUiModel::class.java)
-            invitation?.let { addInvitation(ListItemUiModel.Invitation(it)) }
+            invitation?.let {
+                if(it.type==INVITATION_TYPE.FRIEND_REQUEST){
+                    it.senderUid?.let {uid ->
+                        userRepo.findUserByUIDNotSuspend(uid).addOnCompleteListener { task ->
+                            if(task.isSuccessful){
+                                it.senderName=task.result.getValue(User::class.java)?.username
+                                addInvitation(ListItemUiModel.Invitation(it))
+                            }
+                        }
+                    }
+                }else{
+                    it.senderUid?.let {uid ->
+                        groupsRepo.findGroupByUID(uid).addOnCompleteListener { task ->
+                            if(task.isSuccessful){
+                                it.senderName=task.result.getValue(Group::class.java)?.name
+                                addInvitation(ListItemUiModel.Invitation(it))
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
