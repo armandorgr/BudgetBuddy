@@ -27,8 +27,8 @@ package com.example.budgetbuddy.adapters.recyclerView
         }
 
         /**
-         * Metodo que sirve para establecer la lista de los grupos cargados y actualizar el [RecyclerView]
-         * @param newItems Lista con los nuevos grupos a establecer en el [RecyclerView]
+         * Metodo que sirve para establecer la lista de los amigos cargados y actualizar el [RecyclerView]
+         * @param newItems Lista con los amigos a establecer en el [RecyclerView]
          * */
         @SuppressLint("NotifyDataSetChanged")
         fun setData(newItems: List<ListItemUiModel>) {

@@ -1,5 +1,7 @@
 package com.example.budgetbuddy.modules
 
+import com.example.budgetbuddy.repositories.BalanceRepository
+import com.example.budgetbuddy.repositories.ExpenseRepository
 import com.example.budgetbuddy.repositories.GroupRepository
 import com.example.budgetbuddy.repositories.InvitationsRepository
 import com.example.budgetbuddy.repositories.MessageRepository
@@ -58,4 +60,10 @@ class ReposModules {
      * */
     @Provides
     fun provideMessagesRepository(): MessageRepository = MessageRepository()
+
+    @Provides
+    fun provideExpenseRepository(): ExpenseRepository = ExpenseRepository()
+
+    @Provides
+    fun provideBalanceRepository(): BalanceRepository = BalanceRepository()
 }

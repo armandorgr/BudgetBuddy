@@ -42,8 +42,9 @@ class DetailsFragment : Fragment() {
 
         val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
-        val adapter = DetailsMenuAdapter(childFragmentManager, lifecycle)
+        val adapter = DetailsMenuAdapter(childFragmentManager, lifecycle, selectedGroupUID)
         viewPager.adapter = adapter
+
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = resources.getString(DETAILS_TABS_PAIR[position])
