@@ -66,7 +66,7 @@ class InvitationAdapter(
          * @param invitation Invitacion sobre la cual se ha hecho click
          * @param currentUser Usuario actualmente logeado
          * */
-        fun onItemClick(invitation: InvitationUiModel, currentUser: FirebaseUser)
+         fun onItemClick(invitation: InvitationUiModel, currentUser: FirebaseUser)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {

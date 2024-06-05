@@ -12,5 +12,6 @@ data class User(
     val firstName: String? = null,
     val lastName: String? = null,
     val username: String? = null,
-    var profilePic: String? = null
+    var profilePic: String? = null,
+    val token: String? = null
 )

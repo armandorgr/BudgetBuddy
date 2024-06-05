@@ -5,12 +5,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.ViewModel
+import com.example.budgetbuddy.http.FcmAPI
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.example.budgetbuddy.repositories.StorageRepository
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.example.budgetbuddy.util.ListItemImageLoader
 import com.google.android.gms.tasks.Task
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +30,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val repo: UsersRepository,
-    private val storageRepository: StorageRepository
+    private val storageRepository: StorageRepository,
+    private val apiService: FcmAPI
 ) : ViewModel() {
 
     /**
@@ -68,7 +71,13 @@ class ProfileViewModel @Inject constructor(
         groups: List<ListItemUiModel.Group>
     ): Boolean {
         return withContext(Dispatchers.IO) {
-            repo.deleteUser(uid, friends, groups)
+            val result = repo.deleteUser(uid, friends, groups)
+            if(result) {
+                for (group in groups){
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(group.uid)
+                }
+            }
+            return@withContext result
         }
     }
 

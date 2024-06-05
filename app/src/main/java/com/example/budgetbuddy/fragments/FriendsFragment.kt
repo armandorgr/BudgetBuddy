@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import com.example.budgetbuddy.repositories.UsersRepository
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.database.ServerValue
 
 
 @AndroidEntryPoint
@@ -150,7 +151,7 @@ class FriendsFragment : Fragment() {
                             senderUid = senderUid,
                             senderName = "",
                             type = INVITATION_TYPE.FRIEND_REQUEST,
-                            dateSent = LocalDateTime.now().toString()
+                            dateSent = ServerValue.TIMESTAMP
                         )
 
                         // Actualizar la base de datos de Firebase con las nuevas invitaciones

@@ -14,8 +14,8 @@ import dagger.hilt.components.SingletonComponent
 
 
 /**
- * Modulo que sirve para implementar inyeccion de dependencias al viewmodel de RegisterViewModel
- * Sirve para inyectar el repositorio de usuarios necesario para realizar las operaciones relacionados
+ * Modulo que sirve para implementar inyeccion de dependencias a los ViewModel
+ * Sirve para inyectar los repositorios necesarios para realizar las operaciones relacionados
  * con ellos.
  * Uso de la inyección de dependencias consultado aquí:
  * https://www.packtpub.com/product/how-to-build-android-apps-with-kotlin-second-edition/9781837634934

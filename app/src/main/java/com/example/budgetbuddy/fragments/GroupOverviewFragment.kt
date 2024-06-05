@@ -435,7 +435,7 @@ class GroupOverviewFragment : Fragment() {
      * */
     private fun onLeaveGroupClick(view: View?) {
         leavingGroup = true
-        if(viewModel.members.value.size<2){
+        if(viewModel.members.value.isEmpty()){
             showLeaveGroupConfirmationDialog()
         }else{
             viewModel.leaveGroup(selectedGroupUID, this::onLeaveGroupComplete)

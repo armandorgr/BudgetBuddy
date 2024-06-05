@@ -28,8 +28,11 @@ import com.example.budgetbuddy.util.Utilities
 import com.example.budgetbuddy.viewmodels.FriendsViewModel
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.format.DateTimeFormatter
 
 /**
@@ -172,15 +175,18 @@ class NewGroupFragment : Fragment() {
             if (viewModel.allGood) {
                 if (homeViewModel.firebaseUser.value != null) {
                     binding.determinateBar.visibility = View.VISIBLE
-                    viewModel.createNewGroup(
-                        homeViewModel.firebaseUser.value!!.uid,
-                        homeViewModel.currentUser.value?.username!!
-                    ) {
-                        binding.determinateBar.visibility = View.INVISIBLE
-                        if (it.isSuccessful) {
-                            showSuccessDialog(getString(R.string.group_create_success))
-                        } else {
-                            showFailDialog(getString(R.string.group_create_fail))
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel.createNewGroup(
+                            homeViewModel.firebaseUser.value!!.uid,
+                            homeViewModel.currentUser.value?.username!!,
+                            FirebaseMessaging.getInstance().token.await()
+                        ) {
+                            binding.determinateBar.visibility = View.INVISIBLE
+                            if (it.isSuccessful) {
+                                showSuccessDialog(getString(R.string.group_create_success))
+                            } else {
+                                showFailDialog(getString(R.string.group_create_fail))
+                            }
                         }
                     }
                 }
