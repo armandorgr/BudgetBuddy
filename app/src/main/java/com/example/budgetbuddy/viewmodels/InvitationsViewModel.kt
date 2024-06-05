@@ -2,7 +2,10 @@ package com.example.budgetbuddy.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.budgetbuddy.adapters.recyclerView.InvitationAdapter
+import com.example.budgetbuddy.http.FcmAPI
+import com.example.budgetbuddy.http.SubscribeRequest
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
@@ -15,10 +18,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -37,7 +43,8 @@ import javax.inject.Inject
 class InvitationsViewModel @Inject constructor(
     private val repo: InvitationsRepository,
     private val userRepo: UsersRepository,
-    private val groupsRepo: GroupRepository
+    private val groupsRepo: GroupRepository,
+    private val apiService: FcmAPI
 ) : ViewModel() {
     private val _invitationsList: MutableStateFlow<List<ListItemUiModel>> =
         MutableStateFlow(emptyList())
@@ -85,7 +92,19 @@ class InvitationsViewModel @Inject constructor(
                 } else {
                     groupsRepo.findGroupByUID(invitation.senderUid).addOnCompleteListener {
                         if (it.result.exists()) {
-                            repo.confirmGroupInvitation(currentUser.uid, invitation.senderUid)
+                            repo.confirmGroupInvitation(
+                                currentUser.uid,
+                                invitation.senderUid
+                            ) { groupUID ->
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    apiService.subscribe(
+                                        SubscribeRequest(
+                                            token = FirebaseMessaging.getInstance().token.await(),
+                                            groupUID
+                                        )
+                                    ).execute()
+                                }
+                            }
                         } else {
                             repo.deleteInvitation(currentUser.uid, invitation.senderUid)
                         }
@@ -122,21 +141,33 @@ class InvitationsViewModel @Inject constructor(
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             val invitation = snapshot.getValue(InvitationUiModel::class.java)
             invitation?.let {
-                if(it.type==INVITATION_TYPE.FRIEND_REQUEST){
-                    it.senderUid?.let {uid ->
+                if (it.type == INVITATION_TYPE.FRIEND_REQUEST) {
+                    it.senderUid?.let { uid ->
                         userRepo.findUserByUIDNotSuspend(uid).addOnCompleteListener { task ->
-                            if(task.isSuccessful){
-                                it.senderName=task.result.getValue(User::class.java)?.username
-                                addInvitation(ListItemUiModel.Invitation(it))
+                            if (task.isSuccessful) {
+                                it.senderName = task.result.getValue(User::class.java)?.username
+                                it.senderName?.let { _ ->
+                                    addInvitation(
+                                        ListItemUiModel.Invitation(
+                                            it
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
-                }else{
-                    it.senderUid?.let {uid ->
+                } else {
+                    it.senderUid?.let { uid ->
                         groupsRepo.findGroupByUID(uid).addOnCompleteListener { task ->
-                            if(task.isSuccessful){
-                                it.senderName=task.result.getValue(Group::class.java)?.name
-                                addInvitation(ListItemUiModel.Invitation(it))
+                            if (task.isSuccessful) {
+                                it.senderName = task.result.getValue(Group::class.java)?.name
+                                it.senderName?.let { _ ->
+                                    addInvitation(
+                                        ListItemUiModel.Invitation(
+                                            it
+                                        )
+                                    )
+                                }
                             }
                         }
                     }

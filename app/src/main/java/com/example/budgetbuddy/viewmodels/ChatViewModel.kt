@@ -6,7 +6,12 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.budgetbuddy.R
+import com.example.budgetbuddy.http.FcmAPI
+import com.example.budgetbuddy.http.NotificationBody
+import com.example.budgetbuddy.http.SendMessageRequest
+import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.MESSAGE_TYPE
 import com.example.budgetbuddy.model.Message
@@ -25,6 +30,8 @@ import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 /**
@@ -45,6 +52,7 @@ class ChatViewModel @Inject constructor(
     private val usersRepository: UsersRepository,
     private val messagesRepository: MessageRepository,
     private val storageRepository: StorageRepository,
+    private val notificationService: FcmAPI
 ) : ViewModel() {
     private val _isMember: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isMember: StateFlow<Boolean> = _isMember
@@ -174,7 +182,20 @@ class ChatViewModel @Inject constructor(
      * */
     fun sendMessage(groupUID: String, userUID: String) {
         val message = Message(this.messageText, userUID, null, MESSAGE_TYPE.TEXT)
-        messagesRepository.writeNewMessage(groupUID, message)
+        viewModelScope.launch {
+            val groupName = groupRepository.findGroupByUID(groupUID).await().getValue(Group::class.java)?.name
+            messagesRepository.writeNewMessage(groupUID, message){ groupUID ->
+                notificationService.sendMessage(
+                    SendMessageRequest(
+                        to = groupUID,
+                        NotificationBody(
+                            title = groupName ?: "Nuevo mensaje",
+                            body = message.text!!
+                        )
+                    )
+                ).execute()
+            }
+        }
     }
 
     /**

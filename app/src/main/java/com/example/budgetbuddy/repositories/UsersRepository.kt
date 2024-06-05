@@ -175,4 +175,8 @@ class UsersRepository {
     fun setProfilePic(path: String, currentUserUid: String): Task<Void> {
         return database.child(usersRef).child(currentUserUid).child("profilePic").setValue(path)
     }
+
+    fun setToken(userUID: String, token: String){
+        database.child(usersRef).child(userUID).child("token").setValue(token)
+    }
 }

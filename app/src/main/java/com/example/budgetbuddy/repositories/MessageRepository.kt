@@ -9,6 +9,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Clase repositorio de los mensajes de la aplicación, esta clase contiene todos los métodos necesarios
@@ -30,7 +33,7 @@ class MessageRepository {
      * @param groupUID UID del grupo en la cual se guardará el mensaje dentro de su propiedad 'messages'
      * @param message Mensaje a guardar
      * */
-    fun writeNewMessage(groupUID: String, message: Message) {
+    suspend fun writeNewMessage(groupUID: String, message: Message, onSuccess: (groupUID: String)->Unit) {
         val key = database.child(groupsRef).child(groupUID).child(messagesRef).push().key
         if (key == null) {
             Log.w("prueba", "Couldn't get push key for messages")
@@ -44,6 +47,9 @@ class MessageRepository {
             "$groupsRef/$groupUID/$messagesRef/$key/imgPath" to (Utilities.PROFILE_PIC_ST + key),
         )
         database.updateChildren(childUpdates)
+        withContext(Dispatchers.IO){
+            onSuccess(groupUID)
+        }
     }
 
     /**

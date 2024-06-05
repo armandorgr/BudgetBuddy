@@ -6,6 +6,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Clase repositorio de los invitaciones de la aplicación, esta clase contiene todos los métodos necesarios
@@ -99,12 +101,14 @@ class InvitationsRepository {
      * @param currentUserUid UID del usuario actual que acepta la invitación.
      * @param invitationSenderUid UID del grupo al cual se ha invitado el usuario actual a formar parte.
      * */
-    fun confirmGroupInvitation(currentUserUid: String, invitationSenderUid: String) {
+     fun confirmGroupInvitation(currentUserUid: String, invitationSenderUid: String, onSuccess: (uid: String) -> Unit) {
         val childUpdate = hashMapOf<String, Any?>(
             "$usersRef/$currentUserUid/groups/$invitationSenderUid" to true,
             "$groupsRef/$invitationSenderUid/members/$currentUserUid" to ROLE.MEMBER,
             "$usersRef/$currentUserUid/invitations/$invitationSenderUid" to null
         )
-        database.updateChildren(childUpdate)
+        database.updateChildren(childUpdate).addOnSuccessListener{
+            onSuccess(invitationSenderUid)
+        }
     }
 }

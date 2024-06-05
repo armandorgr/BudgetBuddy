@@ -46,6 +46,10 @@ android {
 }
 
 dependencies {
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
     val lottieVersion = "3.5.0"
     implementation("com.airbnb.android:lottie:$lottieVersion")
     implementation("com.github.bumptech.glide:glide:4.16.0")

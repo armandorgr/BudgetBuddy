@@ -12,9 +12,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.example.budgetbuddy.R
 import com.example.budgetbuddy.adapters.recyclerView.NewGroupFriendsAdapter
+import com.example.budgetbuddy.http.FcmAPI
+import com.example.budgetbuddy.http.SubscribeRequest
+import com.example.budgetbuddy.http.UnsubscribeRequest
 import com.example.budgetbuddy.model.GROUP_CATEGORY
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.ListItemUiModel
@@ -32,9 +36,13 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -53,7 +61,8 @@ import javax.inject.Inject
 class NewGroupViewModel @Inject constructor(
     private val repo: GroupRepository,
     private val userRepo: UsersRepository,
-    private val storageRepository: StorageRepository
+    private val storageRepository: StorageRepository,
+    private val apiService: FcmAPI
 ) : ViewModel() {
     private var childEventsAdded = false
     private var _currentUserUid: String? = null
@@ -114,7 +123,18 @@ class NewGroupViewModel @Inject constructor(
      * dentro de la base de datos
      * */
     fun leaveGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
-        repo.leaveGroup(currentUserUid, groupUID, onCompleteListener)
+        repo.leaveGroup(currentUserUid, groupUID){
+            viewModelScope.launch(Dispatchers.IO) {
+                val token = FirebaseMessaging.getInstance().token.await()
+                apiService.unsubscribe(
+                    UnsubscribeRequest(
+                        tokens = mutableListOf(token),
+                        topic = groupUID
+                    )
+                ).execute()
+            }
+            onCompleteListener(it)
+        }
     }
 
     /**
@@ -171,10 +191,12 @@ class NewGroupViewModel @Inject constructor(
     fun updateGroup(groupUID: String, onCompleteListener: (task: Task<Void>) -> Unit) {
         val membersToDelete = mutableListOf<String>()
         val friendsToInvite = mutableListOf<String>()
+        val tokensToUnsubscribe = mutableListOf<String>()
 
         for (member in _members.value) {
             if (!selectedUsers.any { selectedUser -> selectedUser.uid == member.uid }) {
                 membersToDelete.add(member.uid)
+                tokensToUnsubscribe.add(member.userUiModel.token!!)
             }
         }
         for (user in selectedUsers) {
@@ -186,6 +208,7 @@ class NewGroupViewModel @Inject constructor(
         Log.d("prueba", "selected users $selectedUsers")
         Log.d("prueba", "membersToDelete $membersToDelete")
         Log.d("prueba", "friendsToInvite $friendsToInvite")
+        Log.d("prueba", "tokens $tokensToUnsubscribe")
 
         val group = Group(
             "${Utilities.PROFILE_PIC_ST}images/$groupUID",
@@ -199,6 +222,14 @@ class NewGroupViewModel @Inject constructor(
         )
         repo.updateGroup(group, groupUID, membersToDelete, friendsToInvite)
             .addOnCompleteListener { task ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    apiService.unsubscribe(
+                        UnsubscribeRequest(
+                            tokens = tokensToUnsubscribe,
+                            topic = groupUID
+                        )
+                    ).execute()
+                }
                 groupPhoto.let { pic ->
                     when (pic) {
                         is Uri -> {
@@ -233,9 +264,19 @@ class NewGroupViewModel @Inject constructor(
      * de la base de datos
      * */
     fun deleteGroup(groupUID: String, completeListener: (task: Task<Void>) -> Unit) {
+        val tokensToUnsubscribe = _members.value.map { member -> member.userUiModel.token!! }.toMutableList()
         addMember(currentUserUid, User(), null)
         repo.deleteGroup(groupUID, _members.value.toList()).addOnCompleteListener {
             storageRepository.deletePhoto("images/$groupUID")
+            viewModelScope.launch(Dispatchers.IO) {
+                tokensToUnsubscribe.add(FirebaseMessaging.getInstance().token.await())
+                apiService.unsubscribe(
+                    UnsubscribeRequest(
+                        tokens = tokensToUnsubscribe,
+                        topic = groupUID
+                    )
+                ).execute()
+            }
             completeListener(it)
         }
     }
@@ -377,6 +418,7 @@ class NewGroupViewModel @Inject constructor(
     fun createNewGroup(
         currentUserUid: String,
         username: String,
+        token: String,
         onCompleteListener: (task: Task<Void>) -> Unit
     ) {
         val members: MutableList<String> = selectedUsers.map { user -> user.uid }.toMutableList()
@@ -393,6 +435,14 @@ class NewGroupViewModel @Inject constructor(
         )
 
         repo.createNewGroup(group, currentUserUid, members, username) { task, uid ->
+            viewModelScope.launch(Dispatchers.IO) {
+                apiService.subscribe(
+                    SubscribeRequest(
+                        token = token,
+                        uid
+                    )
+                ).execute()
+            }
             groupPhoto.let { pic ->
                 when (pic) {
                     is Uri -> {

@@ -10,8 +10,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -63,6 +65,7 @@ class HomeViewModel @Inject constructor(
                     repo.setProfilePic(photoUrl, usr.uid)
                 }
                 _currentUser.postValue(user)
+                repo.setToken(it,Firebase.messaging.token.await())
             }
             if (usr.providerData.size > 0) {
                 _provider.postValue(usr.providerData[usr.providerData.size - 1].providerId)
