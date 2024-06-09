@@ -1,4 +1,9 @@
 <resources>
+    <string name="or">OR</string>
+    <string name="user">User</string>
+    <string name="new_message">New message</string>
+    <string name="message_body_image">%s has sent an image</string>
+    <string name="message_body_text">%s has sent a new message</string>
     <string name="app_name">BudgetBuddy</string>
     <string name="login">Login</string>
     <string name="registro">Sign up</string>

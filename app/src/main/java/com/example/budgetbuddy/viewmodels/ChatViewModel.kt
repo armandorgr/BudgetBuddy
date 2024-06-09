@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -180,20 +181,25 @@ class ChatViewModel @Inject constructor(
      * @param groupUID UID del grupo en donde enviar el mensaje
      * @param userUID UID del usuario que envía el mensaje
      * */
-    fun sendMessage(groupUID: String, userUID: String) {
+    fun sendMessage(groupUID: String, userUID: String, context: Context) {
         val message = Message(this.messageText, userUID, null, MESSAGE_TYPE.TEXT)
         viewModelScope.launch {
+            val username = usersRepository.findUserByUID(userUID)?.username ?: context.getString(R.string.user)
             val groupName = groupRepository.findGroupByUID(groupUID).await().getValue(Group::class.java)?.name
             messagesRepository.writeNewMessage(groupUID, message){ groupUID ->
-                notificationService.sendMessage(
-                    SendMessageRequest(
-                        to = groupUID,
-                        NotificationBody(
-                            title = groupName ?: "Nuevo mensaje",
-                            body = message.text!!
+                try{
+                    notificationService.sendMessage(
+                        SendMessageRequest(
+                            to = groupUID,
+                            NotificationBody(
+                                title = groupName ?: "Nuevo mensaje",
+                                body = "$username: ${message.text!!}"
+                            )
                         )
-                    )
-                ).execute()
+                    ).execute()
+                }catch (e: Exception){
+                    Log.d("prueba", e.message.toString())
+                }
             }
         }
     }
@@ -209,6 +215,7 @@ class ChatViewModel @Inject constructor(
         uri: Uri,
         groupUID: String,
         userUID: String,
+        context: Context,
         onComplete: (Task<Void>) -> Unit
     ) {
         val key = messagesRepository.getNewKey(groupUID)
@@ -217,7 +224,28 @@ class ChatViewModel @Inject constructor(
                 if (it.isSuccessful) {
                     val message = Message(null, userUID, null, MESSAGE_TYPE.IMAGE)
                     messagesRepository.writeNewImageMessage(groupUID, key, message)
-                        .addOnCompleteListener(onComplete)
+                        .addOnCompleteListener{task ->
+                            viewModelScope.launch(Dispatchers.IO){
+                                try{
+                                    val groupName = groupRepository.findGroupByUID(groupUID).await().getValue(Group::class.java)?.name
+                                    val username = usersRepository.findUserByUID(userUID)?.username ?: context.getString(R.string.user)
+                                    notificationService.sendMessage(
+                                        SendMessageRequest(
+                                            to = groupUID,
+                                            NotificationBody(
+                                                title = groupName ?: context.getString(R.string.new_message),
+                                                body = context.getString(R.string.message_body_image, username)
+                                            )
+                                        )
+                                    ).execute()
+                                    Log.d("Prueba", groupName!!);
+                                    Log.d("Prueba", username);
+                                }catch (e: Exception){
+                                    Log.d("prueba", e.message.toString())
+                                }
+                            }
+                            onComplete(task)
+                        }
                 }
             }
         }
@@ -234,6 +262,7 @@ class ChatViewModel @Inject constructor(
         bitmap: Bitmap,
         groupUID: String,
         userUID: String,
+        context: Context,
         onComplete: (Task<Void>) -> Unit
     ) {
         val key = messagesRepository.getNewKey(groupUID)
@@ -242,7 +271,28 @@ class ChatViewModel @Inject constructor(
                 if (it.isSuccessful) {
                     val message = Message(null, userUID, null, MESSAGE_TYPE.IMAGE)
                     messagesRepository.writeNewImageMessage(groupUID, key, message)
-                        .addOnCompleteListener(onComplete)
+                        .addOnCompleteListener{task->
+                            viewModelScope.launch(Dispatchers.IO){
+                                try{
+                                    val groupName = groupRepository.findGroupByUID(groupUID).await().getValue(Group::class.java)?.name
+                                    val username = usersRepository.findUserByUID(userUID)?.username ?: context.getString(R.string.user)
+                                    notificationService.sendMessage(
+                                        SendMessageRequest(
+                                            to = groupUID,
+                                            NotificationBody(
+                                                title = groupName ?: context.getString(R.string.new_message),
+                                                body = context.getString(R.string.message_body_image, username)
+                                            )
+                                        )
+                                    ).execute()
+                                    Log.d("Prueba", groupName!!);
+                                    Log.d("Prueba", username);
+                                }catch (e: Exception){
+                                    Log.d("prueba", e.message.toString())
+                                }
+                            }
+                            onComplete(task)
+                        }
                 }
             }
         }

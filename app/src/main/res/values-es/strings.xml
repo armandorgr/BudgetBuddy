@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="or">O</string>
+    <string name="user">Usuario</string>
+    <string name="new_message">Nuevo mensaje</string>
+    <string name="message_body_image">%s ha enviado una foto</string>
+    <string name="message_body_text">%s ha enviado un nuevo mensaje</string>
     <string name="app_name">BudgetBuddy</string>
     <string name="login">Inicio de sesión</string>
     <string name="registro">Registrarse</string>

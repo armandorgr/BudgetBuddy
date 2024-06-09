@@ -45,6 +45,7 @@ class ChatFragment : Fragment() {
                 uri,
                 selectedGroupUID,
                 homeViewModel.firebaseUser.value?.uid!!,
+                requireContext(),
                 this::onPhotoMessageComplete
             )
         },
@@ -53,6 +54,7 @@ class ChatFragment : Fragment() {
                 bitmap,
                 selectedGroupUID,
                 homeViewModel.firebaseUser.value?.uid!!,
+                requireContext(),
                 this::onPhotoMessageComplete
             )
         },
@@ -114,7 +116,7 @@ class ChatFragment : Fragment() {
             // Si el mensaje cumple la validación se envía, si no,  se muestra un Toast
             if (validationResult == null) {
                 binding.inputEditText.setText("")
-                viewModel.sendMessage(selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!)
+                viewModel.sendMessage(selectedGroupUID, homeViewModel.firebaseUser.value?.uid!!, requireContext())
             } else {
                 Toast.makeText(requireContext(), validationResult, Toast.LENGTH_SHORT).show()
             }
