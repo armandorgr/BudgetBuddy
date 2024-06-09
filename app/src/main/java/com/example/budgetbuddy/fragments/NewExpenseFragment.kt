@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,8 +21,27 @@ import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewExpenseViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
-
+/**
+ * Fragmento para la creación de un nuevo gasto.
+ * Utiliza ViewModel para manejar la lógica de creación y validación del gasto.
+ * Implementa funcionalidades como la selección de fecha y la validación de los campos de entrada.
+ * Referencias:
+ * ViewModel: https://developer.android.com/topic/libraries/architecture/viewmodel
+ * Data Binding: https://developer.android.com/topic/libraries/data-binding
+ *
+ * @property viewModel ViewModel para la lógica del fragmento.
+ * @property args Argumentos pasados al fragmento.
+ * @property selectedGroupUID ID del grupo seleccionado.
+ * @property dateFormatter Formateador de fecha para el campo de fecha.
+ * @property binding Binding generado por ViewBinding.
+ * @property homeViewModel ViewModel para la actividad principal.
+ * @property showSuccessDialog Método para mostrar un cuadro de diálogo de éxito.
+ * @property showFailDialog Método para mostrar un cuadro de diálogo de fracaso.
+ * @autor Álvaro Aparicio
+ */
+@AndroidEntryPoint
 class NewExpenseFragment : Fragment() {
     private val viewModel: NewExpenseViewModel by viewModels()
     private val args: NewExpenseFragmentArgs by navArgs()
@@ -39,7 +59,9 @@ class NewExpenseFragment : Fragment() {
         binding = FragmentNewExpenseBinding.inflate(inflater, container, false)
         selectedGroupUID = args.selectedGroupUID
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
-        homeViewModel.firebaseUser.value?.uid
+        homeViewModel.firebaseUser.value?.uid?.let {
+        viewModelNewGroup.setCurrentUserUID(it)
+        }
        // Toast.makeText(requireContext(),selectedGroupUID.toString(),Toast.LENGTH_SHORT).show()
         prepareBinding(binding)
         return binding.root
@@ -65,7 +87,7 @@ class NewExpenseFragment : Fragment() {
 
     /**
      * Metodo que sirve para mostrar una ventana emergent con un mensaje de exito y un boton.
-     * Al hacer click sobre el boton de ok o simplemente fuera de la ventana, se ira al fragmento de [GroupsFragment]
+     * Al hacer click sobre el boton de ok o simplemente fuera de la ventana, se ira al fragmento de [ExpenseFragment]
      * @param message Mensaje a mostrar sobre la ventana de exito
      * */
     private fun showSuccessDialog(message: String) {
@@ -75,7 +97,7 @@ class NewExpenseFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-           // findNavController().navigate(NewExpenseFragmentDirections.navNewGroupToGroups(null))
+            //findNavController().navigate(NewExpenseFragmentDirections.navNewToExpense(selectedGroupUID))
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
@@ -97,6 +119,7 @@ class NewExpenseFragment : Fragment() {
         binding.newExpenseTitle.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setNewExpenseTitle(text.toString())
             viewModel.validateNewExpenseTitle(text.toString(), requireContext())
+
         })
 
         binding.newExpenseAmount.addTextChangedListener(afterTextChanged = { text ->
@@ -116,14 +139,20 @@ class NewExpenseFragment : Fragment() {
         viewModelNewGroup.loadMembers(selectedGroupUID)
 
         binding.btnSaveExpense.setOnClickListener {
+            val lista : MutableList<String> = viewModelNewGroup.members.value.map { member -> member.uid }.toMutableList()
+            lista.add(homeViewModel.firebaseUser.value!!.uid)
+            Log.d("prueba entra metodo",String())
             if (viewModel.allGood) {
+                Log.d("PRUEBA", homeViewModel.firebaseUser.value.toString())
                 homeViewModel.firebaseUser.value?.let {firebaseUser ->
+                    Log.d("prueba", "firebaseuser");
                     viewModel.createNewExpense(
                         homeViewModel.firebaseUser.value!!.uid,
                         homeViewModel.currentUser.value?.username!!,
-                        selectedGroupUID
+                        selectedGroupUID,
+                        lista
                     ) {
-
+                        Log.d("prueba entra METODO2",String())
                         if (it.isSuccessful) {
                             showSuccessDialog(getString(R.string.expense_create_success))
                         } else {

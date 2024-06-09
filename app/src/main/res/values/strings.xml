@@ -91,6 +91,8 @@
     <string name="text_select_users">Users who share the expense</string>
     <string name="group_name_hint">Group Name</string>
     <string name="group_description_hint">Group Description</string>
+    <string name="expense_name_hint">Title</string>
+    <string name="expense_amount_hint">Amount</string>
     <string name="date_placeholder" translatable="false">YYYY-MM-DD</string>
     <string name="start_date_limit_error">The start date can not be before 2000–01-01</string>
     <string name="end_date_error">The end date can not be before the start date</string>
@@ -107,7 +109,10 @@
     <string name="group_delete_fail">Group deletion failed</string>
     <string name="group_create_fail">Group creation failed</string>
     <string name="expense_create_fail">Expense creation failed</string>
+    <string name="expense_delete_fail">Expense delete failed</string>
     <string name="expense_create_success">Expense creation Successfully</string>
+    <string name="expense_delete_success">Expense delete Successfully</string>
+    <string name="delete_expense">DELETE EXPENSE</string>
     <string name="group_create_success">Group created Successfully</string>
     <string name="send_invitation_button_text">Invite friends</string>
     <string name="send_invitation_title">Send invitation</string>
@@ -167,6 +172,7 @@
     <string name="total_personal">MI TOTAL</string>
     <string name="total_group">GASTO TOTAL</string>
     <string name="paid_by">Paid by:</string>
+    <string name="expense_detail">Expense detail</string>
     <string name="calendar_prev">Prev</string>
     <string name="errorEmpty">%s can not be empty</string>
     <string name="errorLength">%s can not have mora than %d letters</string>

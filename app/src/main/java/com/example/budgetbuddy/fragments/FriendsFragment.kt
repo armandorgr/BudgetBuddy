@@ -40,7 +40,26 @@ import com.example.budgetbuddy.repositories.UsersRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.ServerValue
 
-
+/**
+ * Fragmento para gestionar la lista de amigos y enviar solicitudes de amistad.
+ *
+ *  Este fragmento utiliza corutinas para gestionar operaciones asíncronas y la biblioteca de Firebase para la gestión de la base de datos en tiempo real.
+ *
+ * @property friendsViewModel ViewModel para la gestión de amigos.
+ * @property _binding Referencia al layout del fragmento.
+ * @property viewModel ViewModel para el manejo de invitaciones.
+ * @property homeViewModel ViewModel para el manejo de la sesión del usuario.
+ * @property alertDialog Cuadro de diálogo para agregar amigos.
+ * @property userRepository Repositorio de usuarios para la gestión de la base de datos.
+ * @property usersRef Referencia a la colección de usuarios en la base de datos.
+ * @property invitationsRef Referencia a la colección de invitaciones en la base de datos.
+ * @property membersAdapter Adaptador para la lista de amigos.
+ * @property _members Flujo mutable de la lista de amigos.
+ * @property members Flujo de la lista de amigos.
+ * [Corutinas en Android](https://developer.android.com/kotlin/coroutines)
+ * [Documentación de Firebase Realtime Database](https://firebase.google.com/docs/database)
+ * @author Álvaro Aparicio
+ */
 @AndroidEntryPoint
 class FriendsFragment : Fragment() {
     private lateinit var  friendsViewModel: FriendsViewModel
@@ -103,6 +122,9 @@ class FriendsFragment : Fragment() {
         }
     }
 
+    /**
+     * Método para mostrar el cuadro de diálogo para agregar un amigo.
+     */
     private fun showAddFriendDialog() {
         val dialogView = layoutInflater.inflate(R.layout.custom_prompt_dialog, null)
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
@@ -140,6 +162,12 @@ class FriendsFragment : Fragment() {
     }
 
 
+    /**
+     * Método para enviar una solicitud de amistad.
+     * @param senderUid UID del remitente.
+     * @param recipientUsername Nombre de usuario del destinatario.
+     * @param onComplete Callback que se llama cuando se completa la solicitud.
+     */
     fun sendFriendRequest(senderUid: String, recipientUsername: String, onComplete: (task: Task<Void>) -> Unit) {
         lifecycleScope.launch {
             try {

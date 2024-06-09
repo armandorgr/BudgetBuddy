@@ -7,11 +7,9 @@
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
 
-    <!-- Aquí coloca el contenido de tu elemento de lista -->
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="141dp"
         android:padding="16dp">
 
         <!-- Título -->
@@ -43,9 +41,9 @@
             android:id="@+id/payerTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/paidByTextview"
             android:layout_alignBaseline="@id/paidByTextview"
             android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/paidByTextview"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/darker_gray" />
 
@@ -69,6 +67,23 @@
             android:layout_marginTop="8dp"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/darker_gray" />
-    </RelativeLayout>
 
+        <!-- Botón de eliminar -->
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="156dp"
+            android:layout_height="33dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="2dp"
+            android:background="@android:color/holo_red_dark"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            android:text="@string/delete_expense"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

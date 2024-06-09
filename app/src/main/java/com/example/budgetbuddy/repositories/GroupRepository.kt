@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.repositories
 
 import android.util.Log
+import com.example.budgetbuddy.model.Balance
 import com.example.budgetbuddy.model.Group
 import com.example.budgetbuddy.model.INVITATION_TYPE
 import com.example.budgetbuddy.model.InvitationUiModel
@@ -81,7 +82,6 @@ class GroupRepository {
             ServerValue.TIMESTAMP
         )
 
-
         val childUpdates = hashMapOf<String, Any?>(
             "$groupsRef/$key/description" to group.description.toString(),
             "$groupsRef/$key/name" to group.name.toString(),
@@ -91,7 +91,7 @@ class GroupRepository {
             "$groupsRef/$key/members" to group.members,
             "$groupsRef/$key/pic" to group.pic,
             "$usersRef/$currentUserUid/$groupsRef/$key" to true,
-            "$groupsRef/$key/category" to group.category
+            "$groupsRef/$key/category" to group.category,
         )
         for (member in members) {
             childUpdates["$usersRef/$member/$invitationsRef/$key"] = invitation
@@ -99,6 +99,7 @@ class GroupRepository {
         database.updateChildren(childUpdates).addOnCompleteListener {
             onComplete(it, key)
         }
+
     }
 
     /**
