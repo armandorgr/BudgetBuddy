@@ -15,23 +15,6 @@ import com.example.budgetbuddy.validations.RegexValidationHandler
  * @author Álvaro Aparicio
  */
 class NewExpenseTitleValidator(private val context: Context): BaseValidator() {
-    private val validator = BlankValidationHandler(
-        context.getString(
-            R.string.blank_validation_error,
-            "The expense title"
-        )
-    ).setNext(
-        LengthValidationHandler(
-            20,
-            context.getString(R.string.length_validation_error, "The expense title", 20)
-        )
-            .setNext(
-                RegexValidationHandler(
-                    ExpValidations.EXPENSE_TITLE,
-                    context.getString(R.string.regex_validation_error, "The expense title")
-                )
-            )
-    )
 
     /**
      * Metodo que funciona que para validar la entrada de texto
@@ -39,6 +22,25 @@ class NewExpenseTitleValidator(private val context: Context): BaseValidator() {
      * @return resultado [String]? de validar, es nulo si no hay error.
      * */
     override fun validate(input: Any): String? {
+        val subject = context.getString(R.string.expense_name_hint)
+        val validator = BlankValidationHandler(
+            context.getString(
+                R.string.blank_validation_error,
+                "The expense title"
+            )
+        ).setNext(
+            LengthValidationHandler(
+                20,
+                context.getString(R.string.length_validation_error, "The expense title", 20)
+            )
+                .setNext(
+                    RegexValidationHandler(
+                        ExpValidations.EXPENSE_TITLE,
+                        context.getString(R.string.regex_validation_error, "The expense title")
+                    )
+                )
+        )
+
         return validator.validate(input)
     }
 

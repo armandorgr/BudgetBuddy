@@ -2,6 +2,7 @@ package com.example.budgetbuddy.viewHolders
 
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
@@ -26,8 +27,8 @@ import java.util.Locale
  * @author Álvaro Aparicio
  */
 class ExpenseViewHolder(
-    private val containerView: View
-
+    private val containerView: View,
+    private val onClick : (expenseUID : String) -> Unit
 ) : ListItemViewHolder(containerView) {
     private val titleTextView: TextView by lazy {
         containerView.findViewById(R.id.titleTextView)
@@ -41,17 +42,23 @@ class ExpenseViewHolder(
     private val dateTextView: TextView by lazy {
         containerView.findViewById(R.id.dateTextView)
     }
+    private val deleteButton : Button by lazy{
+        containerView.findViewById(R.id.deleteButton)
+    }
+
+
 
 
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
 
+    /*
     init {
         containerView.setOnClickListener {
             val action = ExpenseFragmentDirections.navToNewExpense(it)
             containerView.findNavController().navigate(action)
         }
     }
-
+*/
 
     /**
      * Vincula los datos del gasto a la vista.
@@ -66,6 +73,10 @@ class ExpenseViewHolder(
         val formattedDate = parsedDate.toLocalDate().toString()
         dateTextView.text = formattedDate
 
+
+        deleteButton.setOnClickListener{
+            onClick(expense.expenseUID.toString())
+        }
     }
 
     override fun bindData(listItem: ListItemUiModel) {

@@ -3,6 +3,7 @@ package com.example.budgetbuddy.repositories
 import android.util.Log
 import com.example.budgetbuddy.model.Balance
 import com.example.budgetbuddy.model.Expense
+import com.example.budgetbuddy.model.ListItemUiModel
 import com.example.budgetbuddy.model.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
@@ -28,6 +29,7 @@ import kotlin.math.log
 class ExpenseRepository {
     private val expensesRef: String = "expenses"
     private val groupsRef: String = "groups"
+    private val balancesRef: String = "balances"
     private val database: DatabaseReference = Firebase.database.reference
 
     /**
@@ -37,7 +39,7 @@ class ExpenseRepository {
      * @param currentGroupId El ID del grupo actual.
      * @param onComplete Callback que se llama cuando se completa la tarea.
      */
-    fun createNewExpense(expense: Expense, currentGroupId: String, onComplete:(task: Task<Void>, uid:String)->Unit){
+    fun createNewExpense(expense: Expense,members: List<String>, currentGroupId: String, onComplete:(task: Task<Void>, uid:String)->Unit){
         val key = database.child(expensesRef).push().key
         if (key == null) {
             Log.w("prueba", "Couldn't get push key for posts")
@@ -51,10 +53,39 @@ class ExpenseRepository {
             "$groupsRef/$currentGroupId/$expensesRef/$key/payer" to expense.payer,
             "$groupsRef/$currentGroupId/$expensesRef/$key/debt" to expense.debt,
             "$groupsRef/$currentGroupId/$expensesRef/$key/payerUserName" to expense.payerUserName,
+
         )
         database.updateChildren(childUpdates).addOnCompleteListener {
             onComplete(it, key)
         }
+
+        Log.d("prueba", "Members: $members")
+
+        val amount = expense.amount
+        for (i in members.indices) {
+
+                val user1 = members[i]
+
+                Log.d("users", "user1: $user1")
+                Log.d("members", "$members")
+                /*
+                val balance = Balance(
+                    user1 = user1,
+                    user2 = user2,
+                    amountUser1 = 0.0,
+                    amountUser2 = 0.0
+                )
+                */
+
+                //childUpdates.put("$groupsRef/$currentGroupId/$balancesRef/$user1/$user2",0);
+
+                /*
+                "$groupsRef/$key/$balancesRef/$user2/user2" to 0,
+                "$groupsRef/$key/$balancesRef/$user1/amountUser1" to 0.0,
+                "$groupsRef/$key/$balancesRef/$user2/amountUser2" to 0.0,*/
+
+            }
+
 
     }
 
@@ -93,6 +124,17 @@ class ExpenseRepository {
         private const val TAG = "ExpenseRepository"
     }
 
+    /**
+     * Método que sirve para eliminar un gasto de la base de datos
+     * @param groupUID (El UID del grupo donde se encuentra ese gasto)
+     * @param expenseUID (El UID del gasto en cuestión a borrar)
+     * @return La tarea de eliminar el gasto.
+     * */
+    fun deleteExpense(groupUID: String, expenseUID: String): Task<Void> {
+        val childUpdates = hashMapOf<String, Any?>(
+            "$groupsRef/$groupUID/$expensesRef/$expenseUID" to null
+        )
 
-
+        return database.updateChildren(childUpdates)
+    }
 }

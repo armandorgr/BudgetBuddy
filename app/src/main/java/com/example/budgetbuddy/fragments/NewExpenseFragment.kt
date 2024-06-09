@@ -1,6 +1,7 @@
 package com.example.budgetbuddy.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import com.example.budgetbuddy.util.Result
 import com.example.budgetbuddy.viewmodels.HomeViewModel
 import com.example.budgetbuddy.viewmodels.NewExpenseViewModel
 import com.example.budgetbuddy.viewmodels.NewGroupViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
 /**
  * Fragmento para la creación de un nuevo gasto.
@@ -39,10 +41,11 @@ import java.time.format.DateTimeFormatter
  * @property showFailDialog Método para mostrar un cuadro de diálogo de fracaso.
  * @autor Álvaro Aparicio
  */
+@AndroidEntryPoint
 class NewExpenseFragment : Fragment() {
     private val viewModel: NewExpenseViewModel by viewModels()
     private val args: NewExpenseFragmentArgs by navArgs()
-   // private val viewModelNewGroup: NewGroupViewModel by viewModels()
+    private val viewModelNewGroup: NewGroupViewModel by viewModels()
     private lateinit var selectedGroupUID: String
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private lateinit var binding: FragmentNewExpenseBinding
@@ -56,7 +59,9 @@ class NewExpenseFragment : Fragment() {
         binding = FragmentNewExpenseBinding.inflate(inflater, container, false)
         selectedGroupUID = args.selectedGroupUID
         homeViewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
-        homeViewModel.firebaseUser.value?.uid
+        homeViewModel.firebaseUser.value?.uid?.let {
+        viewModelNewGroup.setCurrentUserUID(it)
+        }
        // Toast.makeText(requireContext(),selectedGroupUID.toString(),Toast.LENGTH_SHORT).show()
         prepareBinding(binding)
         return binding.root
@@ -92,7 +97,7 @@ class NewExpenseFragment : Fragment() {
             message,
             getString(R.string.ok)
         ) {
-           // findNavController().navigate(NewExpenseFragmentDirections.navNewGroupToGroups(null))
+            //findNavController().navigate(NewExpenseFragmentDirections.navNewToExpense(selectedGroupUID))
         }
         alertDialogFactory.createDialog(R.layout.success_dialog, binding.root, data)
     }
@@ -114,6 +119,7 @@ class NewExpenseFragment : Fragment() {
         binding.newExpenseTitle.addTextChangedListener(afterTextChanged = { text ->
             viewModel.setNewExpenseTitle(text.toString())
             viewModel.validateNewExpenseTitle(text.toString(), requireContext())
+
         })
 
         binding.newExpenseAmount.addTextChangedListener(afterTextChanged = { text ->
@@ -130,17 +136,23 @@ class NewExpenseFragment : Fragment() {
                 it?.let { dateFormatter.format(it) } ?: getString(R.string.date_placeholder)
         }
 
-       // viewModelNewGroup.loadMembers(selectedGroupUID)
+        viewModelNewGroup.loadMembers(selectedGroupUID)
 
         binding.btnSaveExpense.setOnClickListener {
+            val lista : MutableList<String> = viewModelNewGroup.members.value.map { member -> member.uid }.toMutableList()
+            lista.add(homeViewModel.firebaseUser.value!!.uid)
+            Log.d("prueba entra metodo",String())
             if (viewModel.allGood) {
+                Log.d("PRUEBA", homeViewModel.firebaseUser.value.toString())
                 homeViewModel.firebaseUser.value?.let {firebaseUser ->
+                    Log.d("prueba", "firebaseuser");
                     viewModel.createNewExpense(
                         homeViewModel.firebaseUser.value!!.uid,
                         homeViewModel.currentUser.value?.username!!,
-                        selectedGroupUID
+                        selectedGroupUID,
+                        lista
                     ) {
-
+                        Log.d("prueba entra METODO2",String())
                         if (it.isSuccessful) {
                             showSuccessDialog(getString(R.string.expense_create_success))
                         } else {

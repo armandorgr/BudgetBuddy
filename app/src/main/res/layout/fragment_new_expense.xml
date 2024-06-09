@@ -22,22 +22,20 @@
             android:textStyle="bold|italic" />
     </LinearLayout>
 
-        <EditText
-            android:id="@+id/newExpenseTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Título"
-            android:textSize="18sp"
-          />
+    <EditText
+        android:id="@+id/newExpenseTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/expense_name_hint"
+        android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/newExpenseAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Cantidad"
-            android:inputType="numberDecimal"
-            android:textSize="18sp"
-          />
+    <EditText
+        android:id="@+id/newExpenseAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/expense_amount_hint"
+        android:inputType="numberDecimal"
+        android:textSize="18sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"

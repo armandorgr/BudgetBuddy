@@ -55,7 +55,7 @@ class NewExpenseViewModel: ViewModel() {
     private val _newExpenseTitle: MutableLiveData<String> = MutableLiveData<String>()
     val newExpenseTitle: LiveData<String> = _newExpenseTitle
 
-    // LiveData para contener el monto del nuevo gasto.
+
     private val _newExpenseTitleError = MutableLiveData<String?>()
     val newExpenseTitleError: LiveData<String?> = _newExpenseTitleError
 
@@ -183,7 +183,7 @@ class NewExpenseViewModel: ViewModel() {
      */
     fun validateNewExpenseTitle(newExpenseTitle: String, context: Context) {
         val validator = NewExpenseTitleValidator(context)
-        _newExpenseTitleError.postValue(validator.validate(newExpenseTitle) ?: "")
+            _newExpenseTitleError.postValue(validator.validate(newExpenseTitle) ?: "")
     }
 
     /**
@@ -222,8 +222,9 @@ class NewExpenseViewModel: ViewModel() {
     val allGood: Boolean
         get() {
             return newExpenseTitleError.value.equals("") &&
-                    startDate.value != null && _endDate.value != null
+                    startDate.value != null
         }
+
 
     /**
      * Método para crear un nuevo gasto.
@@ -236,6 +237,7 @@ class NewExpenseViewModel: ViewModel() {
         currentUserUid: String,
         currentUserName: String,
         currentGroupId: String,
+        members: List<String>,
         onCompleteListener: (task: Task<Void>) -> Unit
     ) {
         val expense = Expense(
@@ -247,16 +249,15 @@ class NewExpenseViewModel: ViewModel() {
             payerUserName = currentUserName
 
         )
-
-
-
-        repo.createNewExpense(expense, currentGroupId) { task, uid ->
+        repo.createNewExpense(expense,members, currentGroupId) { task, uid ->
             if (task.isSuccessful) {
-
+                onCompleteListener(task)
             } else {
-                Log.e(TAG, "Error creating new expense", task.exception)
+                onCompleteListener(task)
             }
 
     }
+
+
     }
 }

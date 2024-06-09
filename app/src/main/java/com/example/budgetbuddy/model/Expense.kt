@@ -20,4 +20,5 @@ data class Expense(
     val payer: String? = null,
     val debt:  Double? = null,
     val payerUserName: String? = null,
+    var expenseUID : String? = null
 ) : Parcelable

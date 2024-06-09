@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.budgetbuddy.model.Expense
 import com.example.budgetbuddy.repositories.ExpenseRepository
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -37,8 +38,11 @@ class ExpenseViewModel : ViewModel() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val expensesList = mutableListOf<Expense>()
                 snapshot.children.forEach { expenseSnapshot ->
+                  var expenseUID = expenseSnapshot.key
                     val expense = expenseSnapshot.getValue(Expense::class.java)
-                    expense?.let { expensesList.add(it) }
+                    expense?.let { expensesList.add(it)
+                    it.expenseUID = expenseUID
+                    }
                 }
                 _expenses.value = expensesList
             }
@@ -62,6 +66,19 @@ class ExpenseViewModel : ViewModel() {
                 // La actualización no se completó
                 Log.e(TAG, "Error updating expense", task.exception)
             }
+        }
+    }
+
+    /**
+     * Método que sirve para borrar un gasto
+     * @param groupUID del grupo donde se encuentra el gasto
+     * @param expenseUID del gasto a borrar de la base datos
+     * @param completeListener Función que se llama al terminar de eliminar el gasto
+     * de la base de datos
+     * */
+    fun deleteExpense(groupUID: String, expenseUID: String, completeListener: (task: Task<Void>) -> Unit) {
+        expenseRepository.deleteExpense(groupUID, expenseUID).addOnCompleteListener {
+            completeListener(it)
         }
     }
 }

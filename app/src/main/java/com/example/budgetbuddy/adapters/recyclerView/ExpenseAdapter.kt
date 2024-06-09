@@ -15,7 +15,7 @@ import com.example.budgetbuddy.viewHolders.ExpenseViewHolder
  * @param expenses Lista de gastos a mostrar en el RecyclerView.
  * @author Álvaro Aparicio
  */
-class ExpenseAdapter (private var expenses: List<Expense>) : RecyclerView.Adapter<ExpenseViewHolder>() {
+class ExpenseAdapter (private var expenses: List<Expense>, private val onClick : (expenseUID : String) -> Unit) : RecyclerView.Adapter<ExpenseViewHolder>() {
 
     /**
      * Método que crea y devuelve una instancia de `ExpenseViewHolder`.
@@ -23,7 +23,7 @@ class ExpenseAdapter (private var expenses: List<Expense>) : RecyclerView.Adapte
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.expense_item, parent, false)
-        return ExpenseViewHolder(itemView)
+        return ExpenseViewHolder(itemView, onClick)
     }
 
     /**
